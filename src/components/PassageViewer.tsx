@@ -1,6 +1,7 @@
+// src/components/PassageViewer.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 interface PassageViewerProps {
   passageText: string;
@@ -9,114 +10,121 @@ interface PassageViewerProps {
   loading?: boolean;
 }
 
+// देवनागरीतील काना-मात्रा, जोडाक्षरे व अदृश्य कॅरेक्टर्स यांचे १००% अचूक एकत्रीकरण
+function normalizeMarathiWord(str: string): string {
+  if (!str) return "";
+
+  return str
+    .normalize("NFD")
+    // १. काना (ा \u093E) + दोन मात्रा (ै \u0948) => औ-कार (ौ \u094C) [उदा. मौल्यवान]
+    .replace(/\u093E\u0948/g, "\u094C")
+    // २. काना (ा \u093E) + एक मात्रा (े \u0947) => ओ-कार (ो \u094B) [उदा. गोष्ट, येतो, उपयोग]
+    .replace(/\u093E\u0947/g, "\u094B")
+    // ३. काना (ा \u093E) + अर्धचंद्र (ॅ \u0945) => ऑ-कार (ॉ \u0949)
+    .replace(/\u093E\u0945/g, "\u0949")
+    // ४. अदृश्य कॅरेक्टर्स (ZWJ, ZWNJ, Soft Hyphen) काढणे
+    .replace(/[\u200B-\u200D\uFEFF\u00AD]/g, "")
+    // ५. सर्वसामान्य NFC फॉर्ममध्ये आणणे
+    .normalize("NFC")
+    .trim();
+}
+
 export default function PassageViewer({
   passageText,
   userInput,
   title,
   loading,
 }: PassageViewerProps) {
-  const activeWordRef = useRef<HTMLSpanElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  if (loading) {
+    return (
+      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex items-center justify-center min-h-[350px] lg:min-h-[500px]">
+        <div className="text-slate-400 text-sm animate-pulse">
+          उतारा लोड होत आहे...
+        </div>
+      </div>
+    );
+  }
 
-  // पॅसेज परिच्छेदांमध्ये विभागणे
-  const paragraphs = passageText.split("\n").filter((p) => p.trim().length > 0);
-  
-  // शब्दांची विभागणी
-  const allTargetWords = passageText.trim().split(/\s+/).filter(Boolean);
-  const isTrailingSpace =
-    userInput.endsWith(" ") || userInput.endsWith("\n") || userInput.endsWith("\t");
-  const typedWords = userInput.trim().split(/\s+/).filter(Boolean);
-  
-  const activeWordIndex = isTrailingSpace
-    ? typedWords.length
-    : Math.max(0, typedWords.length - 1);
+  // युझरने टाईप केलेले सर्व शब्द
+  const allTypedTokens = userInput.trimStart().split(/\s+/);
+  const isTrailingSpace = /\s$/.test(userInput);
 
-  // चालू शब्दावर आपोआप स्क्रोल होणे
-  useEffect(() => {
-    if (activeWordRef.current && containerRef.current) {
-      activeWordRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
-    }
-  }, [activeWordIndex]);
+  // स्पेस दिल्यानंतरच शब्द तपासणीसाठी पूर्ण मानला जाईल
+  const completedWords = isTrailingSpace
+    ? allTypedTokens.filter(Boolean)
+    : allTypedTokens.filter(Boolean).slice(0, -1);
 
+  // चालू टायपिंग शब्द इंडेक्स
+  const currentActiveIndex = completedWords.length;
+
+  // परिच्छेदानुसार (Enter/Paragraph) विभाजन
+  const paragraphs = passageText.split("\n");
   let globalWordCounter = 0;
 
   return (
-    <div className="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col shadow-lg h-full">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-3 pb-2 border-b border-slate-700">
-        <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">
-          📄 मूळ उतारा (Question Passage)
+    <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col shadow-xl">
+      {/* Title Header */}
+      <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+        <h2 className="text-sm font-bold text-amber-400 uppercase tracking-wider">
+          📄 मूळ परीक्षा उतारा (Question Passage)
         </h2>
-        <span className="text-xs text-slate-400 font-medium">
-          {title ? `विषय: ${title}` : "लोड होत आहे..."}
-        </span>
-      </div>
-
-      {/* Main Passage Window */}
-      <div
-        ref={containerRef}
-        className="flex-1 bg-slate-950 p-5 rounded-xl border border-slate-800 text-base sm:text-lg leading-relaxed text-slate-200 select-none overflow-y-auto max-h-[350px] lg:max-h-[500px] space-y-3"
-      >
-        {loading ? (
-          <p className="text-slate-500 text-center mt-10">उतारा लोड होत आहे...</p>
-        ) : (
-          paragraphs.map((para, pIdx) => {
-            const wordsInPara = para.trim().split(/\s+/).filter(Boolean);
-            return (
-              /* text-left आणि प्लॅन स्पेसिंग वापरल्यामुळे जास्तीचा गॅप पूर्णपणे निघून जाईल */
-              <p key={pIdx} className="text-left indent-6 sm:indent-8">
-                {wordsInPara.map((word, wIdx) => {
-                  const currentWordIndex = globalWordCounter;
-                  globalWordCounter++;
-
-                  const isTyped = currentWordIndex < activeWordIndex;
-                  const isActive = currentWordIndex === activeWordIndex;
-                  const userWord = typedWords[currentWordIndex] || "";
-
-                  let statusClass = "text-slate-300";
-
-                  if (isTyped) {
-                    statusClass =
-                      userWord === word
-                        ? "text-emerald-400 font-medium"
-                        : "text-rose-400 font-medium line-through decoration-rose-500/70";
-                  } else if (isActive) {
-                    statusClass =
-                      "bg-amber-400/20 text-amber-300 font-bold px-1 rounded border border-amber-400/50 shadow-sm";
-                  }
-
-                  return (
-                    <React.Fragment key={wIdx}>
-                      <span
-                        ref={isActive ? activeWordRef : null}
-                        className={`transition-colors duration-100 ${statusClass}`}
-                      >
-                        {word}
-                      </span>
-                      {/* दोन शब्दांमध्ये फक्त एकच सामान्य स्पेस */}
-                      {" "}
-                    </React.Fragment>
-                  );
-                })}
-              </p>
-            );
-          })
+        {title && (
+          <span className="text-xs font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
+            {title}
+          </span>
         )}
       </div>
 
-      {/* Progress Footer */}
-      <div className="mt-3 flex justify-between items-center text-xs text-slate-400 font-medium">
-        <span>
-          प्रगती: {Math.min(activeWordIndex, allTargetWords.length)} / {allTargetWords.length} शब्द
-        </span>
-        <span className="text-emerald-400">
-          {allTargetWords.length > 0
-            ? `${Math.round((Math.min(activeWordIndex, allTargetWords.length) / allTargetWords.length) * 100)}% पूर्ण`
-            : "0%"}
-        </span>
+      {/* Paragraphs with Tab & Enter Preserved */}
+      <div className="flex-1 p-5 bg-slate-950 rounded-xl border border-slate-800 text-base sm:text-lg font-normal tracking-wide leading-relaxed space-y-4 select-none overflow-y-auto max-h-[500px]">
+        {paragraphs.map((para, paraIndex) => {
+          const paraWords = para.trim().split(/\s+/).filter(Boolean);
+
+          if (paraWords.length === 0) return null;
+
+          return (
+            <div
+              key={paraIndex}
+              className="flex flex-wrap gap-x-2 gap-y-2 items-center"
+            >
+              {/* Tab Indentation */}
+              <span className="inline-block w-8 sm:w-10 text-slate-700 font-mono text-xs select-none">
+                ⇥
+              </span>
+
+              {paraWords.map((word) => {
+                const wordIndex = globalWordCounter;
+                globalWordCounter++;
+
+                const isCompleted = wordIndex < completedWords.length;
+                const isCurrent = wordIndex === currentActiveIndex;
+
+                // दोन्ही शब्दांचे संपूर्ण देवनागरी नॉर्मलायझेशन करून तुलना
+                const userWordNorm = normalizeMarathiWord(completedWords[wordIndex] || "");
+                const targetWordNorm = normalizeMarathiWord(word);
+
+                const isCorrect = isCompleted && userWordNorm === targetWordNorm;
+                const isWrong = isCompleted && userWordNorm !== targetWordNorm;
+
+                let wordStyle = "text-slate-400 transition-colors";
+
+                if (isCorrect) {
+                  wordStyle = "text-emerald-400 font-medium";
+                } else if (isWrong) {
+                  wordStyle = "text-rose-400 line-through decoration-rose-500 font-medium";
+                } else if (isCurrent) {
+                  wordStyle = "text-amber-300 font-semibold border-b-2 border-amber-400 pb-0.5 animate-pulse";
+                }
+
+                return (
+                  <span key={wordIndex} className={wordStyle}>
+                    {word}
+                  </span>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

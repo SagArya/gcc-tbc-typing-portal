@@ -1,0 +1,137 @@
+[
+  {
+    "id": "mr-home-1",
+    "title": "मराठी १: होम रो - मूलभूत अक्षरे (Home Row Basics)",
+    "language": "marathi",
+    "row": "Home Row",
+    "level": "Beginner",
+    "text": "क क क ह ह ह र र र स स स य य य श श श कह रस यश कर कस हक शय सर कक हह रर एसएस यय शश कह कह रस रस यश यश कर कर कस कस शक शक",
+    "keys": ["क", "ह", "र", "स", "य", "श"]
+  },
+  {
+    "id": "mr-home-2",
+    "title": "मराठी २: होम रो - काना व मात्रा शब्द (Home Row Words)",
+    "language": "marathi",
+    "row": "Home Row",
+    "level": "Intermediate",
+    "text": "करा कसा कहा यश कराव सारा सारा सारा साय साय काया काया काश काश हार हार हाक हाक रास रास राख राख साक साक साख साख शहा शहा शहर शहर करा कसा काया सारा शहर काश हाक राख रास साक",
+    "keys": ["क", "ह", "र", "स", "य", "श", "ा", "े"]
+  },
+  {
+    "id": "mr-top-1",
+    "title": "मराठी ३: टॉप रो - मूलभूत अक्षरे (Top Row Basics)",
+    "language": "marathi",
+    "row": "Top Row",
+    "level": "Beginner",
+    "text": "म म म त त त ज ज ज ल ल ल न न न प प प व व व च च च मत जल नव पच मन वत मच तज नल पव चम जन तव पल मज तच लव पन मत जल नव पच",
+    "keys": ["म", "त", "ज", "ल", "न", "प", "व", "च"]
+  },
+  {
+    "id": "mr-top-2",
+    "title": "मराठी ४: टॉप रो - शब्द सराव (Top Row Words)",
+    "language": "marathi",
+    "row": "Top Row",
+    "level": "Intermediate",
+    "text": "मजला जनता वजन पवन चवदार नवल पालक जलद मदत जतन वचन पचन तव पलक नमन वतन पवन जलद वजन मदत जनता वचन पचन पालक नवल चवदार",
+    "keys": ["म", "त", "ज", "ल", "न", "प", "व", "च", "ा", "े"]
+  },
+  {
+    "id": "mr-bottom-1",
+    "title": "मराठी ५: बॉटम रो - अक्षरे व शब्द (Bottom Row Basics)",
+    "language": "marathi",
+    "row": "Bottom Row",
+    "level": "Intermediate",
+    "text": "ग ग ग ब ब ब अ अ अ इ इ इ द द द उ उ उ गब अद इद दब उद बद अग बग दग अगर बबन दगड इमारत उपवन अजय अगर बबन दगड इमारत उपवन",
+    "keys": ["ग", "ब", "अ", "इ", "द", "उ", "ए", "ण्", "ध्"]
+  },
+  {
+    "id": "mr-office-1",
+    "title": "मराठी ६: महत्त्वाचे कार्यालयीन शब्द (Administrative Terms)",
+    "language": "marathi",
+    "row": "Office Words",
+    "level": "Advanced",
+    "text": "शासकीय कार्यालय परिपत्रक आदेश संदर्भ क्रमांक दिनांक विषय महोदय अर्जदार स्वाक्षरी अधीक्षक सहपत्र मंजुरी अहवाल प्रपत्र प्रत रवाना नोंदवही कार्यपद्धती नियम प्रशासकीय मान्यता तात्काळ कार्यवाही",
+    "keys": ["शासकीय", "परिपत्रक", "संदर्भ", "महोदय", "अधीक्षक", "नोंदवही"]
+  },
+  {
+    "id": "mr-business-1",
+    "title": "मराठी ७: व्यावसायिक व बँकिंग संज्ञा (Business & Commerce)",
+    "language": "marathi",
+    "row": "Business Words",
+    "level": "Advanced",
+    "text": "कंपनी भागीदारी भांडवल नफा तोटा जमा खर्च शिल्लक ताळेबंद लेखापरीक्षण धनादेश वटणावळ पुरवठादार ग्राहक पावती देयक बीजक विक्री खरेदी व्यवस्थापक संचालक कर्ज व्याज गुंतवणूक",
+    "keys": ["भांडवल", "ताळेबंद", "धनादेश", "बीजक", "व्यवस्थापक", "गुंतवणूक"]
+  },
+  {
+    "id": "mr-sentences-1",
+    "title": "मराठी ८: शासकीय व व्यावसायिक वाक्यरचना (Official Sentences)",
+    "language": "marathi",
+    "row": "All Rows",
+    "level": "Advanced",
+    "text": "उपरोक्त विषयाच्या संदर्भात आपणास कळविण्यात येते की आपल्या अर्जाचा विचार करून योग्य ती प्रशासकीय कार्यवाही करण्यात आली आहे सोबत आवश्यक त्या सहपत्रांची सत्यप्रत जोडलेली आहे तरी पुढील आवश्यक आदेश त्वरित निर्गमित करण्यात यावेत ही नम्र विनंती",
+    "keys": ["सर्व मुळाक्षरे", "जोडाक्षरे", "विरामचिन्हे"]
+  },
+  {
+    "id": "mr-shift-1",
+    "title": "मराठी ९: शिफ्ट की - जोडाक्षरे व कठीण शब्द (Shift Keys & Conjuncts)",
+    "language": "marathi",
+    "row": "Shift Keys",
+    "level": "Advanced",
+    "text": "ज्ञान श्रम त्रास क्षेत्र विद्या पृथ्वी प्रकाश ग्रंथ राष्ट्र महाराष्ट्र प्रगती स्पर्धा केंद्र स्पष्ट ठाम ध्येय अभ्यास प्रयत्न श्रद्धा शक्ती क्षमा ज्ञान श्रम त्रास राष्ट्र प्रगती स्पर्धा",
+    "keys": ["ज्ञ", "श्र", "क्ष", "त्र", "ठ", "ढ", "झ", "घ", "भ", "फ"]
+  },
+  {
+    "id": "en-home-1",
+    "title": "English 1: Home Row - Finger Drills",
+    "language": "english",
+    "row": "Home Row",
+    "level": "Beginner",
+    "text": "asdf jkl; asdf jkl; aadd ssff jjkk ll;; fall glad flask salad dash flash slag alfalfa shall fall glad flask salad dash flash slag alfalfa shall falls salads flags",
+    "keys": ["a", "s", "d", "f", "j", "k", "l", ";", "g", "h"]
+  },
+  {
+    "id": "en-top-1",
+    "title": "English 2: Top Row - Words & Flow",
+    "language": "english",
+    "row": "Top Row",
+    "level": "Intermediate",
+    "text": "qwer poi uyt rewq type wire write power quiet quote pour tree root wipe power pour report terror operate pretty purity equity territory writing typewriter wipe write power",
+    "keys": ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"]
+  },
+  {
+    "id": "en-bottom-1",
+    "title": "English 3: Bottom Row - Coordination",
+    "language": "english",
+    "row": "Bottom Row",
+    "level": "Intermediate",
+    "text": "zxcv bnm zxcv bnm menu zinc cabin venom zero comb bomb exam move size buzz maximum zinc zoom amaze vacuum combine bronze cabin venom zero bomb menu zinc cabin venom zero",
+    "keys": ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
+  },
+  {
+    "id": "en-office-1",
+    "title": "English 4: Official & Office Terms",
+    "language": "english",
+    "row": "Office Words",
+    "level": "Advanced",
+    "text": "government office circular reference date subject applicant signature superintendent enclosure approval report register procedure administration approval immediate action compliance memorandum official",
+    "keys": ["circular", "reference", "superintendent", "enclosure", "memorandum"]
+  },
+  {
+    "id": "en-business-1",
+    "title": "English 5: Business & Commercial Vocabulary",
+    "language": "english",
+    "row": "Business Words",
+    "level": "Advanced",
+    "text": "company partnership capital profit balance sheet audit cheque supplier customer receipt invoice sales purchase manager director investment dividend liability voucher agreement transaction quotation",
+    "keys": ["partnership", "balance sheet", "cheque", "invoice", "quotation"]
+  },
+  {
+    "id": "en-sentences-1",
+    "title": "English 6: Official Business Sentences",
+    "language": "english",
+    "row": "All Rows",
+    "level": "Advanced",
+    "text": "with reference to your application we are pleased to inform you that your request has been approved by the competent authority please find the enclosed documents for your kind perusal and necessary action at the earliest thank you for your cooperation",
+    "keys": ["a-z", "Space", "Vocabulary"]
+  }
+]

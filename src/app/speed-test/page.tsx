@@ -8,6 +8,7 @@ import MarathiTextarea from "@/components/MarathiTextarea";
 import ResultCard from "@/components/ResultCard";
 import MistakeReviewer from "@/components/MistakeReviewer";
 import HistoryDashboard, { TestRecord } from "@/components/HistoryDashboard";
+import { updateDailyStreak } from "@/utils/streakManager";
 
 interface Passage {
   id: string;
@@ -176,6 +177,8 @@ export default function SpeedTestPage() {
     const updatedHistory = [newRecord, ...history];
     setHistory(updatedHistory);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
+
+    updateDailyStreak();
   };
 
   const resetTest = () => {

@@ -74,7 +74,7 @@ export const shiftKeyMap: Record<string, string> = {
   "(": "त्र",
   ")": "ऋ",
   "_": "–",
-  "+": "+",
+  "+": "्",
 
   // Top Row (Shift)
   Q: "फ",

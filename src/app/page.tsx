@@ -157,7 +157,7 @@ export default function LandingHomePage() {
             <div className="text-xs text-slate-500 mt-2">२५ प्रश्न • २४ मिनिटे • सविस्तर उत्तरे</div>
           </Link>
 
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
+          {/* <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
             <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center text-2xl mb-4">
               🎯
             </div>
@@ -165,7 +165,18 @@ export default function LandingHomePage() {
             <p className="text-slate-400 text-sm mt-2 leading-relaxed">
               प्रत्येक चुकीला -१ गुण आणि १६ गुणांवर अधिकृत PASS/FAIL निकाल मिळतो.
             </p>
-          </div>
+          </div> */}
+
+          <Link
+            href="/keyboard-drills"
+            className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition group"
+          >
+            <div className="text-xs text-slate-400 font-medium">मूलभूत टायपिंग सराव</div>
+            <div className="text-2xl font-bold text-amber-400 group-hover:translate-x-1 transition mt-1">
+              कीबोर्ड रो सराव (Drills) →
+            </div>
+            <div className="text-xs text-slate-500 mt-2">Home Row • Top Row • Bottom Row • शून्य त्रुटी सराव</div>
+          </Link>
 
           <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
             <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center text-2xl mb-4">
