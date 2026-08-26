@@ -8,7 +8,8 @@ import CustomPassageModal from "@/components/CustomPassageModal";
 import WeakKeysDrawer from "@/components/WeakKeysDrawer";
 import TypingResultModal from "@/components/TypingResultModal";
 import { useWeakKeysTracker } from "@/hooks/useWeakKeysTracker";
-import { normalKeyMap, shiftKeyMap } from "@/app/keyboard-drills/page";
+// import { normalKeyMap, shiftKeyMap } from "@/app/keyboard-drills/page";
+import { normalKeyMap, shiftKeyMap } from "@/utils/keyboardMaps";
 
 export interface PassageItem {
   id: string;

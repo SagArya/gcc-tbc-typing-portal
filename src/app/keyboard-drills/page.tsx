@@ -1,462 +1,268 @@
 // src/app/keyboard-drills/page.tsx
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import drillLessons from "@/data/drillLessons.json";
+import { COMMON_WORDS_DATA } from "@/data/commonWords";
 
-// अधिकृत Remington GAIL Normal Keymap
-export const normalKeyMap: Record<string, string> = {
-  "`": "़",
-  "1": "१",
-  "2": "२",
-  "3": "३",
-  "4": "४",
-  "5": "५",
-  "6": "६",
-  "7": "७",
-  "8": "८",
-  "9": "९",
-  "0": "०",
-  "-": "-",
-  "=": "ृ",
-  q: "ु",
-  w: "ू",
-  e: "म",
-  r: "त",
-  t: "ज",
-  y: "ल",
-  u: "न",
-  i: "प",
-  o: "व",
-  p: "च",
-  "[": "ख्",
-  "]": ",",
-  "\\": ".",
-  a: "ं",
-  s: "े",
-  d: "क",
-  f: "ि",
-  g: "ह",
-  h: "ी",
-  j: "र",
-  k: "ा",
-  l: "स",
-  ";": "य",
-  "'": "श्",
-  z: "्र",
-  x: "ग",
-  c: "ब",
-  v: "अ",
-  b: "इ",
-  n: "द",
-  m: "उ",
-  ",": "ए",
-  ".": "ण्",
-  "/": "ध्",
-  " ": " ",
-};
-
-// अधिकृत Remington GAIL Shift Keymap
-export const shiftKeyMap: Record<string, string> = {
-  "~": "र्‍",
-  "!": "!",
-  "@": "ॅ",
-  "#": "्र",
-  $: "र्",
-  "%": "ः",
-  "^": "‘",
-  "&": "’",
-  "*": "ँ",
-  "(": "त्र",
-  ")": "ऋ",
-  _: "–",
-  "+": "्",
-  Q: "फ",
-  W: "ॉ",
-  E: "म्",
-  R: "त्",
-  T: "ज्",
-  Y: "ल्",
-  U: "न्",
-  I: "प्",
-  O: "व्",
-  P: "च्",
-  "{": "क्ष",
-  "}": "द्व",
-  "|": "द्य",
-  A: "ँ",
-  S: "ै",
-  D: "क्",
-  F: "थ्",
-  G: "ळ",
-  H: "भ",
-  J: "श्र",
-  K: "ज्ञ",
-  L: "स्",
-  ":": "रू",
-  '"': "ष्",
-  Z: "र्",
-  X: "ग्",
-  C: "ब्",
-  V: "ट",
-  B: "ठ",
-  N: "छ",
-  M: "ड",
-  "<": "ढ",
-  ">": "झ",
-  "?": "घ",
+// मूलभूत कीबोर्ड रो ड्रिल्स
+const KEYBOARD_ROW_DRILLS = {
+  marathi: [
+    { id: "mr-home", title: "Home Row (मध्यम ओळ - क म त न स)", text: "क म त न स य ल व र ह क म त न स य ल व र ह" },
+    { id: "mr-top", title: "Top Row (वरची ओळ - ज ड ण च प)", text: "ज ड ण च प ट ठ ग ब द ज ड ण च प ट ठ ग ब द" },
+    { id: "mr-bottom", title: "Bottom Row (खालची ओळ - झ ढ ध फ)", text: "झ ढ ध फ भ घ ळ श ष झ ढ ध फ भ घ ळ श ष" },
+    { id: "mr-matra", title: "मात्रा व काना सराव", text: "का की कु के कै को कौ कं का की कु के कै को कौ कं" },
+  ],
+  english: [
+    { id: "en-home", title: "Home Row (ASDF JKL;)", text: "asdf jkl; asdf jkl; aadd ssff jjkk ll;; asdf jkl;" },
+    { id: "en-top", title: "Top Row (QWERTY UIOP)", text: "qwer tyui op qw er ty ui op qwert yuiop" },
+    { id: "en-bottom", title: "Bottom Row (ZXCVBNM)", text: "zxcv bnm zx cv bn m zxcv bnm zxcvbnm" },
+    { id: "en-all", title: "Full Alphabet (A-Z)", text: "the quick brown fox jumps over the lazy dog" },
+  ],
 };
 
 export default function KeyboardDrillsPage() {
-  const [selectedLessonId, setSelectedLessonId] = useState(drillLessons[0].id);
-  const currentLesson = drillLessons.find((l) => l.id === selectedLessonId) || drillLessons[0];
-
-  const [inputCharIndex, setInputCharIndex] = useState(0);
-  const [mistakes, setMistakes] = useState(0);
+  const [drillType, setDrillType] = useState<"row" | "words">("words");
+  const [language, setLanguage] = useState<"marathi" | "english">("marathi");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [targetText, setTargetText] = useState<string>("");
+  const [userInput, setUserInput] = useState<string>("");
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [wpm, setWpm] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [lastKeyPressed, setLastKeyPressed] = useState<string>("");
+  const [accuracy, setAccuracy] = useState<number>(100);
+  const [wpm, setWpm] = useState<number>(0);
 
-  // की-स्ट्रोक बफर (उदा. आधी 'k' दाबली की बफरमध्ये 'ा' राहील)
-  const [typedBuffer, setTypedBuffer] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const targetChars = useMemo(() => {
-    return Array.from(currentLesson.text);
-  }, [currentLesson.text]);
-
-  const currentCharToType = targetChars[inputCharIndex] || "";
-
+  // भाषा किंवा मोड बदलल्यावर योग्य शब्द लोड करणे
   useEffect(() => {
-    setInputCharIndex(0);
-    setMistakes(0);
+    if (drillType === "row") {
+      const rows = KEYBOARD_ROW_DRILLS[language];
+      if (rows && rows.length > 0) {
+        setSelectedCategory(rows[0].id);
+        setTargetText(rows[0].text);
+      }
+    } else {
+      const availableCats = COMMON_WORDS_DATA.filter((c) => c.language === language);
+      if (availableCats && availableCats.length > 0) {
+        setSelectedCategory(availableCats[0].id);
+        // कॅटेगरीमधील शब्द स्पेस देऊन जोडणे
+        setTargetText(availableCats[0].words.join(" "));
+      }
+    }
+    setUserInput("");
     setStartTime(null);
     setWpm(0);
-    setIsCompleted(false);
-    setLastKeyPressed("");
-    setTypedBuffer("");
-  }, [selectedLessonId]);
+    setAccuracy(100);
+  }, [drillType, language]);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (typeof document !== "undefined" && document.activeElement instanceof HTMLSelectElement) {
-        document.activeElement.blur();
+  // कॅटेगरी ड्रॉपडाउन बदलल्यावर
+  const handleCategoryChange = (catId: string) => {
+    setSelectedCategory(catId);
+    if (drillType === "row") {
+      const item = KEYBOARD_ROW_DRILLS[language].find((r) => r.id === catId);
+      if (item) setTargetText(item.text);
+    } else {
+      const item = COMMON_WORDS_DATA.find((c) => c.id === catId);
+      if (item) {
+        setTargetText(item.words.join(" "));
       }
+    }
+    setUserInput("");
+    setStartTime(null);
+    inputRef.current?.focus();
+  };
 
-      if (e.ctrlKey || e.altKey || e.metaKey || e.key === "Tab" || e.key === "CapsLock" || e.key === "Shift") {
-        return;
+  // टायपिंग इनपुट हँडलर
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (!startTime) setStartTime(Date.now());
+    setUserInput(val);
+
+    let correctChars = 0;
+    for (let i = 0; i < val.length; i++) {
+      if (val[i] === targetText[i]) correctChars++;
+    }
+
+    const currentAcc = val.length > 0 ? Math.round((correctChars / val.length) * 100) : 100;
+    setAccuracy(currentAcc);
+
+    if (startTime) {
+      const elapsedMins = (Date.now() - startTime) / 60000;
+      if (elapsedMins > 0.05) {
+        const wordsTyped = val.length / 5;
+        setWpm(Math.round(wordsTyped / elapsedMins));
       }
+    }
+  };
 
-      if (isCompleted) return;
+  // रिसेट
+  const handleReset = () => {
+    setUserInput("");
+    setStartTime(null);
+    setWpm(0);
+    setAccuracy(100);
+    inputRef.current?.focus();
+  };
 
-      if (e.key === " ") {
-        e.preventDefault();
-      }
-
-      const rawKey = e.key;
-      let typedChar = rawKey;
-
-      if (currentLesson.language === "marathi") {
-        if (shiftKeyMap[rawKey]) {
-          typedChar = shiftKeyMap[rawKey];
-        } else if (normalKeyMap[rawKey]) {
-          typedChar = normalKeyMap[rawKey];
-        }
-      }
-
-      setLastKeyPressed(typedChar === " " ? "SPACE" : typedChar);
-
-      if (!startTime) {
-        setStartTime(Date.now());
-      }
-
-      const expectedChar = targetChars[inputCharIndex];
-
-      // --- १. 'ो' (ओ-कार) विशेष हँडलिंग ---
-      if (expectedChar === "ो" || expectedChar === "\u094B") {
-        if (typedBuffer === "" && (typedChar === "ा" || rawKey.toLowerCase() === "k")) {
-          setTypedBuffer("ा");
-          return;
-        } else if (typedBuffer === "ा" && (typedChar === "े" || rawKey.toLowerCase() === "s")) {
-          setTypedBuffer("");
-          const nextIndex = inputCharIndex + 1;
-          setInputCharIndex(nextIndex);
-          if (nextIndex >= targetChars.length) setIsCompleted(true);
-          return;
-        } else if (typedChar === "ो" || typedChar === "\u094B") {
-          setTypedBuffer("");
-          const nextIndex = inputCharIndex + 1;
-          setInputCharIndex(nextIndex);
-          if (nextIndex >= targetChars.length) setIsCompleted(true);
-          return;
-        } else {
-          setTypedBuffer("");
-          setMistakes((prev) => prev + 1);
-          return;
-        }
-      }
-
-      // --- २. 'ौ' (औ-कार) विशेष हँडलिंग ---
-      if (expectedChar === "ौ" || expectedChar === "\u094C") {
-        if (typedBuffer === "" && (typedChar === "ा" || rawKey.toLowerCase() === "k")) {
-          setTypedBuffer("ा");
-          return;
-        } else if (typedBuffer === "ा" && (typedChar === "ै" || rawKey === "S")) {
-          setTypedBuffer("");
-          const nextIndex = inputCharIndex + 1;
-          setInputCharIndex(nextIndex);
-          if (nextIndex >= targetChars.length) setIsCompleted(true);
-          return;
-        } else {
-          setTypedBuffer("");
-          setMistakes((prev) => prev + 1);
-          return;
-        }
-      }
-
-      // --- ३. काना जोडून पूर्ण होणारी अक्षरे (ण, श, ष, ख, ध, थ, आ) ---
-      const prefixPairs: Record<string, { prefixChar: string; prefixKey: string }> = {
-        "ण": { prefixChar: "ण्", prefixKey: "." },
-        "श": { prefixChar: "श्", prefixKey: "'" },
-        "ष": { prefixChar: "ष्", prefixKey: '"' },
-        "ख": { prefixChar: "ख्", prefixKey: "[" },
-        "ध": { prefixChar: "ध्", prefixKey: "/" },
-        "थ": { prefixChar: "थ्", prefixKey: "F" },
-        "आ": { prefixChar: "अ", prefixKey: "v" },
-      };
-
-      if (expectedChar in prefixPairs) {
-        const pair = prefixPairs[expectedChar];
-        if (typedBuffer === "" && (typedChar === pair.prefixChar || rawKey === pair.prefixKey)) {
-          setTypedBuffer(pair.prefixChar);
-          return;
-        } else if (typedBuffer === pair.prefixChar && (typedChar === "ा" || rawKey.toLowerCase() === "k")) {
-          setTypedBuffer("");
-          const nextIndex = inputCharIndex + 1;
-          setInputCharIndex(nextIndex);
-          if (nextIndex >= targetChars.length) setIsCompleted(true);
-          return;
-        } else if (typedChar === expectedChar) {
-          setTypedBuffer("");
-          const nextIndex = inputCharIndex + 1;
-          setInputCharIndex(nextIndex);
-          if (nextIndex >= targetChars.length) setIsCompleted(true);
-          return;
-        } else {
-          setTypedBuffer("");
-          setMistakes((prev) => prev + 1);
-          return;
-        }
-      }
-
-      // --- ४. सामान्य सरळ अक्षरांसाठी थेट तपासणी ---
-      if (typedChar === expectedChar) {
-        setTypedBuffer("");
-        const nextIndex = inputCharIndex + 1;
-        setInputCharIndex(nextIndex);
-
-        if (startTime) {
-          const timeMins = (Date.now() - startTime) / 60000 || 1 / 60000;
-          const wordsTyped = nextIndex / 5;
-          setWpm(Math.round(wordsTyped / timeMins));
-        }
-
-        if (nextIndex >= targetChars.length) {
-          setIsCompleted(true);
-        }
-      } else {
-        setTypedBuffer("");
-        setMistakes((prev) => prev + 1);
-      }
-    },
-    [inputCharIndex, targetChars, currentLesson, startTime, isCompleted, typedBuffer]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
-  const accuracy =
-    inputCharIndex + mistakes > 0
-      ? Math.round((inputCharIndex / (inputCharIndex + mistakes)) * 100)
-      : 100;
+  const filteredCategories = COMMON_WORDS_DATA.filter((c) => c.language === language);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans p-4 sm:p-6 select-none">
-      <div className="max-w-5xl mx-auto space-y-5">
-        
-        {/* Header */}
-        <header className="bg-slate-900/90 backdrop-blur-md p-4 rounded-2xl border border-slate-800 flex flex-wrap justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs transition"
-            >
-              ← मुख्य पान
-            </Link>
-            <div>
-              <h1 className="text-lg sm:text-xl font-black text-amber-400">
-                कीबोर्ड रो सराव (Remington GAIL Drills)
-              </h1>
-              <p className="text-xs text-slate-400">
-                Home Row (d=क, g=ह, j=र, l=स, ;=य, k=ा, s=े)
-              </p>
-            </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-8 font-sans selection:bg-amber-500/30">
+      
+      {/* 🧭 Top Bar */}
+      <div className="max-w-5xl mx-auto flex items-center justify-between pb-6 border-b border-slate-800/80">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl text-amber-400">
+            ⌨️
           </div>
-
-          <select
-            value={selectedLessonId}
-            onChange={(e) => {
-              setSelectedLessonId(e.target.value);
-              e.target.blur();
-            }}
-            onKeyDown={(e) => {
-              if (e.key !== "ArrowUp" && e.key !== "ArrowDown" && e.key !== "Enter") {
-                e.preventDefault();
-              }
-            }}
-            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-amber-500"
-          >
-            {drillLessons.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.title}
-              </option>
-            ))}
-          </select>
-        </header>
-
-        {/* Live Score Strip */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400">गती (Speed)</span>
-            <div className="text-xl font-black text-emerald-400 mt-0.5">{wpm} WPM</div>
-          </div>
-          <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400">अचूकता (Accuracy)</span>
-            <div className="text-xl font-black text-cyan-400 mt-0.5">{accuracy}%</div>
-          </div>
-          <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-center">
-            <span className="text-[11px] text-slate-400">चुका (Mistakes)</span>
-            <div className="text-xl font-black text-rose-400 mt-0.5">{mistakes}</div>
+          <div>
+            <h1 className="text-lg sm:text-xl font-bold text-slate-100">कीबोर्ड व सामान्य शब्द सराव</h1>
+            <p className="text-xs text-slate-400">Word Drills & Row Practice</p>
           </div>
         </div>
+        <Link
+          href="/"
+          className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-white transition"
+        >
+          ← मुख्य पान
+        </Link>
+      </div>
 
-        {/* Main Drill Visualizer */}
-        <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 text-center space-y-6 shadow-2xl relative overflow-hidden">
-          {!isCompleted ? (
-            <div className="space-y-1">
-              <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-                आता ही की दाबा (Press Key):
-              </span>
-              <div className="text-6xl font-black text-amber-400 font-mono tracking-wider py-2">
-                {currentCharToType === " " ? "SPACE" : currentCharToType}
-                {currentCharToType === "ो" && (
-                  <span className="text-xs block text-amber-300 font-sans font-normal mt-1">
-                    {typedBuffer === "ा" ? "👉 आता 's' (े) दाबा" : "👉 आधी 'k' (ा) नंतर 's' (े) दाबा"}
-                  </span>
-                )}
-                {currentCharToType === "ण" && (
-                  <span className="text-xs block text-amber-300 font-sans font-normal mt-1">
-                    {typedBuffer === "ण्" ? "👉 आता 'k' (ा) दाबा" : "👉 आधी '.' (ण्) नंतर 'k' (ा) दाबा"}
-                  </span>
-                )}
-                {currentCharToType === "आ" && (
-                  <span className="text-xs block text-amber-300 font-sans font-normal mt-1">
-                    {typedBuffer === "अ" ? "👉 आता 'k' (ा) दाबा" : "👉 आधी 'v' (अ) नंतर 'k' (ा) दाबा"}
-                  </span>
-                )}
-                {currentCharToType === "श" && (
-                  <span className="text-xs block text-amber-300 font-sans font-normal mt-1">
-                    {typedBuffer === "श्" ? "👉 आता 'k' (ा) दाबा" : "👉 आधी '\'' (श्) नंतर 'k' (ा) दाबा"}
-                  </span>
-                )}
-                {currentCharToType === "ष" && (
-                  <span className="text-xs block text-amber-300 font-sans font-normal mt-1">
-                    {typedBuffer === "ष्" ? "👉 आता 'k' (ा) दाबा" : "👉 आधी Shift+'\"' (ष्) नंतर 'k' (ा) दाबा"}
-                  </span>
-                )}
-              </div>
-              {lastKeyPressed && (
-                <div className="text-xs text-slate-500">
-                  दाबली गेलेली की: <span className="text-slate-300 font-mono">{lastKeyPressed}</span>
-                  {typedBuffer && (
-                    <span className="text-amber-400 ml-2 font-bold animate-pulse">
-                      [बफर: {typedBuffer} - पुढील की दाबा]
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="py-4 space-y-2">
-              <div className="text-4xl">🎉</div>
-              <h2 className="text-2xl font-black text-emerald-400">अभिनंदन! हा सराव पूर्ण झाला!</h2>
-              <p className="text-xs text-slate-400">गती: {wpm} WPM • अचूकता: {accuracy}%</p>
+      <div className="max-w-5xl mx-auto mt-8 space-y-6">
+
+        {/* ⚙️ Controls */}
+        <div className="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 backdrop-blur-md">
+          
+          {/* Mode Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 font-semibold">मोड:</span>
+            <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1">
               <button
-                onClick={() => {
-                  setInputCharIndex(0);
-                  setMistakes(0);
-                  setStartTime(null);
-                  setIsCompleted(false);
-                  setLastKeyPressed("");
-                  setTypedBuffer("");
-                }}
-                className="mt-3 px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition"
+                onClick={() => setDrillType("words")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                  drillType === "words" ? "bg-amber-500 text-slate-950 shadow-md" : "text-slate-400 hover:text-slate-200"
+                }`}
               >
-                पुन्हा सराव करा
+                📚 सामान्य शब्द
+              </button>
+              <button
+                onClick={() => setDrillType("row")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                  drillType === "row" ? "bg-amber-500 text-slate-950 shadow-md" : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                ⌨️ रो सराव
               </button>
             </div>
-          )}
+          </div>
 
-          {/* Full Single-Line Window View */}
-          <div className="w-full min-h-[110px] bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-center px-6 py-4 my-4 shadow-inner">
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-3 text-3xl sm:text-4xl md:text-5xl font-mono tracking-widest leading-loose">
-              {targetChars.map((char, index) => {
-                const currentChunk = Math.floor(inputCharIndex / 15);
-                const charChunk = Math.floor(index / 15);
-
-                if (charChunk !== currentChunk) return null;
-
-                const isCurrent = index === inputCharIndex;
-                const isTyped = index < inputCharIndex;
-
-                let charStyle = "text-slate-600";
-                if (isTyped) {
-                  charStyle = "text-emerald-400 font-semibold";
-                } else if (isCurrent) {
-                  charStyle = "text-amber-400 font-bold border-b-4 border-amber-400 pb-1 animate-pulse scale-105";
-                }
-
-                return (
-                  <span key={index} className={`inline-block px-1 text-center transition-all ${charStyle}`}>
-                    {char === " " ? "␣" : char}
-                  </span>
-                );
-              })}
+          {/* Language Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400 font-semibold">भाषा:</span>
+            <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1">
+              <button
+                onClick={() => setLanguage("marathi")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                  language === "marathi" ? "bg-emerald-500 text-slate-950 shadow-md" : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                🇮🇳 मराठी
+              </button>
+              <button
+                onClick={() => setLanguage("english")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                  language === "english" ? "bg-emerald-500 text-slate-950 shadow-md" : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                🇬🇧 English
+              </button>
             </div>
           </div>
 
-          <p className="text-xs text-slate-500">
-            ⌨️ <strong>'ो'</strong> = <strong>k + s</strong> | <strong>'ण'</strong> = <strong>. + k</strong> | <strong>'श'</strong> = <strong>&apos; + k</strong> | <strong>'ष'</strong> = <strong>Shift+&apos; + k</strong>
-          </p>
+          {/* Category Dropdown */}
+          <div className="flex items-center gap-2 flex-1 min-w-[260px]">
+            <span className="text-xs text-slate-400 font-semibold">कॅटेगरी:</span>
+            <select
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-amber-300 font-medium w-full focus:outline-none focus:border-amber-500/50"
+            >
+              {drillType === "row"
+                ? KEYBOARD_ROW_DRILLS[language].map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.title}
+                    </option>
+                  ))
+                : filteredCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.title} ({c.words.length} शब्द)
+                    </option>
+                  ))}
+            </select>
+          </div>
         </div>
 
-        {/* Row Keys Palette */}
-        <div className="p-4 bg-slate-900 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
-          <span className="text-xs font-bold text-slate-400">या धड्यातील मुख्य अक्षरे:</span>
-          <div className="flex flex-wrap gap-2">
-            {currentLesson.keys.map((k, i) => (
-              <span
-                key={i}
-                className="px-3 py-1 bg-slate-950 border border-slate-800 rounded-lg text-xs font-bold text-slate-200"
-              >
-                {k}
-              </span>
-            ))}
+        {/* 📊 Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl text-center">
+            <span className="text-[11px] text-slate-400 font-bold block uppercase">गती (Speed)</span>
+            <span className="text-2xl font-black text-amber-400">{wpm} <span className="text-xs font-normal text-slate-400">WPM</span></span>
+          </div>
+          <div className="bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl text-center">
+            <span className="text-[11px] text-slate-400 font-bold block uppercase">अचूकता (Accuracy)</span>
+            <span className={`text-2xl font-black ${accuracy >= 95 ? "text-emerald-400" : "text-rose-400"}`}>
+              {accuracy}%
+            </span>
+          </div>
+          <div className="bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl text-center">
+            <span className="text-[11px] text-slate-400 font-bold block uppercase">प्रगती (Progress)</span>
+            <span className="text-2xl font-black text-sky-400">
+              {Math.min(100, Math.round((userInput.length / (targetText.length || 1)) * 100))}%
+            </span>
+          </div>
+        </div>
+
+        {/* 📝 Typing Practice Box */}
+        <div className="bg-slate-900/70 border border-slate-800 p-6 sm:p-8 rounded-3xl space-y-6 shadow-xl backdrop-blur-xl">
+          
+          <div className="text-lg sm:text-xl font-medium leading-relaxed tracking-wide font-mono bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80 max-h-56 overflow-y-auto select-none">
+            {targetText.split("").map((char, index) => {
+              let colorClass = "text-slate-400";
+              if (index < userInput.length) {
+                colorClass = userInput[index] === char ? "text-emerald-400 bg-emerald-500/10 rounded" : "text-rose-400 bg-rose-500/20 rounded underline";
+              } else if (index === userInput.length) {
+                colorClass = "text-slate-950 bg-amber-400 rounded px-0.5 animate-pulse";
+              }
+              return (
+                <span key={index} className={colorClass}>
+                  {char}
+                </span>
+              );
+            })}
+          </div>
+
+          <div className="space-y-2">
+            <input
+              ref={inputRef}
+              type="text"
+              value={userInput}
+              onChange={handleInputChange}
+              placeholder="येथे पाहून टाईप करण्यास सुरुवात करा..."
+              className="w-full bg-slate-950 border border-slate-700/80 focus:border-amber-500/60 rounded-2xl px-5 py-4 text-base sm:text-lg text-slate-100 font-mono focus:outline-none transition shadow-inner"
+              autoFocus
+            />
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-xs text-slate-400">
+              💡 टीप: शब्द पूर्ण झाल्यावर <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">Space</kbd> दाबा.
+            </span>
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
+            >
+              🔄 पुन्हा सुरू करा
+            </button>
           </div>
         </div>
 
