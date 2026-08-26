@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "category": "Computer Fundamentals",
+    "question": "संगणकाचा मेंदू (Brain of Computer) खालीलपैकी कोणास म्हणतात?",
+    "options": ["RAM", "CPU", "Hard Disk", "Monitor"],
+    "correctIndex": 1,
+    "explanation": "CPU (Central Processing Unit) सर्व प्रक्रिया आणि गणना नियंत्रित करतो, म्हणून त्यास संगणकाचा मेंदू म्हणतात."
+  },
+  {
+    "id": 2,
+    "category": "Computer Fundamentals",
+    "question": "खालीलपैकी कोणते इनपुट डिव्हाइस (Input Device) आहे?",
+    "options": ["Monitor", "Printer", "Keyboard", "Speaker"],
+    "correctIndex": 2,
+    "explanation": "Keyboard द्वारे संगणकाला डेटा व कमांड्स दिल्या जातात, म्हणून ते इनपुट डिव्हाइस आहे."
+  },
+  {
+    "id": 3,
+    "category": "Computer Fundamentals",
+    "question": "१ किलोबाईट (1 KB) म्हणजे किती बाईट्स?",
+    "options": ["1000 Bytes", "1024 Bytes", "1048 Bytes", "100 Bytes"],
+    "correctIndex": 1,
+    "explanation": "बायनरी पद्धतीनुसार 1 KB = 1024 Bytes असतात."
+  },
+  {
+    "id": 4,
+    "category": "Computer Fundamentals",
+    "question": "खालीलपैकी कोणती प्रायमरी मेमरी (Primary Memory) आहे?",
+    "options": ["Hard Disk", "RAM", "CD-ROM", "Pen Drive"],
+    "correctIndex": 1,
+    "explanation": "RAM आणि ROM या संगणकाच्या प्रायमरी (मुख्य) मेमरी मानल्या जातात."
+  },
+  {
+    "id": 5,
+    "category": "Computer Fundamentals",
+    "question": "ROM चा पूर्ण विस्तार (Full Form) काय आहे?",
+    "options": ["Read Only Memory", "Random Output Memory", "Real Option Memory", "Run Offline Memory"],
+    "correctIndex": 0,
+    "explanation": "ROM म्हणजे Read Only Memory, ज्यातील डेटा कायमस्वरूपी साठवलेला असतो."
+  },
+  {
+    "id": 6,
+    "category": "Computer Fundamentals",
+    "question": "संगणक चालू करण्याच्या प्रक्रियेला काय म्हणतात?",
+    "options": ["Running", "Booting", "Processing", "Loading"],
+    "correctIndex": 1,
+    "explanation": "ऑपरेटिंग सिस्टीम मेमरीमध्ये लोड करून संगणक सुरू करण्याच्या क्रियेला Booting म्हणतात."
+  },
+  {
+    "id": 7,
+    "category": "Computer Fundamentals",
+    "question": "खालीलपैकी कोणती ऑपरेटिंग सिस्टीम ओपन सोर्स (Open Source) आहे?",
+    "options": ["Windows 10", "Linux", "macOS", "MS-DOS"],
+    "correctIndex": 1,
+    "explanation": "Linux हा विनामूल्य व ओपन सोर्स ऑपरेटिंग सिस्टीमचा प्रकार आहे."
+  },
+  {
+    "id": 8,
+    "category": "Computer Fundamentals",
+    "question": "ALU चा पूर्ण विस्तार (Full Form) काय आहे?",
+    "options": ["Arithmetic Logic Unit", "Array Logic Unit", "Advanced Level Unit", "Automatic Logic Unit"],
+    "correctIndex": 0,
+    "explanation": "ALU (Arithmetic Logic Unit) गणितीय आणि तार्किक प्रक्रिया करण्याचे काम करतो."
+  },
+  {
+    "id": 9,
+    "category": "Computer Fundamentals",
+    "question": "कागदावरील छपाईचे काम संगणकाकडून करून घेण्यासाठी कोणते आउटपुट साधन वापरतात?",
+    "options": ["Scanner", "Plotter/Printer", "Keyboard", "Mouse"],
+    "correctIndex": 1,
+    "explanation": "Printer आणि Plotter ही कागदावर हार्ड कॉपी आउटपुट देणारी साधने आहेत."
+  },
+  {
+    "id": 10,
+    "category": "Computer Fundamentals",
+    "question": "फाईल कायमस्वरूपी डिलीट (Permanent Delete) करण्यासाठी कोणती शॉर्टकट की वापरतात?",
+    "options": ["Delete", "Shift + Delete", "Ctrl + Delete", "Alt + Delete"],
+    "correctIndex": 1,
+    "explanation": "Shift + Delete वापरल्यास फाईल Recycle Bin मध्ये न जाता कायमची नष्ट होते."
+  },
+  {
+    "id": 11,
+    "category": "MS Word",
+    "question": "MS Word मध्ये मजकूर 'Bold' करण्यासाठी कोणती शॉर्टकट की वापरली जाते?",
+    "options": ["Ctrl + B", "Ctrl + I", "Ctrl + U", "Ctrl + Shift + B"],
+    "correctIndex": 0,
+    "explanation": "Ctrl + B ही निवडलेला मजकूर ठळक (Bold) करण्यासाठी शॉर्टकट की आहे."
+  },
+  {
+    "id": 12,
+    "category": "MS Word",
+    "question": "MS Word मध्ये फाईल सेव्ह (Save) करण्यासाठी कोणती शॉर्टकट की आहे?",
+    "options": ["Ctrl + O", "Ctrl + S", "Ctrl + P", "Ctrl + A"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + S ने चालू फाईल सेव्ह होते."
+  },
+  {
+    "id": 13,
+    "category": "MS Word",
+    "question": "निवडलेला मजकूर 'Center Align' करण्यासाठी कोणती शॉर्टकट की वापरतात?",
+    "options": ["Ctrl + C", "Ctrl + E", "Ctrl + L", "Ctrl + R"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + E चा वापर परिच्छेद किंवा ओळ मध्यभागी (Center) आणण्यासाठी होतो."
+  },
+  {
+    "id": 14,
+    "category": "MS Word",
+    "question": "MS Word मध्ये 'Spelling & Grammar' तपासण्यासाठी कोणती फंक्शन की वापरतात?",
+    "options": ["F2", "F5", "F7", "F12"],
+    "correctIndex": 2,
+    "explanation": "F7 की दाबल्यास Spell Check डायलॉग बॉक्स उघडतो."
+  },
+  {
+    "id": 15,
+    "category": "MS Word",
+    "question": "MS Word च्या फाईलचे डिफॉल्ट एक्स्टेंशन (Default Extension) काय असते?",
+    "options": [".txt", ".docx", ".xlsx", ".pptx"],
+    "correctIndex": 1,
+    "explanation": "आधुनिक MS Word डॉक्युमेंटचे एक्स्टेंशन .docx असते."
+  },
+  {
+    "id": 16,
+    "category": "MS Word",
+    "question": "शेवटची केलेली क्रिया पूर्ववत (Undo) करण्यासाठी कोणती की वापरतात?",
+    "options": ["Ctrl + Y", "Ctrl + Z", "Ctrl + U", "Ctrl + X"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + Z ने Undo (पूर्ववत) होते."
+  },
+  {
+    "id": 17,
+    "category": "MS Word",
+    "question": "डॉक्युमेंटमधील सर्व मजकूर एकाच वेळी निवडण्यासाठी (Select All) कोणती शॉर्टकट की आहे?",
+    "options": ["Ctrl + S", "Ctrl + A", "Shift + A", "Alt + A"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + A ने संपूर्ण मजकूर सिलेक्ट होतो."
+  },
+  {
+    "id": 18,
+    "category": "MS Word",
+    "question": "मजकुराचा आकार वाढवण्यासाठी (Grow Font) कोणती शॉर्टकट की वापरतात?",
+    "options": ["Ctrl + ]", "Ctrl + [", "Ctrl + >", "Alt + ]"],
+    "correctIndex": 0,
+    "explanation": "Ctrl + ] किंवा Ctrl + Shift + > ने फॉन्टचा आकार वाढवता येतो."
+  },
+  {
+    "id": 19,
+    "category": "MS Word",
+    "question": "मजकूर कट (Cut) करण्यासाठी कोणती शॉर्टकट की आहे?",
+    "options": ["Ctrl + C", "Ctrl + X", "Ctrl + V", "Ctrl + K"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + X ने निवडलेला मजकूर कट केला जातो."
+  },
+  {
+    "id": 20,
+    "category": "MS Word",
+    "question": "डॉक्युमेंटमध्ये 'Hyperlink' जोडण्यासाठी कोणती शॉर्टकट की वापरली जाते?",
+    "options": ["Ctrl + H", "Ctrl + K", "Ctrl + L", "Ctrl + J"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + K ने मजकुराला हायपरलिंक जोडता येते."
+  },
+  {
+    "id": 21,
+    "category": "MS Excel",
+    "question": "MS Excel मध्ये फॉर्म्युला नेहमी कोणत्या चिन्हाने सुरू होतो?",
+    "options": ["+", "-", "=", "@"],
+    "correctIndex": 2,
+    "explanation": "Excel मधील प्रत्येक सूत्र '=' (Equal to) चिन्हाने सुरू होते."
+  },
+  {
+    "id": 22,
+    "category": "MS Excel",
+    "question": "A1 पासून A10 पर्यंतच्या संख्यांची बेरीज करण्यासाठी योग्य फॉर्म्युला कोणता?",
+    "options": ["=ADD(A1:A10)", "=SUM(A1:A10)", "=TOTAL(A1:A10)", "=COUNT(A1:A10)"],
+    "correctIndex": 1,
+    "explanation": "=SUM(A1:A10) हे सेल्समधील संख्यांची बेरीज करण्याचे अधिकृत सूत्र आहे."
+  },
+  {
+    "id": 23,
+    "category": "MS Excel",
+    "question": "MS Excel च्या वर्कशीटमधील उभ्या भागाला काय म्हणतात?",
+    "options": ["Row", "Column", "Cell", "Grid"],
+    "correctIndex": 1,
+    "explanation": "उभ्या मांडणीला Column (स्तंभ) आणि आडव्या मांडणीला Row (ओळ) म्हणतात."
+  },
+  {
+    "id": 24,
+    "category": "MS Excel",
+    "question": "Row आणि Column यांच्या एकत्र येण्याने काय तयार होते?",
+    "options": ["Table", "Cell", "Worksheet", "Block"],
+    "correctIndex": 1,
+    "explanation": "Row आणि Column च्या छेदनबिंदूवर तयार होणाऱ्या आयताकार भागास Cell म्हणतात."
+  },
+  {
+    "id": 25,
+    "category": "MS Excel",
+    "question": "पहिल्या रो आणि पहिल्या कॉलमच्या सेलचा पत्ता (Cell Address) काय असतो?",
+    "options": ["1A", "A1", "ROW1", "COL1"],
+    "correctIndex": 1,
+    "explanation": "सेल ॲड्रेसमध्ये आधी कॉलमचे नाव आणि मग रोचा नंबर येतो (उदा. A1)."
+  },
+  {
+    "id": 26,
+    "category": "MS Excel",
+    "question": "दिलेल्या संख्यांमधील सर्वात मोठी संख्या शोधण्यासाठी कोणते फंक्शन वापरतात?",
+    "options": ["=HIGH()", "=MAX()", "=TOP()", "=LARGE()"],
+    "correctIndex": 1,
+    "explanation": "=MAX() फंक्शन दिलेल्या श्रेणीतील महत्तम मूल्य दर्शवते."
+  },
+  {
+    "id": 27,
+    "category": "MS Excel",
+    "question": "Excel वर्कशीटमध्ये नवीन शीट जोडण्यासाठी कोणती शॉर्टकट की वापरतात?",
+    "options": ["Shift + F11", "Ctrl + F11", "Alt + F11", "F11"],
+    "correctIndex": 0,
+    "explanation": "Shift + F11 दाबल्यास चालू वर्कबुकमध्ये New Worksheet इन्सर्ट होते."
+  },
+  {
+    "id": 28,
+    "category": "MS Excel",
+    "question": "Excel फाईलचे डिफॉल्ट एक्स्टेंशन काय असते?",
+    "options": [".xls", ".xlsx", ".xlsm", ".exl"],
+    "correctIndex": 1,
+    "explanation": "Excel २००७ व पुढील आवृत्तीचे एक्स्टेंशन .xlsx असते."
+  },
+  {
+    "id": 29,
+    "category": "MS Excel",
+    "question": "संख्यांची सरासरी (Average) काढण्यासाठी कोणते फंक्शन वापरतात?",
+    "options": ["=MEAN()", "=AVG()", "=AVERAGE()", "=SUMAVG()"],
+    "correctIndex": 2,
+    "explanation": "सरासरी काढण्यासाठी =AVERAGE() हे संपूर्ण नावाचे फंक्शन वापरले जाते."
+  },
+  {
+    "id": 30,
+    "category": "MS Excel",
+    "question": "Excel मध्ये सक्रिय सेलच्या वरील बाजूस कोणता बार असतो जिथे मजकूर/फॉर्म्युला दिसतो?",
+    "options": ["Title Bar", "Formula Bar", "Status Bar", "Scroll Bar"],
+    "correctIndex": 1,
+    "explanation": "Formula Bar मध्ये सक्रिय सेलचे सूत्र आणि आतील मूल्य प्रदर्शित होते."
+  },
+  {
+    "id": 31,
+    "category": "MS PowerPoint",
+    "question": "नवीन प्रेझेंटेशनमध्ये नवीन स्लाईड (New Slide) जोडण्यासाठी कोणती शॉर्टकट की आहे?",
+    "options": ["Ctrl + N", "Ctrl + M", "Ctrl + S", "Ctrl + Shift + N"],
+    "correctIndex": 1,
+    "explanation": "Ctrl + M ने चालू प्रेझेंटेशनमध्ये New Slide जोडली जाते."
+  },
+  {
+    "id": 32,
+    "category": "MS PowerPoint",
+    "question": "स्लाईड शो (Slide Show) पहिल्या स्लाईडपासून सुरू करण्यासाठी कोणती की वापरली जाते?",
+    "options": ["F5", "Shift + F5", "Ctrl + F5", "F7"],
+    "correctIndex": 0,
+    "explanation": "F5 की दाबल्यास स्लाईड शो सुरुवातीपासून सुरू होतो."
+  },
+  {
+    "id": 33,
+    "category": "MS PowerPoint",
+    "question": "चालू असलेल्या स्लाईडपासून (Current Slide) शो सुरू करण्यासाठी कोणती की वापरतात?",
+    "options": ["F5", "Shift + F5", "Ctrl + F5", "Alt + F5"],
+    "correctIndex": 1,
+    "explanation": "Shift + F5 ने सध्या चालू असलेल्या स्लाईडपासून शो सुरू होतो."
+  },
+  {
+    "id": 34,
+    "category": "MS PowerPoint",
+    "question": "PowerPoint फाईलचे डिफॉल्ट एक्स्टेंशन काय असते?",
+    "options": [".ppt", ".pptx", ".ppsx", ".potx"],
+    "correctIndex": 1,
+    "explanation": "PowerPoint प्रेझेंटेशन फाईलचे एक्स्टेंशन .pptx असते."
+  },
+  {
+    "id": 35,
+    "category": "MS PowerPoint",
+    "question": "चालू स्लाईड शोमधून बाहेर पडण्यासाठी (Exit) कोणती की दाबतात?",
+    "options": ["Enter", "Spacebar", "Esc (Escape)", "Tab"],
+    "correctIndex": 2,
+    "explanation": "Esc की दाबल्यास स्लाईड शो तात्काळ बंद होऊन एडिटर मोड उघडतो."
+  },
+  {
+    "id": 36,
+    "category": "MS PowerPoint",
+    "question": "स्लाईडमधील घटकांना हालचाल (Animation) देण्यासाठी कोणता टॅब वापरतात?",
+    "options": ["Design", "Animations", "Transitions", "Insert"],
+    "correctIndex": 1,
+    "explanation": "Animations टॅबमधून टेक्स्ट व इमेजला विविध मोशन इफेक्ट्स देता येतात."
+  },
+  {
+    "id": 37,
+    "category": "MS PowerPoint",
+    "question": "एका स्लाईडवरून दुसऱ्या स्लाईडवर जाताना होणाऱ्या बदलास काय म्हणतात?",
+    "options": ["Animation", "Slide Transition", "Slide Effect", "Morphing"],
+    "correctIndex": 1,
+    "explanation": "दोन स्लाईड्समधील बदलाला Slide Transition म्हणतात."
+  },
+  {
+    "id": 38,
+    "category": "MS PowerPoint",
+    "question": "स्लाईडची डुप्लिकेट कॉपी तयार करण्यासाठी कोणती शॉर्टकट की वापरतात?",
+    "options": ["Ctrl + D", "Ctrl + C", "Ctrl + K", "Ctrl + J"],
+    "correctIndex": 0,
+    "explanation": "Ctrl + D ने सिलेक्ट केलेली स्लाईड किंवा ऑब्जेक्ट डुप्लिकेट होतो."
+  },
+  {
+    "id": 39,
+    "category": "MS PowerPoint",
+    "question": "PowerPoint मध्ये सर्व स्लाईड्स एकाच स्क्रीनवर लहान आकारात पाहण्यासाठी कोणता व्ह्यू वापरतात?",
+    "options": ["Normal View", "Slide Sorter View", "Reading View", "Notes Page"],
+    "correctIndex": 1,
+    "explanation": "Slide Sorter View मध्ये सर्व स्लाईड्स थंबनेल्स स्वरूपात दिसतात."
+  },
+  {
+    "id": 40,
+    "category": "MS PowerPoint",
+    "question": "प्रेझेंटेशनमध्ये तयार केलेल्या पानावरील मुख्य घटकास काय म्हणतात?",
+    "options": ["Document", "Worksheet", "Slide", "Canvas"],
+    "correctIndex": 2,
+    "explanation": "PowerPoint च्या प्रत्येक पानाला Slide म्हणतात."
+  },
+  {
+    "id": 41,
+    "category": "Internet",
+    "question": "WWW चा पूर्ण विस्तार (Full Form) काय आहे?",
+    "options": ["World Wide Web", "World Whole Web", "Web Wide World", "Wide World Web"],
+    "correctIndex": 0,
+    "explanation": "WWW म्हणजे World Wide Web, ज्याचा शोध टिम बर्नर्स-ली यांनी लावला."
+  },
+  {
+    "id": 42,
+    "category": "Internet",
+    "question": "वेबसाईट उघडण्यासाठी वापरल्या जाणाऱ्या सॉफ्टवेअरला काय म्हणतात?",
+    "options": ["Web Server", "Web Browser", "Search Engine", "Operating System"],
+    "correctIndex": 1,
+    "explanation": "Google Chrome, Mozilla Firefox ही Web Browser सॉफ्टवेअर्स आहेत."
+  },
+  {
+    "id": 43,
+    "category": "Internet",
+    "question": "ईमेल पाठवताना CC चा अर्थ काय होतो?",
+    "options": ["Carbon Copy", "Central Copy", "Computer Copy", "Common Copy"],
+    "correctIndex": 0,
+    "explanation": "CC म्हणजे Carbon Copy, ज्याद्वारे एकाच ईमेलच्या प्रती इतर व्यक्तींना पाठवता येतात."
+  },
+  {
+    "id": 44,
+    "category": "Internet",
+    "question": "ईमेलमधील BCC चा पूर्ण विस्तार काय आहे?",
+    "options": ["Blind Carbon Copy", "Base Carbon Copy", "Back Carbon Copy", "Brief Carbon Copy"],
+    "correctIndex": 0,
+    "explanation": "BCC (Blind Carbon Copy) मधील प्राप्तकर्त्यांची नावे इतरांना दिसत नाहीत."
+  },
+  {
+    "id": 45,
+    "category": "Internet",
+    "question": "URL चा पूर्ण विस्तार (Full Form) काय आहे?",
+    "options": ["Uniform Resource Locator", "Universal Resource Link", "Uniform Record Locator", "United Resource Link"],
+    "correctIndex": 0,
+    "explanation": "URL म्हणजे वेबवरील कोणत्याही फाईल किंवा वेबसाईटचा अचूक पत्ता (Uniform Resource Locator)."
+  },
+  {
+    "id": 46,
+    "category": "Internet",
+    "question": "खालीलपैकी कोणते लोकप्रिय सर्च इंजिन (Search Engine) आहे?",
+    "options": ["MS Word", "Google", "WhatsApp", "Photoshop"],
+    "correctIndex": 1,
+    "explanation": "Google हे माहिती शोधण्यासाठी जगभरात सर्वाधिक वापरले जाणारे सर्च इंजिन आहे."
+  },
+  {
+    "id": 47,
+    "category": "Internet",
+    "question": "सुरक्षित वेबसाईटच्या URL च्या सुरुवातीला काय लिहिलेले असते?",
+    "options": ["http://", "https://", "ftp://", "www://"],
+    "correctIndex": 1,
+    "explanation": "https मधील 's' म्हणजे Secure (SSL Certificate द्वारे डेटा एन्क्रिप्टेड असतो)."
+  },
+  {
+    "id": 48,
+    "category": "Internet",
+    "question": "वेबसाईटच्या मुख्य किंवा पहिल्या पानाला काय म्हणतात?",
+    "options": ["Home Page", "Main Page", "Index Page", "Start Page"],
+    "correctIndex": 0,
+    "explanation": "कोणत्याही वेबसाईटच्या पहिल्या पानाला तांत्रिक भाषेत Home Page म्हणतात."
+  },
+  {
+    "id": 49,
+    "category": "Internet",
+    "question": "ईमेलसोबत फाईल, फोटो किंवा डॉक्युमेंट जोडण्याच्या क्रियेला काय म्हणतात?",
+    "options": ["Connecting", "Attachment", "Merging", "Linking"],
+    "correctIndex": 1,
+    "explanation": "ईमेलसोबत पाठवल्या जाणाऱ्या बाह्य फाईल्सना Attachment म्हणतात."
+  },
+  {
+    "id": 50,
+    "category": "Internet",
+    "question": "IP चा पूर्ण विस्तार (Full Form) काय आहे?",
+    "options": ["Internet Protocol", "Internal Program", "International Page", "Instant Processing"],
+    "correctIndex": 0,
+    "explanation": "IP (Internet Protocol) हा संगणकीय नेटवर्कमध्ये संवाद साधण्याचा मूलभूत नियम आहे."
+  }
+]

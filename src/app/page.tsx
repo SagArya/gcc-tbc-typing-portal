@@ -36,6 +36,14 @@ export default function LandingHomePage() {
             >
               स्पीड टेस्ट सुरू करा 🚀
             </Link>
+              <Link
+                href="/mcq-test"
+                className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition group shadow-md"
+              >
+                <div className="text-xs text-slate-400 font-medium">GCC-TBC परीक्षा</div>
+                <div className="text-2xl font-bold text-amber-400 group-hover:translate-x-1 transition mt-1">MCQ क्विझ (५० गुण) →</div>
+                <div className="text-xs text-slate-500 mt-2">२५ प्रश्न • २४ मिनिटे • सविस्तर उत्तरे</div>
+              </Link>
           </div>
         </div>
       </nav>
@@ -131,7 +139,7 @@ export default function LandingHomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
+          {/* <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">
               ⌨️
             </div>
@@ -139,7 +147,15 @@ export default function LandingHomePage() {
             <p className="text-slate-400 text-sm mt-2 leading-relaxed">
               वेलांटी बफर, रफार, काना आणि कठीण जोडाक्षरे टाइप करताना कोणतीही अडचण येत नाही.
             </p>
-          </div>
+          </div> */}
+          <Link
+            href="/mcq-test"
+            className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition group shadow-md"
+          >
+            <div className="text-xs text-slate-400 font-medium">GCC-TBC परीक्षा</div>
+            <div className="text-2xl font-bold text-amber-400 group-hover:translate-x-1 transition mt-1">MCQ क्विझ (५० गुण) →</div>
+            <div className="text-xs text-slate-500 mt-2">२५ प्रश्न • २४ मिनिटे • सविस्तर उत्तरे</div>
+          </Link>
 
           <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
             <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center text-2xl mb-4">
