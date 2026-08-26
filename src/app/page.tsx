@@ -31,25 +31,23 @@ export default function LandingHomePage() {
 
           <div className="flex items-center gap-3">
             <Link
+              href="/typing-practice"
+              className="px-4 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs sm:text-sm font-bold transition flex items-center gap-1.5"
+            >
+              ⚡ स्मार्ट लॅब
+            </Link>
+            <Link
               href="/speed-test"
               className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-bold transition shadow-lg shadow-emerald-500/25 flex items-center gap-2"
             >
               स्पीड टेस्ट सुरू करा 🚀
             </Link>
-              <Link
-                href="/mcq-test"
-                className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition group shadow-md"
-              >
-                <div className="text-xs text-slate-400 font-medium">GCC-TBC परीक्षा</div>
-                <div className="text-2xl font-bold text-amber-400 group-hover:translate-x-1 transition mt-1">MCQ क्विझ (५० गुण) →</div>
-                <div className="text-xs text-slate-500 mt-2">२५ प्रश्न • २४ मिनिटे • सविस्तर उत्तरे</div>
-              </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-16 text-center">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-16 text-center">
         
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/80 text-xs font-medium text-emerald-300 mb-6 shadow-sm">
@@ -66,23 +64,23 @@ export default function LandingHomePage() {
         </h1>
 
         <p className="mt-6 text-base sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          रेमिंग्टन मराठी कीबोर्ड, अचूक वेलांटी-रफार इंजिन, ४० गुणांची परीक्षा पद्धती, आणि लाइव्ह वर्ड हायलाइटिंगसह सर्वोत्तम सराव अनुभव.
+          रेमिंग्टन मराठी कीबोर्ड, अचूक वेलांटी-रफार इंजिन, साइड-बाय-साइड सराव लॅब, ४० गुणांची परीक्षा पद्धती, आणि लाइव्ह वर्ड हायलाइटिंगसह सर्वोत्तम अनुभव.
         </p>
 
         {/* Main CTA Buttons */}
         <div className="mt-10 flex flex-wrap justify-center items-center gap-4">
           <Link
-            href="/speed-test"
-            className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-base transition shadow-xl shadow-emerald-500/20"
+            href="/typing-practice"
+            className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-base transition shadow-xl shadow-amber-500/20 flex items-center gap-2"
           >
-            ७ मिनिटांची स्पीड टेस्ट द्या →
+            ⚡ स्मार्ट टायपिंग लॅब उघडा →
           </Link>
-          <a
-            href="#features"
-            className="px-6 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 text-slate-200 font-bold text-base transition"
+          <Link
+            href="/speed-test"
+            className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-base transition shadow-xl shadow-emerald-500/20"
           >
-            फिचर्स व अभ्यासक्रम पहा
-          </a>
+            ७ मिनिटांची स्पीड टेस्ट द्या
+          </Link>
         </div>
 
         {/* Quick Launch Category Cards */}
@@ -127,7 +125,7 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* Features Grid Section */}
+      {/* Features Grid Section (Centered 3 Cards) */}
       <section id="features" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 border-t border-slate-900">
         <div className="text-center mb-14">
           <h2 className="text-2xl sm:text-4xl font-black text-slate-100">
@@ -138,55 +136,77 @@ export default function LandingHomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">
-              ⌨️
+        {/* Centered Grid Container */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 justify-center">
+          
+          {/* १. नवीन स्मार्ट टायपिंग लॅब कार्ड */}
+          <Link
+            href="/typing-practice"
+            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-amber-500/60 hover:bg-slate-800/60 transition group shadow-lg shadow-amber-500/5 relative overflow-hidden flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                  ⚡
+                </div>
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  NEW
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-100 group-hover:text-amber-400 transition">
+                स्मार्ट टायपिंग लॅब →
+              </h3>
+              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
+                Side-by-Side सराव, मराठी/इंग्रजी मजकूर (.txt) अपलोड, थेट बोटांचे गाईड आणि कमजोर कीजचे विश्लेषण.
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-slate-200">अचूक रेमिंग्टन मॅपिंग</h3>
-            <p className="text-slate-400 text-sm mt-2 leading-relaxed">
-              वेलांटी बफर, रफार, काना आणि कठीण जोडाक्षरे टाइप करताना कोणतीही अडचण येत नाही.
-            </p>
-          </div> */}
+            <div className="text-[11px] text-amber-400 font-semibold mt-4 pt-3 border-t border-slate-800">
+              कस्टम पॅसेज सराव • बोटांचे गाईड
+            </div>
+          </Link>
+
+          {/* २. MCQ क्विझ कार्ड */}
           <Link
             href="/mcq-test"
-            className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/60 transition group shadow-md"
+            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-teal-500/50 hover:bg-slate-800/60 transition group shadow-md flex flex-col justify-between"
           >
-            <div className="text-xs text-slate-400 font-medium">GCC-TBC परीक्षा</div>
-            <div className="text-2xl font-bold text-amber-400 group-hover:translate-x-1 transition mt-1">MCQ क्विझ (५० गुण) →</div>
-            <div className="text-xs text-slate-500 mt-2">२५ प्रश्न • २४ मिनिटे • सविस्तर उत्तरे</div>
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                📝
+              </div>
+              <h3 className="text-lg font-bold text-slate-100 group-hover:text-teal-400 transition">
+                MCQ क्विझ (५० गुण) →
+              </h3>
+              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
+                Computer Basics, MS Office, Windows व इंटरनेट विषयांवरील २५ प्रश्न आणि २४ मिनिटांची सराव परीक्षा.
+              </p>
+            </div>
+            <div className="text-[11px] text-teal-400 font-semibold mt-4 pt-3 border-t border-slate-800">
+              २५ प्रश्न • २४ मिनिटे • सविस्तर निकाल
+            </div>
           </Link>
 
-          {/* <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
-            <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center text-2xl mb-4">
-              🎯
-            </div>
-            <h3 className="text-lg font-bold text-slate-200">अधिकृत ४० गुणांचे मार्किंग</h3>
-            <p className="text-slate-400 text-sm mt-2 leading-relaxed">
-              प्रत्येक चुकीला -१ गुण आणि १६ गुणांवर अधिकृत PASS/FAIL निकाल मिळतो.
-            </p>
-          </div> */}
-
+          {/* ३. कीबोर्ड रो सराव (Drills) कार्ड */}
           <Link
             href="/keyboard-drills"
-            className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition group"
+            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/60 transition group shadow-md flex flex-col justify-between"
           >
-            <div className="text-xs text-slate-400 font-medium">मूलभूत टायपिंग सराव</div>
-            <div className="text-2xl font-bold text-amber-400 group-hover:translate-x-1 transition mt-1">
-              कीबोर्ड रो सराव (Drills) →
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                ⌨️
+              </div>
+              <h3 className="text-lg font-bold text-slate-100 group-hover:text-sky-400 transition">
+                कीबोर्ड रो सराव (Drills) →
+              </h3>
+              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
+                Home Row, Upper Row आणि Bottom Row वरील मुळाक्षरे, काना-मात्रा व जोडाक्षरांचा पायाभूत सराव.
+              </p>
             </div>
-            <div className="text-xs text-slate-500 mt-2">Home Row • Top Row • Bottom Row • शून्य त्रुटी सराव</div>
+            <div className="text-[11px] text-sky-400 font-semibold mt-4 pt-3 border-t border-slate-800">
+              Home Row • Top Row • Bottom Row
+            </div>
           </Link>
 
-          <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
-            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center text-2xl mb-4">
-              🔍
-            </div>
-            <h3 className="text-lg font-bold text-slate-200">तपशीलवार चूक विश्लेषण</h3>
-            <p className="text-slate-400 text-sm mt-2 leading-relaxed">
-              चाचणीनंतर नक्की कोणते शब्द चुकले आणि कोणते राहिले हे समोरासमोर तपासता येते.
-            </p>
-          </div>
         </div>
       </section>
 
