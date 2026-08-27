@@ -1,218 +1,269 @@
 // src/app/page.tsx
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import GlowCursor from "@/components/GlowCursor";
+import ThemeToggle from "@/components/ThemeToggle";
+import {
+  Zap,
+  Keyboard,
+  Target,
+  FileQuestion,
+  Sparkles,
+  ChevronRight,
+  Award,
+  Activity,
+  ShieldCheck,
+  TrendingUp,
+} from "lucide-react";
 
-export default function LandingHomePage() {
+export default function HomePage() {
+  const [liveWpm, setLiveWpm] = useState(42);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveWpm((prev) => (prev >= 52 ? 38 : prev + 1));
+    }, 1800);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-300">
-      
-      {/* Background Ambient Glows */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/10 blur-[140px] rounded-full" />
-        <div className="absolute top-1/2 -left-40 w-[500px] h-[350px] bg-sky-500/10 blur-[130px] rounded-full" />
-        <div className="absolute bottom-10 -right-40 w-[500px] h-[350px] bg-indigo-500/10 blur-[130px] rounded-full" />
-      </div>
+    <div className="min-h-screen flex flex-col justify-between relative selection:bg-amber-400 selection:text-black">
+      <GlowCursor />
 
-      {/* Top Navbar */}
-      <nav className="relative z-10 w-full border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
-              ⌨️
+      {/* Dynamic Grid Pattern */}
+      <div 
+        className="pointer-events-none fixed inset-0 z-0 opacity-[0.04] dark:opacity-[0.05]"
+        style={{
+          backgroundImage: `radial-gradient(currentColor 1px, transparent 1px)`,
+          backgroundSize: '28px 28px'
+        }}
+      />
+
+      {/* Floating Glass Navigation */}
+      <header className="relative z-20 max-w-6xl mx-auto w-full px-6 pt-6">
+        <div className="theme-panel rounded-2xl px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-white dark:text-black font-black text-xl shadow-lg shadow-amber-500/25">
+              ⚡
             </div>
             <div>
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
-                TypoMaster GCC-TBC
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                Maharashtra Exam Portal
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/typing-practice"
-              className="px-4 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs sm:text-sm font-bold transition flex items-center gap-1.5"
-            >
-              ⚡ स्मार्ट लॅब
-            </Link>
-            <Link
-              href="/speed-test"
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-bold transition shadow-lg shadow-emerald-500/25 flex items-center gap-2"
-            >
-              स्पीड टेस्ट सुरू करा 🚀
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-16 text-center">
-        
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/80 text-xs font-medium text-emerald-300 mb-6 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          अधिकृत MSCE Pune पॅटर्ननुसार १००% मोफत टायपिंग परीक्षा पोर्टल
-        </div>
-
-        {/* Hero Title */}
-        <h1 className="text-3xl sm:text-6xl font-black tracking-tight text-slate-100 max-w-4xl mx-auto leading-tight sm:leading-tight">
-          महाराष्ट्र शासकीय टंकलेखन परीक्षेत{" "}
-          <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
-            प्रथम श्रेणीत उत्तीर्ण व्हा
-          </span>
-        </h1>
-
-        <p className="mt-6 text-base sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          रेमिंग्टन मराठी कीबोर्ड, अचूक वेलांटी-रफार इंजिन, साइड-बाय-साइड सराव लॅब, ४० गुणांची परीक्षा पद्धती, आणि लाइव्ह वर्ड हायलाइटिंगसह सर्वोत्तम अनुभव.
-        </p>
-
-        {/* Main CTA Buttons */}
-        <div className="mt-10 flex flex-wrap justify-center items-center gap-4">
-          <Link
-            href="/typing-practice"
-            className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-base transition shadow-xl shadow-amber-500/20 flex items-center gap-2"
-          >
-            ⚡ स्मार्ट टायपिंग लॅब उघडा →
-          </Link>
-          <Link
-            href="/speed-test"
-            className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-base transition shadow-xl shadow-emerald-500/20"
-          >
-            ७ मिनिटांची स्पीड टेस्ट द्या
-          </Link>
-        </div>
-
-        {/* Quick Launch Category Cards */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-          
-          <Link
-            href="/speed-test"
-            className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/60 transition group shadow-md"
-          >
-            <div className="text-xs text-slate-400 font-medium">मराठी टंकलेखन</div>
-            <div className="text-2xl font-bold text-emerald-400 group-hover:translate-x-1 transition mt-1">30 WPM सराव →</div>
-            <div className="text-xs text-slate-500 mt-2">२१० शब्द • ७ मिनिटे चाचणी</div>
-          </Link>
-
-          <Link
-            href="/speed-test"
-            className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-teal-500/50 hover:bg-slate-800/60 transition group shadow-md"
-          >
-            <div className="text-xs text-slate-400 font-medium">मराठी टंकलेखन</div>
-            <div className="text-2xl font-bold text-teal-400 group-hover:translate-x-1 transition mt-1">40 WPM सराव →</div>
-            <div className="text-xs text-slate-500 mt-2">२८० शब्द • ७ मिनिटे चाचणी</div>
-          </Link>
-
-          <Link
-            href="/speed-test"
-            className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/60 transition group shadow-md"
-          >
-            <div className="text-xs text-slate-400 font-medium">English Typing</div>
-            <div className="text-2xl font-bold text-sky-400 group-hover:translate-x-1 transition mt-1">30 & 40 WPM →</div>
-            <div className="text-xs text-slate-500 mt-2">Official Passages • 7 Mins</div>
-          </Link>
-
-          <Link
-            href="/speed-test"
-            className="p-5 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/60 transition group shadow-md"
-          >
-            <div className="text-xs text-slate-400 font-medium">English High Speed</div>
-            <div className="text-2xl font-bold text-indigo-400 group-hover:translate-x-1 transition mt-1">50 WPM सराव →</div>
-            <div className="text-xs text-slate-500 mt-2">३५० शब्द • ७ मिनिटे चाचणी</div>
-          </Link>
-
-        </div>
-      </section>
-
-      {/* Features Grid Section (Centered 3 Cards) */}
-      <section id="features" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 border-t border-slate-900">
-        <div className="text-center mb-14">
-          <h2 className="text-2xl sm:text-4xl font-black text-slate-100">
-            परीक्षेसाठी आवश्यक असणारी सर्व साधने एकाच ठिकाणी
-          </h2>
-          <p className="text-slate-400 text-sm sm:text-base mt-2">
-            विद्यार्थ्यांचा वेळ वाचवण्यासाठी आणि अचूक सराव होण्यासाठी तयार केलेले फीचर्स
-          </p>
-        </div>
-
-        {/* Centered Grid Container */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 justify-center">
-          
-          {/* १. नवीन स्मार्ट टायपिंग लॅब कार्ड */}
-          <Link
-            href="/typing-practice"
-            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-amber-500/60 hover:bg-slate-800/60 transition group shadow-lg shadow-amber-500/5 relative overflow-hidden flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                  ⚡
-                </div>
-                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  NEW
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-lg tracking-tight">
+                  TypeForge
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 uppercase tracking-wider">
+                  PRO
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-slate-100 group-hover:text-amber-400 transition">
-                स्मार्ट टायपिंग लॅब →
-              </h3>
-              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
-                Side-by-Side सराव, मराठी/इंग्रजी मजकूर (.txt) अपलोड, थेट बोटांचे गाईड आणि कमजोर कीजचे विश्लेषण.
-              </p>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block">
+                Official GCC-TBC Exam Suite
+              </span>
             </div>
-            <div className="text-[11px] text-amber-400 font-semibold mt-4 pt-3 border-t border-slate-800">
-              कस्टम पॅसेज सराव • बोटांचे गाईड
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/mcq-test"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs font-bold text-purple-700 dark:text-purple-300 transition"
+            >
+              <FileQuestion className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <span>Theory 50 Marks</span>
+            </Link>
+
+            <div className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
+              Remington GAIL
+            </div>
+
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <main className="relative z-10 max-w-6xl mx-auto w-full px-6 py-12 sm:py-16 space-y-12">
+        
+        {/* Pitch Area */}
+        <div className="text-center space-y-6 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-200/70 dark:bg-white/[0.04] border border-slate-300 dark:border-white/[0.08] text-xs font-semibold text-slate-700 dark:text-slate-300 backdrop-blur-xl">
+            <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400 animate-pulse" />
+            <span>Zero Inaccuracy Drift • 45 Timed Exam Batches</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-7xl font-black tracking-tight leading-[1.05]">
+            Precision Speed. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 dark:from-amber-300 dark:via-amber-400 dark:to-yellow-500">
+              Exam Certification.
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
+            Engineered for Maharashtra GCC-TBC typing exams with intelligent Marathi ligature recognition, live penalty deductions, and muscle memory drills.
+          </p>
+
+          {/* Exam Grade Chips */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <div className="px-4 py-2 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-amber-500/30 text-xs font-bold shadow-sm">
+              <span className="text-slate-500 dark:text-slate-400 mr-2">🇮🇳 Marathi:</span>
+              <span className="text-amber-600 dark:text-amber-400 font-mono text-sm">30 WPM</span>
+              <span className="text-slate-300 dark:text-slate-700 mx-1.5">•</span>
+              <span className="text-amber-600 dark:text-amber-400 font-mono text-sm">40 WPM</span>
+            </div>
+
+            <div className="px-4 py-2 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-cyan-500/30 text-xs font-bold shadow-sm">
+              <span className="text-slate-500 dark:text-slate-400 mr-2">🇬🇧 English:</span>
+              <span className="text-sky-600 dark:text-cyan-400 font-mono text-sm">40 WPM</span>
+              <span className="text-slate-300 dark:text-slate-700 mx-1.5">•</span>
+              <span className="text-sky-600 dark:text-cyan-400 font-mono text-sm">50 WPM</span>
+              <span className="text-slate-300 dark:text-slate-700 mx-1.5">•</span>
+              <span className="text-sky-600 dark:text-cyan-400 font-mono text-sm">60 WPM</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 4 Bento Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          {/* Card 1: Speed Test */}
+          <Link href="/speed-test" className="group">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-black transition-all duration-300 shadow-md">
+                  <Zap className="w-7 h-7" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black group-hover:text-amber-600 dark:group-hover:text-amber-300 transition">
+                    Speed Test
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    Official 7-minute timed exam batches (30/40 WPM) with GCC-TBC penalty scoring.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
+                <span>Start Batch Test</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
+              </div>
             </div>
           </Link>
 
-          {/* २. MCQ क्विझ कार्ड */}
-          <Link
-            href="/mcq-test"
-            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-teal-500/50 hover:bg-slate-800/60 transition group shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                📝
+          {/* Card 2: Keyboard Drills */}
+          <Link href="/keyboard-drills" className="group">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-600 dark:text-cyan-400 group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shadow-md">
+                  <Keyboard className="w-7 h-7" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black group-hover:text-sky-600 dark:group-hover:text-cyan-300 transition">
+                    Keyboard Drills
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    Home, Top, Bottom row muscle memory builders & high-frequency word workouts.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-slate-100 group-hover:text-teal-400 transition">
-                MCQ क्विझ (५० गुण) →
-              </h3>
-              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
-                Computer Basics, MS Office, Windows व इंटरनेट विषयांवरील २५ प्रश्न आणि २४ मिनिटांची सराव परीक्षा.
-              </p>
-            </div>
-            <div className="text-[11px] text-teal-400 font-semibold mt-4 pt-3 border-t border-slate-800">
-              २५ प्रश्न • २४ मिनिटे • सविस्तर निकाल
+
+              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-sky-600 dark:text-cyan-400">
+                <span>Train Muscle Memory</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
+              </div>
             </div>
           </Link>
 
-          {/* ३. कीबोर्ड रो सराव (Drills) कार्ड */}
-          <Link
-            href="/keyboard-drills"
-            className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/60 transition group shadow-md flex flex-col justify-between"
-          >
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                ⌨️
+          {/* Card 3: Practice Lab */}
+          <Link href="/typing-practice" className="group">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-md">
+                  <Target className="w-7 h-7" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
+                    Practice Lab
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    Custom passage uploads, real-time weak keys diagnostic tracker & finger posture guides.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-slate-100 group-hover:text-sky-400 transition">
-                कीबोर्ड रो सराव (Drills) →
-              </h3>
-              <p className="text-slate-400 text-xs mt-2 leading-relaxed">
-                Home Row, Upper Row आणि Bottom Row वरील मुळाक्षरे, काना-मात्रा व जोडाक्षरांचा पायाभूत सराव.
-              </p>
+
+              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                <span>Open Diagnostic Lab</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
+              </div>
             </div>
-            <div className="text-[11px] text-sky-400 font-semibold mt-4 pt-3 border-t border-slate-800">
-              Home Row • Top Row • Bottom Row
+          </Link>
+
+          {/* Card 4: Theory MCQs */}
+          <Link href="/mcq-test" className="group">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-md">
+                  <Award className="w-7 h-7" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black group-hover:text-purple-600 dark:group-hover:text-purple-300 transition">
+                    Theory MCQs
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    Complete 50 Marks computer theory preparation: Windows, Word, Excel & Internet.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+                <span>Solve MCQs</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
+              </div>
             </div>
           </Link>
 
         </div>
-      </section>
+
+        {/* Live Engine Interactive Performance Banner */}
+        <div className="theme-panel p-6 sm:p-8 rounded-3xl space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-white/[0.08] pb-4">
+            <div className="flex items-center gap-3">
+              <Activity className="w-5 h-5 text-amber-500 dark:text-amber-400 animate-pulse" />
+              <span className="text-sm font-bold tracking-wide">
+                Live Typing Telemetry
+              </span>
+            </div>
+            <div className="flex items-center gap-5 text-xs font-mono">
+              <span className="text-amber-700 dark:text-amber-400 font-bold bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-500/20">
+                ⚡ Speed: {liveWpm} WPM
+              </span>
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1 rounded-xl border border-emerald-500/20">
+                🎯 Accuracy: 98.6%
+              </span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-100 dark:bg-black/60 border border-slate-200 dark:border-white/[0.08] font-mono text-lg text-slate-800 dark:text-slate-300 flex items-center justify-between shadow-inner">
+            <div>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">शासकीय सेवेतील </span>
+              <span className="text-amber-800 dark:text-amber-300 bg-amber-500/20 px-1 rounded">सर्व</span> अधिकारी व कर्मचारी...
+            </div>
+            <span className="text-xs text-slate-400 hidden sm:block font-sans">
+              Remington GAIL Active
+            </span>
+          </div>
+        </div>
+
+      </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-900 bg-slate-950 py-10 text-center text-xs text-slate-500">
-        <p>© 2026 TypoMaster GCC-TBC • महाराष्ट्र शासकीय टंकलेखन परीक्षा सराव पोर्टल</p>
+      <footer className="relative z-10 max-w-6xl mx-auto w-full px-6 py-6 border-t border-slate-200 dark:border-white/[0.08] text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <span>© 2026 TypeForge PRO • GCC-TBC Maharashtra</span>
+        <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+          <span>Marathi 30/40</span>
+          <span>•</span>
+          <span>English 40/50/60</span>
+        </div>
       </footer>
     </div>
   );

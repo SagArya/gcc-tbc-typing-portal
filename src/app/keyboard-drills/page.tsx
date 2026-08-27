@@ -4,7 +4,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import MarathiTextarea from "@/components/MarathiTextarea";
+import GlowCursor from "@/components/GlowCursor";
+import ThemeToggle from "@/components/ThemeToggle";
 import { COMMON_WORDS_DATA } from "@/data/commonWords";
+import {
+  ArrowLeft,
+  Keyboard,
+  RotateCcw,
+  Zap,
+  Target,
+  TrendingUp,
+  Sparkles,
+  Layers,
+  BookOpen,
+  Info,
+} from "lucide-react";
 
 const KEYBOARD_ROW_DRILLS = {
   marathi: [
@@ -57,19 +71,12 @@ function normalizeText(str: string): string {
   if (!str) return "";
 
   return str
-    // १. अदृश्य कॅरेक्टर्स आणि Non-breaking spaces काढून टाकणे
     .replace(/[\u200B-\u200D\uFEFF\u00AD\u00A0]/g, "")
-    // २. देवनागरीचे सर्व घटक सुटे करणे
     .normalize("NFD")
-    // ३. काना + दोन मात्रा => औ
     .replace(/\u093E\u0948/g, "\u094C")
-    // ४. काना + एक मात्रा => ओ
     .replace(/\u093E\u0947/g, "\u094B")
-    // ५. काना + अर्धचंद्र => ऑ
     .replace(/\u093E\u0945/g, "\u0949")
-    // ६. इंग्रजी पूर्णविराम (.) आणि दंड (।) एकसमान करणे
     .replace(/\./g, "।")
-    // ७. सर्वसामान्य NFC फॉर्ममध्ये एकत्रित करणे
     .normalize("NFC")
     .trim();
 }
@@ -115,7 +122,6 @@ export default function KeyboardDrillsPage() {
     handleReset();
   };
 
-  // १. मूळ शब्द आणि युझरने टाईप केलेले शब्द वेगळे करणे
   const targetWords = targetText.trim().split(/\s+/).filter(Boolean);
   const isTrailingSpace = /\s$/.test(userInput);
   const rawTypedWords = userInput.trimStart().split(/\s+/).filter(Boolean);
@@ -140,7 +146,6 @@ export default function KeyboardDrillsPage() {
     if (!startTime) setStartTime(Date.now());
     setUserInput(val);
 
-    // अचूकता मोजणे
     const typedList = val.trimStart().split(/\s+/).filter(Boolean);
     let correctWords = 0;
     typedList.forEach((word, idx) => {
@@ -173,72 +178,113 @@ export default function KeyboardDrillsPage() {
   const filteredCategories = COMMON_WORDS_DATA.filter((c) => c.language === language);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-8 font-sans selection:bg-amber-500/30">
-      <div className="max-w-5xl mx-auto flex items-center justify-between pb-6 border-b border-slate-800/80">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl text-amber-400">
-            ⌨️
-          </div>
-          <div>
-            <h1 className="text-lg sm:text-xl font-bold text-slate-100">कीबोर्ड व सामान्य शब्द सराव</h1>
-            <p className="text-xs text-slate-400">Word Drills & Row Practice (Word-by-Word Engine)</p>
-          </div>
-        </div>
-        <Link
-          href="/"
-          className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-white transition"
-        >
-          ← मुख्य पान
-        </Link>
-      </div>
+    <main className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-cyan-400 selection:text-black font-sans relative overflow-x-hidden p-4 sm:p-6">
+      
+      {/* Dynamic Background Glow */}
+      <GlowCursor />
 
-      <div className="max-w-5xl mx-auto mt-8 space-y-6">
-        <div className="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 backdrop-blur-md">
+      {/* Grid Pattern Overlay */}
+      <div 
+        className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.04]"
+        style={{
+          backgroundImage: `radial-gradient(currentColor 1px, transparent 1px)`,
+          backgroundSize: '24px 24px'
+        }}
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto w-full space-y-6">
+        
+        {/* Top Floating Glass Navigation */}
+        <header className="glass-panel p-4 sm:p-5 rounded-3xl flex flex-wrap justify-between items-center gap-4">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5 font-medium"
+            >
+              <ArrowLeft className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+              <span>Back</span>
+            </Link>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-base sm:text-lg font-extrabold tracking-tight">
+                  Keyboard & Word Drills
+                </h1>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                  Muscle Memory
+                </span>
+              </div>
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                Targeted Row Workouts & High-Frequency Word Engine
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleReset}
+              className="px-3.5 py-1.5 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs border border-slate-200 dark:border-white/[0.08] transition duration-200 flex items-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+              <span>Reset Drill</span>
+            </button>
+
+            {/* Theme Toggle Button */}
+            <ThemeToggle />
+          </div>
+        </header>
+
+        {/* Drill Controls Bar */}
+        <div className="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+          
+          {/* Mode Switcher */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-semibold">मोड:</span>
-            <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Mode:</span>
+            <div className="bg-slate-100 dark:bg-black/50 p-1 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-1">
               <button
                 onClick={() => setDrillType("words")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                   drillType === "words"
-                    ? "bg-amber-500 text-slate-950 shadow-md"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
-                📚 सामान्य शब्द
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Common Words</span>
               </button>
               <button
                 onClick={() => setDrillType("row")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
                   drillType === "row"
-                    ? "bg-amber-500 text-slate-950 shadow-md"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
-                ⌨️ रो सराव
+                <Keyboard className="w-3.5 h-3.5" />
+                <span>Row Practice</span>
               </button>
             </div>
           </div>
 
+          {/* Language Switcher */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-semibold">भाषा:</span>
-            <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex gap-1">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Language:</span>
+            <div className="bg-slate-100 dark:bg-black/50 p-1 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-1">
               <button
                 onClick={() => setLanguage("marathi")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
                   language === "marathi"
-                    ? "bg-emerald-500 text-slate-950 shadow-md"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
-                🇮🇳 मराठी
+                🇮🇳 Marathi
               </button>
               <button
                 onClick={() => setLanguage("english")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
                   language === "english"
-                    ? "bg-emerald-500 text-slate-950 shadow-md"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
                 🇬🇧 English
@@ -246,12 +292,13 @@ export default function KeyboardDrillsPage() {
             </div>
           </div>
 
+          {/* Category Dropdown */}
           <div className="flex items-center gap-2 flex-1 min-w-[260px]">
-            <span className="text-xs text-slate-400 font-semibold">कॅटेगरी:</span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Category:</span>
             <select
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-amber-300 font-medium w-full focus:outline-none focus:border-amber-500/50"
+              className="bg-white dark:bg-black/50 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-cyan-700 dark:text-cyan-300 font-semibold w-full focus:outline-none focus:border-cyan-500"
             >
               {drillType === "row"
                 ? KEYBOARD_ROW_DRILLS[language].map((r) => (
@@ -261,55 +308,73 @@ export default function KeyboardDrillsPage() {
                   ))
                 : filteredCategories.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.title} ({c.words.length} शब्द)
+                      {c.title} ({c.words.length} words)
                     </option>
                   ))}
             </select>
           </div>
         </div>
 
+        {/* Live Metrics Grid */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl text-center">
-            <span className="text-[11px] text-slate-400 font-bold block uppercase">गती (Speed)</span>
-            <span className="text-2xl font-black text-amber-400">
-              {wpm} <span className="text-xs font-normal text-slate-400">WPM</span>
+          <div className="glass-panel p-4 sm:p-5 rounded-2xl text-center">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">
+              Typing Speed
             </span>
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-2xl sm:text-3xl font-black font-mono text-cyan-600 dark:text-cyan-400">{wpm}</span>
+              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">WPM</span>
+            </div>
           </div>
-          <div className="bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl text-center">
-            <span className="text-[11px] text-slate-400 font-bold block uppercase">अचूकता (Accuracy)</span>
-            <span className={`text-2xl font-black ${accuracy >= 95 ? "text-emerald-400" : "text-rose-400"}`}>
-              {accuracy}%
+
+          <div className="glass-panel p-4 sm:p-5 rounded-2xl text-center">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">
+              Accuracy
             </span>
+            <div className="flex items-center justify-center gap-1">
+              <span className={`text-2xl sm:text-3xl font-black font-mono ${accuracy >= 95 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                {accuracy}
+              </span>
+              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">%</span>
+            </div>
           </div>
-          <div className="bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl text-center">
-            <span className="text-[11px] text-slate-400 font-bold block uppercase">प्रगती (Progress)</span>
-            <span className="text-2xl font-black text-sky-400">
-              {Math.min(100, Math.round((completedWords.length / (targetWords.length || 1)) * 100))}%
+
+          <div className="glass-panel p-4 sm:p-5 rounded-2xl text-center">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">
+              Progress
             </span>
+            <div className="flex items-center justify-center gap-1">
+              <span className="text-2xl sm:text-3xl font-black font-mono text-amber-600 dark:text-amber-400">
+                {Math.min(100, Math.round((completedWords.length / (targetWords.length || 1)) * 100))}
+              </span>
+              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">%</span>
+            </div>
           </div>
         </div>
 
-        {/* Word Display Box */}
-        <div className="bg-slate-900/70 border border-slate-800 p-6 sm:p-8 rounded-3xl space-y-6 shadow-xl backdrop-blur-xl">
-          <div className="flex flex-wrap gap-2.5 text-lg sm:text-xl font-medium leading-relaxed tracking-wide font-mono bg-slate-950/80 p-6 rounded-2xl border border-slate-800/80 max-h-56 overflow-y-auto select-none">
+        {/* Word Display & Typing Bento Container */}
+        <div className="glass-panel p-6 sm:p-8 rounded-3xl space-y-6">
+          
+          {/* Target Words Stream */}
+          <div className="flex flex-wrap gap-2 text-base sm:text-lg font-medium leading-relaxed tracking-wide font-mono bg-slate-100 dark:bg-black/40 p-6 rounded-2xl border border-slate-200 dark:border-white/[0.06] max-h-56 overflow-y-auto select-none shadow-inner">
             {targetWords.map((word, idx) => {
               const isDone = idx < completedWords.length;
               const isCurrent = idx === activeWordIdx;
               const isFuture = idx > activeWordIdx;
 
-              let wordClass = "text-slate-400 px-1.5 py-0.5 rounded";
+              let wordClass = "text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded";
 
               if (isDone) {
                 const userWord = completedWords[idx] || "";
                 if (normalizeText(userWord) === normalizeText(word)) {
-                  wordClass = "text-emerald-400 bg-emerald-500/10 font-bold px-1.5 py-0.5 rounded";
+                  wordClass = "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 font-bold px-2 py-0.5 rounded";
                 } else {
-                  wordClass = "text-rose-400 bg-rose-500/20 line-through px-1.5 py-0.5 rounded";
+                  wordClass = "text-rose-600 dark:text-rose-400 bg-rose-500/10 dark:bg-rose-500/20 line-through px-2 py-0.5 rounded";
                 }
               } else if (isCurrent) {
-                wordClass = "text-slate-950 bg-amber-400 font-bold px-2 py-0.5 rounded shadow-md animate-pulse";
+                wordClass = "text-black bg-cyan-400 font-black px-2.5 py-0.5 rounded shadow-lg shadow-cyan-400/20 animate-pulse";
               } else if (isFuture) {
-                wordClass = "text-slate-500 px-1.5 py-0.5";
+                wordClass = "text-slate-400 dark:text-slate-500 px-2 py-0.5";
               }
 
               return (
@@ -320,6 +385,7 @@ export default function KeyboardDrillsPage() {
             })}
           </div>
 
+          {/* Interactive Input Box */}
           <div className="space-y-2">
             <MarathiTextarea
               ref={inputRef}
@@ -330,26 +396,38 @@ export default function KeyboardDrillsPage() {
               placeholder={
                 language === "marathi"
                   ? "येथे पाहून टाईप करा (प्रत्येक शब्दानंतर Space दाबा)..."
-                  : "Start typing in English..."
+                  : "Type the target words here (press Space after each word)..."
               }
-              className="w-full bg-slate-950 border border-slate-700/80 focus:border-amber-500/60 rounded-2xl px-5 py-4 text-base sm:text-lg text-slate-100 font-mono focus:outline-none transition shadow-inner resize-none"
+              className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] focus:border-cyan-500 rounded-2xl px-5 py-4 text-base sm:text-lg text-slate-900 dark:text-slate-100 font-mono focus:outline-none transition-colors shadow-inner resize-none placeholder-slate-400 dark:placeholder-slate-600"
               autoFocus
             />
           </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-xs text-slate-400">
-              💡 टीप: प्रत्येक अक्षर/शब्द पूर्ण झाल्यावर <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">Space</kbd> दाबा.
-            </span>
+          {/* Tip & Reset Helper */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/[0.06]">
+            <div className="flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+              <span>
+                Tip: Press <kbd className="px-1.5 py-0.5 bg-slate-200 dark:bg-black/60 rounded border border-slate-300 dark:border-white/[0.1] text-cyan-700 dark:text-cyan-300 font-mono text-[10px]">Space</kbd> after completing each word.
+              </span>
+            </div>
+
             <button
               onClick={handleReset}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition"
+              className="px-3 py-1 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg transition duration-200 cursor-pointer flex items-center gap-1"
             >
-              🔄 पुन्हा सुरू करा
+              <RotateCcw className="w-3 h-3" />
+              <span>Restart Drill</span>
             </button>
           </div>
         </div>
+
       </div>
-    </div>
+
+      {/* Modern Minimal Footer */}
+      <footer className="relative z-10 max-w-6xl mx-auto w-full pt-8 text-center text-xs text-slate-500 font-mono">
+        <span>TypeForge PRO • Keyboard Muscle Memory Engine</span>
+      </footer>
+    </main>
   );
 }

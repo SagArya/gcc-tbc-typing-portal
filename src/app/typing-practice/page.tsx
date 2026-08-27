@@ -7,9 +7,22 @@ import VirtualKeyboardHands from "@/components/VirtualKeyboardHands";
 import CustomPassageModal from "@/components/CustomPassageModal";
 import WeakKeysDrawer from "@/components/WeakKeysDrawer";
 import TypingResultModal from "@/components/TypingResultModal";
+import MarathiTextarea from "@/components/MarathiTextarea";
+import GlowCursor from "@/components/GlowCursor";
+import ThemeToggle from "@/components/ThemeToggle";
 import { useWeakKeysTracker } from "@/hooks/useWeakKeysTracker";
-// import { normalKeyMap, shiftKeyMap } from "@/app/keyboard-drills/page";
-import { normalKeyMap, shiftKeyMap } from "@/utils/keyboardMaps";
+import {
+  ArrowLeft,
+  Timer,
+  UploadCloud,
+  Crosshair,
+  HandMetal,
+  RotateCcw,
+  CheckCircle,
+  FileText,
+  Keyboard,
+  Sparkles,
+} from "lucide-react";
 
 export interface PassageItem {
   id: string;
@@ -33,31 +46,6 @@ const DEFAULT_PASSAGES: PassageItem[] = [
   },
 ];
 
-const HALF_TO_FULL_MAP: Record<string, string> = {
-  "ध्": "ध",
-  "थ्": "थ",
-  "भ्": "भ",
-  "श्": "श",
-  "ख्": "ख",
-  "ग्": "ग",
-  "घ्": "घ",
-  "च्": "च",
-  "ज्": "ज",
-  "झ्": "झ",
-  "ण्": "ण",
-  "त्": "त",
-  "न्": "न",
-  "प्": "प",
-  "ब्": "ब",
-  "म्": "म",
-  "ल्": "ल",
-  "व्": "व",
-  "स्": "स",
-  "ष्": "ष",
-  "ळ्": "ळ",
-  "क्": "क",
-};
-
 export default function TypingPracticePage() {
   const [passages, setPassages] = useState<PassageItem[]>(DEFAULT_PASSAGES);
   const [selectedPassageId, setSelectedPassageId] = useState(DEFAULT_PASSAGES[0].id);
@@ -72,7 +60,6 @@ export default function TypingPracticePage() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isTypingActive, setIsTypingActive] = useState(false);
 
-  const [pendingVelanti, setPendingVelanti] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { getTopWeakKeys, clearStats } = useWeakKeysTracker();
 
@@ -109,7 +96,7 @@ export default function TypingPracticePage() {
   const activeCharIndex = currentTypedWord.length;
   const activeChar = activeTargetWord[activeCharIndex] || activeTargetWord[0] || "";
 
-  // निकाल मोजणी
+  // निकाल मोजणी (NFC Normalization सह)
   const resultStats = useMemo(() => {
     const userWords = userInput.trim().split(/\s+/).filter(Boolean);
     const targetWords = currentPassage.text.trim().split(/\s+/).filter(Boolean);
@@ -143,174 +130,16 @@ export default function TypingPracticePage() {
     };
   }, [userInput, currentPassage, elapsedSeconds]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (!isTypingActive && userInput.length === 0) {
+  const handleInputChange = (val: string) => {
+    if (!isTypingActive && val.length > 0) {
       setIsTypingActive(true);
       setStartTime(Date.now());
     }
-
-    if (
-      e.ctrlKey ||
-      e.altKey ||
-      e.metaKey ||
-      e.key === "CapsLock" ||
-      e.key === "Shift"
-    ) {
-      return;
-    }
-
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const before = userInput.substring(0, start);
-    const after = userInput.substring(end);
-
-    if (e.key === "Tab") {
-      e.preventDefault();
-      const tabSpace = "    ";
-      const updated = before + tabSpace + after;
-      setUserInput(updated);
-      setTimeout(() => {
-        textarea.selectionStart = textarea.selectionEnd = start + tabSpace.length;
-      }, 0);
-      return;
-    }
-
-    if (e.key === "Backspace") {
-      if (pendingVelanti) {
-        setPendingVelanti(false);
-        e.preventDefault();
-        return;
-      }
-      return;
-    }
-
-    if (
-      e.key === "Delete" ||
-      e.key === "ArrowLeft" ||
-      e.key === "ArrowRight" ||
-      e.key === "ArrowUp" ||
-      e.key === "ArrowDown"
-    ) {
-      return;
-    }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      setPendingVelanti(false);
-      const updated = before + "\n" + after;
-      setUserInput(updated);
-      setTimeout(() => {
-        textarea.selectionStart = textarea.selectionEnd = start + 1;
-      }, 0);
-      return;
-    }
-
-    if (e.key === " ") {
-      e.preventDefault();
-      setPendingVelanti(false);
-      const updated = before + " " + after;
-      setUserInput(updated);
-      setTimeout(() => {
-        textarea.selectionStart = textarea.selectionEnd = start + 1;
-      }, 0);
-      return;
-    }
-
-    if (isEnglish) {
-      return;
-    }
-
-    const rawKey = e.key;
-
-    if (rawKey === "f" && !e.shiftKey) {
-      e.preventDefault();
-      setPendingVelanti(true);
-      return;
-    }
-
-    let marathiChar = "";
-    if (e.shiftKey && shiftKeyMap[rawKey]) {
-      marathiChar = shiftKeyMap[rawKey];
-    } else if (normalKeyMap[rawKey]) {
-      marathiChar = normalKeyMap[rawKey];
-    }
-
-    if (marathiChar) {
-      e.preventDefault();
-      let updatedText = "";
-      let newCursorPos = start;
-
-      if (rawKey === "k" && !e.shiftKey && before.endsWith("अ")) {
-        const textWithoutA = before.slice(0, -1);
-        updatedText = (textWithoutA + "आ" + after).normalize("NFC");
-        newCursorPos = start;
-      } else if (
-        rawKey === "k" &&
-        !e.shiftKey &&
-        before.length >= 2 &&
-        HALF_TO_FULL_MAP[before.slice(-2)]
-      ) {
-        const fullChar = HALF_TO_FULL_MAP[before.slice(-2)];
-        const textBeforeHalf = before.slice(0, -2);
-
-        if (pendingVelanti) {
-          updatedText = (textBeforeHalf + fullChar + "ि" + after).normalize("NFC");
-          setPendingVelanti(false);
-          newCursorPos = start;
-        } else {
-          updatedText = (textBeforeHalf + fullChar + after).normalize("NFC");
-          newCursorPos = start - 1;
-        }
-      } else if (pendingVelanti) {
-        if (marathiChar.endsWith("्")) {
-          updatedText = (before + marathiChar + after).normalize("NFC");
-          newCursorPos = start + marathiChar.length;
-        } else {
-          updatedText = (before + marathiChar + "ि" + after).normalize("NFC");
-          setPendingVelanti(false);
-          newCursorPos = start + marathiChar.length + 1;
-        }
-      } else if ((rawKey === "Z" || rawKey === "$") && before.length > 0) {
-        const match = before.match(
-          /([\u0915-\u0939\u0958-\u095F](?:[\u094D][\u0915-\u0939\u0958-\u095F])*[\u093E-\u094F\u0901-\u0903]*)$/
-        );
-        if (match && match.index !== undefined) {
-          const cluster = match[0];
-          const prefix = before.substring(0, match.index);
-          updatedText = (prefix + "र्" + cluster + after).normalize("NFC");
-          newCursorPos = start + 2;
-        } else {
-          const lastChar = before.slice(-1);
-          const prefix = before.slice(0, -1);
-          updatedText = (prefix + "र्" + lastChar + after).normalize("NFC");
-          newCursorPos = start + 2;
-        }
-      } else if (rawKey.toLowerCase() === "s" && before.endsWith("ा")) {
-        const textWithoutKana = before.slice(0, -1);
-        updatedText = (
-          textWithoutKana +
-          (e.shiftKey ? "ौ" : "ो") +
-          after
-        ).normalize("NFC");
-        newCursorPos = start;
-      } else {
-        updatedText = (before + marathiChar + after).normalize("NFC");
-        newCursorPos = start + marathiChar.length;
-      }
-
-      setUserInput(updatedText);
-      setTimeout(() => {
-        textarea.selectionStart = textarea.selectionEnd = newCursorPos;
-      }, 0);
-    }
+    setUserInput(val);
   };
 
   const handleReset = () => {
     setUserInput("");
-    setPendingVelanti(false);
     setIsTypingActive(false);
     setStartTime(null);
     setElapsedSeconds(0);
@@ -349,92 +178,125 @@ export default function TypingPracticePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 space-y-6">
-      <div className="max-w-7xl mx-auto space-y-5">
-        {/* Header Bar */}
-        <header className="bg-slate-900/90 backdrop-blur-md p-4 rounded-2xl border border-slate-800 flex flex-wrap justify-between items-center gap-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-emerald-400 selection:text-black font-sans relative overflow-x-hidden p-4 sm:p-6">
+      
+      {/* Dynamic Background Glow */}
+      <GlowCursor />
+
+      {/* Grid Pattern Overlay */}
+      <div 
+        className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.04]"
+        style={{
+          backgroundImage: `radial-gradient(currentColor 1px, transparent 1px)`,
+          backgroundSize: '24px 24px'
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto w-full space-y-6">
+        
+        {/* Top Floating Glass Navigation */}
+        <header className="glass-panel p-4 rounded-2xl flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition border border-slate-700"
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5 font-medium"
             >
-              ← मुख्य पान
+              <ArrowLeft className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Back</span>
             </Link>
             <div>
-              <h1 className="text-lg font-black text-amber-400">
-                स्मार्ट टायपिंग लॅब (Practice Lab)
-              </h1>
-              <span className="text-[11px] font-semibold text-slate-400">
-                मोड: {isEnglish ? "🇬🇧 English Standard" : "🇮🇳 Marathi Remington GAIL"}
+              <div className="flex items-center gap-2">
+                <h1 className="text-base font-extrabold tracking-tight">
+                  Practice Lab
+                </h1>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                  Diagnostic
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                Mode: {isEnglish ? "🇬🇧 English Standard" : "🇮🇳 Marathi Remington GAIL"}
               </span>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="px-3 py-1.5 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-amber-400 font-bold">
-              ⏱️ {Math.floor(elapsedSeconds / 60)}:
-              {(elapsedSeconds % 60).toString().padStart(2, "0")}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Live Timer Pill */}
+            <div className="px-3.5 py-1.5 bg-slate-100 dark:bg-black/50 rounded-xl border border-slate-200 dark:border-white/[0.08] text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 shadow-inner">
+              <Timer className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+              <span>
+                {Math.floor(elapsedSeconds / 60)}:
+                {(elapsedSeconds % 60).toString().padStart(2, "0")}
+              </span>
             </div>
 
             <button
               onClick={() => setIsCustomModalOpen(true)}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] rounded-xl text-xs font-semibold transition duration-200 flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
-              📤 स्वतःचा उतारा जोडा
+              <UploadCloud className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+              <span>Custom Passage</span>
             </button>
+
             <button
               onClick={() => setIsWeakKeysOpen(true)}
-              className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition duration-200 flex items-center gap-1.5 cursor-pointer"
             >
-              🎯 कमजोर अक्षरे
+              <Crosshair className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400" />
+              <span>Weak Keys</span>
             </button>
+
             <button
               onClick={() => setShowHandsGuide((prev) => !prev)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition duration-200 flex items-center gap-1.5 cursor-pointer ${
                 showHandsGuide
-                  ? "bg-amber-500/10 text-amber-300 border-amber-500/30"
-                  : "bg-slate-800 text-slate-400 border-slate-700"
+                  ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                  : "bg-slate-100 dark:bg-white/[0.04] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/[0.08]"
               }`}
             >
-              🖐️ बोटे {showHandsGuide ? "चालू" : "बंद"}
+              <HandMetal className="w-3.5 h-3.5" />
+              <span>Finger Guide: {showHandsGuide ? "ON" : "OFF"}</span>
             </button>
+
+            {/* Theme Toggle Button */}
+            <ThemeToggle />
           </div>
         </header>
 
-        {/* 🔲 Side-by-Side Clean Grid (Left: Single Passage Viewer | Right: Single Textarea) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        {/* Bento Grid: Left (Question Passage) | Right (Interactive Typing Box) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           
-          {/* डावी बाजू: मूळ प्रश्न उतारा */}
-          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex flex-col shadow-xl min-h-[400px] lg:min-h-[480px]">
-            <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-3 mb-3">
-              <span className="font-bold text-amber-400 uppercase tracking-wider">
-                📄 प्रश्न उतारा (Question Passage)
-              </span>
-              <span className="text-[11px] text-slate-400 truncate max-w-[200px]">
+          {/* डावी बाजू: प्रश्न उतारा */}
+          <div className="glass-panel p-6 rounded-3xl flex flex-col min-h-[420px] lg:min-h-[500px]">
+            <div className="flex justify-between items-center text-xs border-b border-slate-200 dark:border-white/[0.06] pb-3 mb-4">
+              <div className="flex items-center gap-2 font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-[11px]">
+                <FileText className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                <span>Target Passage</span>
+              </div>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[220px] font-mono">
                 {currentPassage.title}
               </span>
             </div>
 
             {/* Highlighting सह उतारा */}
-            <div className="flex-1 bg-slate-950 p-4 rounded-xl border border-slate-800/80 overflow-y-auto leading-relaxed text-base sm:text-lg font-sans">
+            <div className="flex-1 bg-slate-100 dark:bg-black/40 p-5 rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-y-auto leading-relaxed text-base sm:text-lg font-sans select-none shadow-inner">
               {passageWords.map((word, idx) => {
                 const userWord = typedTokens[idx];
                 const isCurrent = idx === currentWordIndex;
-                let wordColor = "text-slate-400"; // टाईप न झालेला शब्द
+                let wordColor = "text-slate-600 dark:text-slate-400";
 
                 if (userWord !== undefined) {
                   if (userWord.normalize("NFC") === word.normalize("NFC")) {
-                    wordColor = "text-emerald-400 font-semibold"; // बरोबर
+                    wordColor = "text-emerald-600 dark:text-emerald-400 font-semibold";
                   } else {
-                    wordColor = "text-rose-400 font-semibold underline decoration-rose-500/50"; // चूक
+                    wordColor = "text-rose-600 dark:text-rose-400 font-semibold underline decoration-rose-500/50";
                   }
                 }
 
                 return (
                   <span
                     key={idx}
-                    className={`inline-block mr-2 mb-1 px-1 rounded transition-colors ${wordColor} ${
-                      isCurrent ? "bg-amber-500/20 text-amber-300 border-b-2 border-amber-400" : ""
+                    className={`inline-block mr-2 mb-1 px-1.5 py-0.5 rounded transition-colors ${wordColor} ${
+                      isCurrent ? "bg-amber-500/20 text-amber-800 dark:text-amber-300 border-b-2 border-amber-500 font-bold" : ""
                     }`}
                   >
                     {word}
@@ -444,26 +306,21 @@ export default function TypingPracticePage() {
             </div>
           </div>
 
-          {/* उजवी बाजू: टायपिंग इनपुट बॉक्स */}
-          <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex flex-col shadow-xl min-h-[400px] lg:min-h-[480px]">
-            <div className="flex justify-between items-center text-xs text-slate-400 mb-3 pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-emerald-400 uppercase tracking-wider">
-                  ⌨️ तुमचा टायपिंग बॉक्स
-                </span>
-                {pendingVelanti && (
-                  <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded text-[10px] font-bold border border-amber-500/30 animate-pulse">
-                    वेलांटी (ि) सक्रिय
-                  </span>
-                )}
+          {/* उजवी बाजू: टायपिंग बॉक्स */}
+          <div className="glass-panel p-6 rounded-3xl flex flex-col min-h-[420px] lg:min-h-[500px]">
+            <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mb-4 pb-3 border-b border-slate-200 dark:border-white/[0.06]">
+              <div className="flex items-center gap-2 font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider text-[11px]">
+                <Keyboard className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+                <span>Live Interactive Input</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleReset}
-                  className="text-slate-400 hover:text-white transition cursor-pointer"
+                  className="px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition duration-200 flex items-center gap-1 cursor-pointer text-xs"
                 >
-                  रिसेट
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset</span>
                 </button>
                 <button
                   onClick={() => {
@@ -471,35 +328,38 @@ export default function TypingPracticePage() {
                     setIsResultOpen(true);
                   }}
                   disabled={userInput.trim().length === 0}
-                  className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-bold rounded-xl transition text-xs shadow-lg shadow-emerald-500/20 cursor-pointer"
+                  className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 text-slate-950 font-black rounded-xl transition duration-200 text-xs shadow-md shadow-emerald-500/20 flex items-center gap-1.5 cursor-pointer"
                 >
-                  ✅ सबमिट आणि निकाल
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  <span>Submit & Review</span>
                 </button>
               </div>
             </div>
 
-            <textarea
+            <MarathiTextarea
               ref={textareaRef}
               value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onChangeValue={handleInputChange}
+              isMarathi={!isEnglish}
               placeholder={
                 isEnglish
-                  ? "Type the English passage here..."
+                  ? "Type the target English passage here..."
                   : "येथे परीक्षा उताऱ्याप्रमाणे टायपिंग सुरू करा..."
               }
-              className="flex-1 w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-base sm:text-lg text-slate-100 focus:outline-none focus:border-amber-500 leading-relaxed font-sans resize-none"
+              className="flex-1 w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.06] rounded-2xl p-5 text-base sm:text-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:border-emerald-500 leading-relaxed font-sans resize-none shadow-inner transition-colors duration-200 placeholder-slate-400 dark:placeholder-slate-600"
               autoFocus
             />
           </div>
         </div>
 
-        {/* Visual Hands Guide (फक्त मराठी उतार्‍यासाठी) */}
+        {/* Visual Finger Guide */}
         {showHandsGuide && !isEnglish && (
-          <VirtualKeyboardHands activeChar={activeChar} />
+          <div className="glass-panel p-6 rounded-3xl">
+            <VirtualKeyboardHands activeChar={activeChar} />
+          </div>
         )}
 
-        {/* Modals & Drawers */}
+        {/* Modals & Diagnostic Drawers */}
         <CustomPassageModal
           isOpen={isCustomModalOpen}
           onClose={() => setIsCustomModalOpen(false)}
@@ -525,6 +385,11 @@ export default function TypingPracticePage() {
           {...resultStats}
         />
       </div>
+
+      {/* Modern Minimal Footer */}
+      <footer className="relative z-10 max-w-7xl mx-auto w-full pt-8 text-center text-xs text-slate-500 font-mono">
+        <span>TypeForge Engine • Diagnostic Practice Lab</span>
+      </footer>
     </div>
   );
 }
