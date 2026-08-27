@@ -18,51 +18,103 @@ import {
   Layers,
   BookOpen,
   Info,
+  Award,
+  ArrowRight,
 } from "lucide-react";
 
 const KEYBOARD_ROW_DRILLS = {
   marathi: [
     {
-      id: "mr-home",
-      title: "Home Row (मध्यम ओळ - क म त न स)",
-      text: "क म त न स य ल व र ह क म त न स य ल व र ह",
+      id: "mr-home-letters",
+      title: "Home Row: अक्षरे (क म त न स य ल व र ह)",
+      text: "क म त न स य ल व र ह क म त न स य ल व र ह कक मम तत नन सस यय लल वव रर हह कम तन सय लव रह कत सन यव लर हम सन यल वर हक मत नस यल वर ह",
     },
     {
-      id: "mr-top",
-      title: "Top Row (वरची ओळ - ज ड ण च प)",
-      text: "ज ड ण च प ट ठ ग ब द ज ड ण च प ट ठ ग ब द",
+      id: "mr-home-words",
+      title: "Home Row: शब्द सराव (Home Row Words)",
+      text: "कर सर तर वर नर मन तन वन सन मत सत कत रस लस नस लय वय लय वर करवत तरस कसरत नवरस सरवत समरस वतन तरक मकर नमक हरवत समय",
     },
     {
-      id: "mr-bottom",
-      title: "Bottom Row (खालची ओळ - झ ढ ध फ)",
-      text: "झ ढ ध फ भ घ ळ श ष झ ढ ध फ भ घ ळ श ष",
+      id: "mr-top-letters",
+      title: "Top Row: अक्षरे (ज ड ण च प ट ठ ग ब द)",
+      text: "ज ड ण च प ट ठ ग ब द ज ड ण च प ट ठ ग ब द जज डड णण चच पप टट ठठ गग बब दद जड णच पट ठग बद जप चट ठब दण जद गट डब पण",
     },
     {
-      id: "mr-matra",
-      title: "मात्रा व काना सराव",
-      text: "का की कु के कै को कौ कं का की कु के कै को कौ कं",
+      id: "mr-top-words",
+      title: "Top Row: शब्द सराव (Top Row Words)",
+      text: "पट चट तट गट दड जड ठग बड चण पड पटपट चटचट गडबड दगड बडबड चटक पटक दणका ठसका टप टप चप चप घट घट दप दप",
+    },
+    {
+      id: "mr-bottom-letters",
+      title: "Bottom Row: अक्षरे (झ ढ ध फ भ घ ळ श ष)",
+      text: "झ ढ ध फ भ घ ळ श ष झ ढ ध फ भ घ ळ श ष झझ ढढ धध फफ भभ घघ ळळ शश षष झढ धफ भघ ळश षझ ढध फभ घळ शष झफ ढभ धघ फळ भश घष",
+    },
+    {
+      id: "mr-bottom-words",
+      title: "Bottom Row: शब्द सराव (Bottom Row Words)",
+      text: "धड फळ भट घट झट ढग फणस भडक धडक झडक घमघम झळझळ भलभल धन घट भर फळ शप शपथ धनंजय भाषण घोषणा ढकल भरण घडण",
+    },
+    {
+      id: "mr-home-top-mix",
+      title: "Home + Top Row: मिश्र शब्द (Combined Words)",
+      text: "कपट गमन तपन नगर चमन पदक मदत जनक पतन कदम गगन पवन जगत तडक कडक चमक दमक चवदार चमकदार पटकन पटकन मदतगार जनमत परवाना",
+    },
+    {
+      id: "mr-all-rows-advanced",
+      title: "All Rows: संपूर्ण कीबोर्ड मास्टर सराव",
+      text: "सकल जनमानसात आदर निर्माण करणारा मनुष्य नेहमी यशस्वी ठरतो सत्य आणि न्याय यांच्या मार्गावर चालणे हेच प्रत्येक नागरिकाचे परम कर्तव्य आहे सतत अभ्यास आणि सराव यामुळे टायपिंगचा वेग निश्चित वाढतो",
+    },
+    {
+      id: "mr-matra-advanced",
+      title: "मात्रा, काना, वेलांटी व उकार सराव",
+      text: "का की कु कू के कै को कौ कं कः मा मी मु मू मे मै मो मौ मं मः ता ती तु तू ते तै तो तौ तं तः सा सी सु सू से सै सो सौ सं सः काम कीर कुल केस कोट कौल कासव जीवन पाऊस गौरव",
     },
   ],
   english: [
     {
-      id: "en-home",
-      title: "Home Row (ASDF JKL;)",
-      text: "asdf jkl; asdf jkl; aadd ssff jjkk ll;; asdf jkl;",
+      id: "en-home-letters",
+      title: "Home Row: Letters (ASDF JKL;)",
+      text: "asdf jkl; asdf jkl; aadd ssff jjkk ll;; aa ss dd ff jj kk ll ;; asdfg ;lkjh asdf jkl; gfdsa hjkl; aaddssff jjkkll;; asdf jkl; fdsa ;lkj",
     },
     {
-      id: "en-top",
-      title: "Top Row (QWERTY UIOP)",
-      text: "qwer tyui op qw er ty ui op qwert yuiop",
+      id: "en-home-words",
+      title: "Home Row: Word Builder",
+      text: "all fall salad flash glad alfalfa ask dad sad lad hall dash flask gas had half sash fall alas shall flags flasks Dallas salads alfalfa dads lads",
     },
     {
-      id: "en-bottom",
-      title: "Bottom Row (ZXCVBNM)",
-      text: "zxcv bnm zx cv bn m zxcv bnm zxcvbnm",
+      id: "en-top-letters",
+      title: "Top Row: Letters (QWERTY UIOP)",
+      text: "qwer tyui op qw er ty ui op qwert yuiop poiuy trewq qq ww ee rr tt yy uu ii oo pp qwer uiop trew poiu wert yuiop qwert poiuy",
     },
     {
-      id: "en-all",
-      title: "Full Alphabet (A-Z)",
-      text: "the quick brown fox jumps over the lazy dog",
+      id: "en-top-words",
+      title: "Top Row: Word Builder",
+      text: "type write power quiet poetry equity require tower root pure pour tree trip peer rope wire territory pepper priority twitter output pretty route",
+    },
+    {
+      id: "en-bottom-letters",
+      title: "Bottom Row: Letters (ZXCVBNM)",
+      text: "zxcv bnm zx cv bn m zxcv bnm zxcvbnm mnbvcxz zz xx cc vv bb nn mm zxc vbn mnb vcx zxcv bnm mnbv cxz zxcvb nmzxc vbnm",
+    },
+    {
+      id: "en-bottom-words",
+      title: "Bottom Row: Word Builder",
+      text: "man can ban van cab mob zinc exam comb coax bacon cabin civic bomb mimic amaze buzz maximum venom vacuum mix cabman",
+    },
+    {
+      id: "en-home-top-mix",
+      title: "Home + Top Row: Common Combinations",
+      text: "there their where great trade quiet write state order power street plate water little letter please pretty factor filter reply simple figure people",
+    },
+    {
+      id: "en-all-rows-advanced",
+      title: "All Rows: Pangrams & Muscle Flow",
+      text: "the quick brown fox jumps over the lazy dog pack my box with five dozen liquor jugs sphinx of black quartz judge my vow how razorback jumping frogs can level six piqued gymnasts",
+    },
+    {
+      id: "en-speed-burst",
+      title: "High-Frequency Speed Bursts",
+      text: "about after again below could every first great house large might never other place right small there under water where world years youth daily early found group light money night party state",
     },
   ],
 };
@@ -90,8 +142,13 @@ export default function KeyboardDrillsPage() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [accuracy, setAccuracy] = useState<number>(100);
   const [wpm, setWpm] = useState<number>(0);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [showResultModal, setShowResultModal] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const filteredCategories = COMMON_WORDS_DATA.filter((c) => c.language === language);
+  const currentCategoryList = drillType === "row" ? KEYBOARD_ROW_DRILLS[language] : filteredCategories;
 
   useEffect(() => {
     if (drillType === "row") {
@@ -101,10 +158,9 @@ export default function KeyboardDrillsPage() {
         setTargetText(rows[0].text);
       }
     } else {
-      const availableCats = COMMON_WORDS_DATA.filter((c) => c.language === language);
-      if (availableCats && availableCats.length > 0) {
-        setSelectedCategory(availableCats[0].id);
-        setTargetText(availableCats[0].words.join(" "));
+      if (filteredCategories && filteredCategories.length > 0) {
+        setSelectedCategory(filteredCategories[0].id);
+        setTargetText(filteredCategories[0].words.join(" "));
       }
     }
     handleReset();
@@ -120,6 +176,16 @@ export default function KeyboardDrillsPage() {
       if (item) setTargetText(item.words.join(" "));
     }
     handleReset();
+  };
+
+  const handleNextDrill = () => {
+    const currentIndex = currentCategoryList.findIndex((item) => item.id === selectedCategory);
+    const nextIndex = (currentIndex + 1) % currentCategoryList.length;
+    const nextItem = currentCategoryList[nextIndex];
+
+    if (nextItem) {
+      handleCategoryChange(nextItem.id);
+    }
   };
 
   const targetWords = targetText.trim().split(/\s+/).filter(Boolean);
@@ -143,7 +209,10 @@ export default function KeyboardDrillsPage() {
   const activeWordIdx = completedWords.length;
 
   const updateTypingState = (val: string) => {
-    if (!startTime) setStartTime(Date.now());
+    if (isFinished) return;
+
+    const currentTime = startTime || Date.now();
+    if (!startTime) setStartTime(currentTime);
     setUserInput(val);
 
     const typedList = val.trimStart().split(/\s+/).filter(Boolean);
@@ -158,12 +227,20 @@ export default function KeyboardDrillsPage() {
       typedList.length > 0 ? Math.round((correctWords / typedList.length) * 100) : 100;
     setAccuracy(currentAcc);
 
-    if (startTime) {
-      const elapsedMins = (Date.now() - startTime) / 60000;
-      if (elapsedMins > 0.02) {
-        const wordsTyped = val.length / 5;
-        setWpm(Math.round(wordsTyped / elapsedMins));
-      }
+    const elapsedMins = Math.max((Date.now() - currentTime) / 60000, 0.02);
+    const wordsTyped = val.length / 5;
+    const currentWpm = Math.round(wordsTyped / elapsedMins);
+    setWpm(currentWpm);
+
+    // 🎯 AUTO SUBMISSION CHECK
+    const hasFinishedBySpace = typedList.length >= targetWords.length && isTrailingSpace;
+    const hasFinishedExactLastWord =
+      typedList.length === targetWords.length &&
+      normalizeText(typedList[typedList.length - 1]) === normalizeText(targetWords[targetWords.length - 1]);
+
+    if (targetWords.length > 0 && (hasFinishedBySpace || hasFinishedExactLastWord)) {
+      setIsFinished(true);
+      setShowResultModal(true);
     }
   };
 
@@ -172,10 +249,10 @@ export default function KeyboardDrillsPage() {
     setStartTime(null);
     setWpm(0);
     setAccuracy(100);
+    setIsFinished(false);
+    setShowResultModal(false);
     inputRef.current?.focus();
   };
-
-  const filteredCategories = COMMON_WORDS_DATA.filter((c) => c.language === language);
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-cyan-400 selection:text-black font-sans relative overflow-x-hidden p-4 sm:p-6">
@@ -242,7 +319,8 @@ export default function KeyboardDrillsPage() {
             <div className="bg-slate-100 dark:bg-black/50 p-1 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-1">
               <button
                 onClick={() => setDrillType("words")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                disabled={isFinished}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50 ${
                   drillType === "words"
                     ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -253,7 +331,8 @@ export default function KeyboardDrillsPage() {
               </button>
               <button
                 onClick={() => setDrillType("row")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                disabled={isFinished}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50 ${
                   drillType === "row"
                     ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -271,7 +350,8 @@ export default function KeyboardDrillsPage() {
             <div className="bg-slate-100 dark:bg-black/50 p-1 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-1">
               <button
                 onClick={() => setLanguage("marathi")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                disabled={isFinished}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer disabled:opacity-50 ${
                   language === "marathi"
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -281,7 +361,8 @@ export default function KeyboardDrillsPage() {
               </button>
               <button
                 onClick={() => setLanguage("english")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                disabled={isFinished}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer disabled:opacity-50 ${
                   language === "english"
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -297,8 +378,9 @@ export default function KeyboardDrillsPage() {
             <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Category:</span>
             <select
               value={selectedCategory}
+              disabled={isFinished}
               onChange={(e) => handleCategoryChange(e.target.value)}
-              className="bg-white dark:bg-black/50 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-cyan-700 dark:text-cyan-300 font-semibold w-full focus:outline-none focus:border-cyan-500"
+              className="bg-white dark:bg-black/50 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-cyan-700 dark:text-cyan-300 font-semibold w-full focus:outline-none focus:border-cyan-500 disabled:opacity-50"
             >
               {drillType === "row"
                 ? KEYBOARD_ROW_DRILLS[language].map((r) => (
@@ -393,12 +475,15 @@ export default function KeyboardDrillsPage() {
               value={userInput}
               onChangeValue={(val) => updateTypingState(val)}
               isMarathi={language === "marathi"}
+              disabled={isFinished}
               placeholder={
-                language === "marathi"
+                isFinished
+                  ? "🎉 Drill Completed! Check your results."
+                  : language === "marathi"
                   ? "येथे पाहून टाईप करा (प्रत्येक शब्दानंतर Space दाबा)..."
                   : "Type the target words here (press Space after each word)..."
               }
-              className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] focus:border-cyan-500 rounded-2xl px-5 py-4 text-base sm:text-lg text-slate-900 dark:text-slate-100 font-mono focus:outline-none transition-colors shadow-inner resize-none placeholder-slate-400 dark:placeholder-slate-600"
+              className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] focus:border-cyan-500 rounded-2xl px-5 py-4 text-base sm:text-lg text-slate-900 dark:text-slate-100 font-mono focus:outline-none transition-colors shadow-inner resize-none placeholder-slate-400 dark:placeholder-slate-600 disabled:opacity-50"
               autoFocus
             />
           </div>
@@ -423,6 +508,65 @@ export default function KeyboardDrillsPage() {
         </div>
 
       </div>
+
+      {/* 🏆 AUTO-TRIGGERED DRILL RESULT MODAL */}
+      {showResultModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
+          <div className="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full text-center space-y-6 shadow-2xl relative">
+            <div className="w-16 h-16 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center mx-auto text-cyan-600 dark:text-cyan-400">
+              <Award className="w-8 h-8 animate-bounce" />
+            </div>
+
+            <div>
+              <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+                Drill Completed! 🎉
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                उत्कृष्ट सराव! खालीलप्रमाणे तुमचा निकाल आहे:
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08]">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                  Speed
+                </span>
+                <div className="text-2xl sm:text-3xl font-black font-mono text-cyan-600 dark:text-cyan-400">
+                  {wpm} <span className="text-xs font-normal text-slate-400">WPM</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08]">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                  Accuracy
+                </span>
+                <div className={`text-2xl sm:text-3xl font-black font-mono ${accuracy >= 95 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                  {accuracy}%
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons: Repeat + Next Drill */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                onClick={handleReset}
+                className="flex-1 py-3 bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs sm:text-sm transition duration-200 border border-slate-300 dark:border-white/[0.1] cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <RotateCcw className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                <span>पुन्हा सराव करा</span>
+              </button>
+
+              <button
+                onClick={handleNextDrill}
+                className="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition duration-200 shadow-lg shadow-cyan-500/25 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span>पुढचा सराव</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modern Minimal Footer */}
       <footer className="relative z-10 max-w-6xl mx-auto w-full pt-8 text-center text-xs text-slate-500 font-mono">
