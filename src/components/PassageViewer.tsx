@@ -37,8 +37,8 @@ export default function PassageViewer({
 }: PassageViewerProps) {
   if (loading) {
     return (
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex items-center justify-center min-h-[350px] lg:min-h-[500px]">
-        <div className="text-slate-400 text-sm animate-pulse">
+      <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center justify-center min-h-[350px] lg:min-h-[500px]">
+        <div className="text-slate-400 text-xs sm:text-sm animate-pulse">
           उतारा लोड होत आहे...
         </div>
       </div>
@@ -62,21 +62,21 @@ export default function PassageViewer({
   let globalWordCounter = 0;
 
   return (
-    <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col shadow-xl">
+    <div className="bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-800 flex flex-col shadow-xl">
       {/* Title Header */}
-      <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-        <h2 className="text-sm font-bold text-amber-400 uppercase tracking-wider">
+      <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-800">
+        <h2 className="text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wider">
           📄 मूळ परीक्षा उतारा (Question Passage)
         </h2>
         {title && (
-          <span className="text-xs font-semibold text-slate-300 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
+          <span className="text-[11px] font-semibold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">
             {title}
           </span>
         )}
       </div>
 
-      {/* Paragraphs with Tab & Enter Preserved */}
-      <div className="flex-1 p-5 bg-slate-950 rounded-xl border border-slate-800 text-base sm:text-lg font-normal tracking-wide leading-relaxed space-y-4 select-none overflow-y-auto max-h-[500px]">
+      {/* Paragraphs with Tab & Enter Preserved - Fully Compact Layout */}
+      <div className="flex-1 p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-[13px] sm:text-[14px] font-normal font-mono tracking-normal leading-snug space-y-2.5 select-none overflow-y-auto min-h-[350px] lg:min-h-[500px]">
         {paragraphs.map((para, paraIndex) => {
           const paraWords = para.trim().split(/\s+/).filter(Boolean);
 
@@ -85,10 +85,10 @@ export default function PassageViewer({
           return (
             <div
               key={paraIndex}
-              className="flex flex-wrap gap-x-2 gap-y-2 items-center"
+              className="flex flex-wrap gap-x-1.5 gap-y-1 items-center"
             >
               {/* Tab Indentation */}
-              <span className="inline-block w-8 sm:w-10 text-slate-700 font-mono text-xs select-none">
+              <span className="inline-block w-6 sm:w-8 text-slate-600 font-mono text-xs select-none">
                 ⇥
               </span>
 

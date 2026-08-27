@@ -9,6 +9,8 @@ import ResultCard from "@/components/ResultCard";
 import MistakeReviewer from "@/components/MistakeReviewer";
 import HistoryDashboard, { TestRecord } from "@/components/HistoryDashboard";
 import { updateDailyStreak } from "@/utils/streakManager";
+import { ENGLISH_40_PASSAGES } from "@/data/english40Passages";
+import { MARATHI_30_PASSAGES } from "@/data/marathi30Passages";
 
 interface Passage {
   id: string;
@@ -18,7 +20,7 @@ interface Passage {
   text: string;
 }
 
-const EXAM_TIME_SECONDS = 420; // ७ मिनिटे
+const EXAM_TIME_SECONDS = 420; // ७ मिनिटे (GCC-TBC Standard)
 const TOTAL_EXAM_MARKS = 40;
 const PASSING_MARKS = 16;
 const STORAGE_KEY = "gcc_tbc_typing_history";
@@ -70,9 +72,46 @@ export default function SpeedTestPage() {
     }
   }, []);
 
+  // भाषा व स्पीडनुसार पॅसेजेस लोड करणे
   useEffect(() => {
     async function loadPassages() {
       setLoading(true);
+
+      // १. मराठी ३० WPM साठी लोकल डेटा वापरणे
+      if (language === "marathi" && speed === "30") {
+        const formattedPassages: Passage[] = MARATHI_30_PASSAGES.map((p: any) => ({
+          id: p.id,
+          language: "marathi",
+          speed: 30,
+          title: p.title || `Batch ${p.batchNo}`,
+          text: p.text || p.content || "",
+        }));
+
+        setPassages(formattedPassages);
+        setSelectedPassage(formattedPassages[0] || null);
+        setLoading(false);
+        resetTest();
+        return;
+      }
+
+      // २. इंग्रजी ४० WPM साठी लोकल डेटा वापरणे
+      if (language === "english" && speed === "40") {
+        const formattedPassages: Passage[] = ENGLISH_40_PASSAGES.map((p: any) => ({
+          id: p.id,
+          language: "english",
+          speed: 40,
+          title: p.title || `Batch ${p.batchNo}`,
+          text: p.text || p.content || "",
+        }));
+
+        setPassages(formattedPassages);
+        setSelectedPassage(formattedPassages[0] || null);
+        setLoading(false);
+        resetTest();
+        return;
+      }
+
+      // ३. इतर कॉम्बिनेशन्ससाठी API कॉल करणे
       try {
         const res = await fetch(`/api/passages?lang=${language}&speed=${speed}`);
         const result = await res.json();
@@ -277,7 +316,7 @@ export default function SpeedTestPage() {
                   resetTest();
                 }
               }}
-              className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-emerald-500 disabled:opacity-50 max-w-[190px] truncate"
+              className="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-amber-300 font-medium focus:outline-none focus:border-emerald-500 disabled:opacity-50 max-w-[220px] truncate"
             >
               {passages.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -382,7 +421,7 @@ export default function SpeedTestPage() {
             <MarathiTextarea
               ref={inputRef}
               value={userInput}
-              onChange={(val) => {
+              onChangeValue={(val) => {
                 if (!isActive && timeLeft > 0 && !isFinished) {
                   setIsActive(true);
                 }
@@ -391,7 +430,7 @@ export default function SpeedTestPage() {
               isMarathi={language === "marathi"}
               disabled={timeLeft === 0 || isFinished || loading}
               placeholder="येथे डाव्या बाजूचा उतारा पाहून टाईप करा (परिच्छेदासाठी Tab आणि Enter वापरा)..."
-              className="flex-1 w-full p-5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-base sm:text-lg text-slate-100 leading-relaxed resize-none placeholder-slate-600 min-h-[350px] lg:min-h-[500px]"
+              className="flex-1 w-full p-3.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-[13px] sm:text-[14px] text-slate-100 font-mono leading-snug resize-none placeholder-slate-600 min-h-[350px] lg:min-h-[500px]"
             />
           )}
         </div>
