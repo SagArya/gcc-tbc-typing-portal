@@ -1,6 +1,15 @@
 // src/data/lessonsData.ts
 
-export interface LessonItem {
+export interface LessonStep {
+  id: string;
+  title: string;
+  targetText: string;
+  keysTaught: string[];
+  instruction?: string;
+}
+
+// १. कच्च्या (Raw) धड्यांसाठीचा साधा इंटरफेस (ज्यामुळे marathiLessons/englishLessons मध्ये एरर येणार नाही)
+export interface RawLessonItem {
   id: string;
   title: string;
   marathiTitle: string;
@@ -13,8 +22,24 @@ export interface LessonItem {
   text: string;
 }
 
-export const marathiLessons: LessonItem[] = [
-  // ==========================================
+// २. संपूर्ण ॲपसाठी आवश्यक असणारा पूर्ण इंटरफेस (ज्यामुळे सर्व पेजेस सुरळीत चालतील)
+export interface LessonItem {
+  id: string;
+  title: string;
+  marathiTitle: string;
+  tier: "beginner" | "common_words" | "intermediate" | "advanced" | number | string;
+  tierName: string;
+  targetWpm: number;
+  minAccuracy: number;
+  description: string;
+  keysTaught: string[];
+  text: string;
+  language: "marathi" | "english";
+  steps: LessonStep[];
+  totalSteps: number;
+}
+
+export const marathiLessons: RawLessonItem[] = [  // ==========================================
   // TIER 1: ROW FOUNDATION & BASIC KEYS (धडा १ ते १०)
   // ==========================================
   {
@@ -511,7 +536,7 @@ export const marathiLessons: LessonItem[] = [
   }
 ];
 
-export const englishLessons: LessonItem[] = [
+export const englishLessons: RawLessonItem[] = [
   // ==========================================
   // TIER 1: ROW FOUNDATION (Lessons 1 to 8)
   // ==========================================
@@ -895,17 +920,10 @@ export const englishLessons: LessonItem[] = [
 //   english: englishLessons,
 // };
 
-export interface LessonStep {
-  id: string;
-  title: string;
-  targetText: string;
-  keysTaught: string[];
-}
-
-export const LESSONS_DATA = [
-  ...marathiLessons.map((l) => ({
+export const LESSONS_DATA: LessonItem[] = [
+  ...marathiLessons.map((l): LessonItem => ({
     ...l,
-    language: "marathi" as const,
+    language: "marathi",
     tier:
       l.tier === 1
         ? "beginner"
@@ -914,18 +932,20 @@ export const LESSONS_DATA = [
         : l.tier === 3
         ? "intermediate"
         : "advanced",
+    totalSteps: 1,
     steps: [
       {
         id: `${l.id}-step-1`,
         title: l.title,
         targetText: l.text,
         keysTaught: l.keysTaught,
+        instruction: l.description,
       },
     ],
   })),
-  ...englishLessons.map((l) => ({
+  ...englishLessons.map((l): LessonItem => ({
     ...l,
-    language: "english" as const,
+    language: "english",
     tier:
       l.tier === 1
         ? "beginner"
@@ -934,12 +954,14 @@ export const LESSONS_DATA = [
         : l.tier === 3
         ? "intermediate"
         : "advanced",
+    totalSteps: 1,
     steps: [
       {
         id: `${l.id}-step-1`,
         title: l.title,
         targetText: l.text,
         keysTaught: l.keysTaught,
+        instruction: l.description,
       },
     ],
   })),

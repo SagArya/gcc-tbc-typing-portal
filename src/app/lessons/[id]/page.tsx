@@ -23,6 +23,8 @@ import {
   BookOpen,
 } from "lucide-react";
 
+import VirtualKeyboard from "@/components/VirtualKeyboard";
+
 function normalizeText(str: string): string {
   if (!str) return "";
   return str
@@ -335,12 +337,18 @@ export default function LessonPlayerPage() {
           </div>
         </div>
 
-        {/* Visual Hands Guide */}
-        {isMarathi && (
-          <div className="glass-panel p-6 rounded-3xl">
-            <VirtualKeyboardHands activeChar={activeChar} />
-          </div>
-        )}
+        // src/app/lessons/[id]/page.tsx मध्ये:
+
+            // १. वर इम्पोर्ट जोडा:
+            import VirtualKeyboard from "@/components/VirtualKeyboard";
+
+            // २. रिटर्न JSX मध्ये टायपिंग टेक्स्टएरियाच्या खाली हा कॉम्पोनंट जोडा:
+            <div className="mt-6">
+                <VirtualKeyboard 
+                    nextChar={activeChar} 
+                    isMarathi={isMarathi} 
+                />
+                </div>
       </div>
 
       {/* 🏆 LESSON COMPLETION FINAL MODAL */}
