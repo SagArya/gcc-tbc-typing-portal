@@ -7,15 +7,11 @@ import GlowCursor from "@/components/GlowCursor";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   Zap,
-  Keyboard,
-  Target,
   FileQuestion,
   Sparkles,
   ChevronRight,
-  Award,
   Activity,
-  ShieldCheck,
-  TrendingUp,
+  GraduationCap,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -29,7 +25,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative selection:bg-amber-400 selection:text-black">
+    <div className="min-h-screen flex flex-col justify-between relative selection:bg-amber-400 selection:text-black font-sans">
       <GlowCursor />
 
       {/* Dynamic Grid Pattern */}
@@ -65,14 +61,22 @@ export default function HomePage() {
 
           <div className="flex items-center gap-3">
             <Link
+              href="/lessons"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-xs font-bold text-cyan-700 dark:text-cyan-300 transition"
+            >
+              <GraduationCap className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+              <span>Academy</span>
+            </Link>
+
+            <Link
               href="/mcq-test"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs font-bold text-purple-700 dark:text-purple-300 transition"
+              className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs font-bold text-purple-700 dark:text-purple-300 transition"
             >
               <FileQuestion className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <span>Theory 50 Marks</span>
             </Link>
 
-            <div className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] text-xs font-semibold text-slate-700 dark:text-slate-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
               Remington GAIL
             </div>
@@ -100,7 +104,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto">
-            Engineered for Maharashtra GCC-TBC typing exams with intelligent Marathi ligature recognition, live penalty deductions, and muscle memory drills.
+            Engineered for Maharashtra GCC-TBC typing exams with intelligent Marathi ligature recognition, live penalty deductions, custom passages, and weak keys diagnostics.
           </p>
 
           {/* Exam Grade Chips */}
@@ -123,100 +127,76 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* 4 Bento Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 3 Streamlined Core Bento Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Card 1: Speed Test */}
+          {/* Card 1: Guided Lessons (Typing Academy) */}
+          <Link href="/lessons" className="group">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300 border-cyan-500/30">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                  <GraduationCap className="w-7 h-7" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition">
+                    Guided Lessons
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    Step-by-step curriculum from Beginner to Advanced with common words, hand visuals, and star ratings.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-cyan-600 dark:text-cyan-400">
+                <span>Start Curriculum</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Card 2: Speed Test (Exam Simulator + Custom Passage + Weak Keys) */}
           <Link href="/speed-test" className="group">
-            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300 border-amber-500/30">
               <div className="space-y-4">
                 <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-black transition-all duration-300 shadow-md">
                   <Zap className="w-7 h-7" />
                 </div>
                 <div>
                   <h2 className="text-xl font-black group-hover:text-amber-600 dark:group-hover:text-amber-300 transition">
-                    Speed Test
+                    Speed Test & Exam
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                    Official 7-minute timed exam batches (30/40 WPM) with GCC-TBC penalty scoring.
+                    Official 7-minute timed exam batches, custom passage upload & real-time weak keys diagnostic tracker.
                   </p>
                 </div>
               </div>
 
               <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
-                <span>Start Batch Test</span>
+                <span>Start Exam Simulator</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
               </div>
             </div>
           </Link>
 
-          {/* Card 2: Keyboard Drills */}
-          <Link href="/keyboard-drills" className="group">
-            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
-              <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-600 dark:text-cyan-400 group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shadow-md">
-                  <Keyboard className="w-7 h-7" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-black group-hover:text-sky-600 dark:group-hover:text-cyan-300 transition">
-                    Keyboard Drills
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                    Home, Top, Bottom row muscle memory builders & high-frequency word workouts.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-sky-600 dark:text-cyan-400">
-                <span>Train Muscle Memory</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 3: Practice Lab */}
-          <Link href="/typing-practice" className="group">
-            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
-              <div className="space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-md">
-                  <Target className="w-7 h-7" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-black group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition">
-                    Practice Lab
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                    Custom passage uploads, real-time weak keys diagnostic tracker & finger posture guides.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                <span>Open Diagnostic Lab</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
-              </div>
-            </div>
-          </Link>
-
-          {/* Card 4: Theory MCQs */}
+          {/* Card 3: Theory MCQs */}
           <Link href="/mcq-test" className="group">
-            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300">
+            <div className="theme-panel h-full p-7 rounded-3xl flex flex-col justify-between group-hover:-translate-y-2 transition-all duration-300 border-purple-500/30">
               <div className="space-y-4">
                 <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-md">
-                  <Award className="w-7 h-7" />
+                  <FileQuestion className="w-7 h-7" />
                 </div>
                 <div>
                   <h2 className="text-xl font-black group-hover:text-purple-600 dark:group-hover:text-purple-300 transition">
-                    Theory MCQs
+                    Theory MCQs Exam
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                    Complete 50 Marks computer theory preparation: Windows, Word, Excel & Internet.
+                    Complete 50 Marks objective exam covering Windows, MS Word, Excel, PowerPoint & Internet syllabus.
                   </p>
                 </div>
               </div>
 
               <div className="mt-8 pt-4 border-t border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
-                <span>Solve MCQs</span>
+                <span>Solve MCQs Test</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition" />
               </div>
             </div>
@@ -224,7 +204,7 @@ export default function HomePage() {
 
         </div>
 
-        {/* Live Engine Interactive Performance Banner */}
+        {/* Live Telemetry Banner */}
         <div className="theme-panel p-6 sm:p-8 rounded-3xl space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-white/[0.08] pb-4">
             <div className="flex items-center gap-3">
