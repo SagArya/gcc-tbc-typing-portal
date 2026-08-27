@@ -11,17 +11,14 @@ interface MarathiTextareaProps
   isMarathi?: boolean;
 }
 
-// देवनागरी लिगेचर, रफार, अर्धी अक्षरे व वेलांटी जोडणी लॉजिक
 function combineLigatures(text: string, char: string): string {
   if (!text) return char;
 
   const lastChar = text.slice(-1);
-  const lastTwoChars = text.slice(-2); // उदा. 'ख्', 'ध्', 'ण्', 'ष्'
+  const lastTwoChars = text.slice(-2);
 
-  // ========================================================
-  // १. रफार लॉजिक (उदा. माग + र् => मार्ग, सव + र् => सर्व)
-  // ========================================================
-  const RAFAAR = "\u0930\u094D"; // 'र्'
+  // १. रफार लॉजिक (उदा. माग + र् => मार्ग)
+  const RAFAAR = "\u0930\u094D";
   if (char === RAFAAR || char === "र्") {
     const match = text.match(/([\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/);
     if (match) {
@@ -31,54 +28,31 @@ function combineLigatures(text: string, char: string): string {
     }
   }
 
-  // ========================================================
-  // २. अर्ध्या व्यंजनाला काना (ा \u093E) लागल्यास ते पूर्ण अक्षर बनवणे
-  // ========================================================
+  // २. अर्ध्या अक्षरांना काना (k / Shift+A) लागल्यास पूर्ण बनवणे
   if (char === "\u093E" || char === "ा") {
-    // ध : ध् + ा => ध (उदा. अधिकारी, धर्म)
     if (lastTwoChars === "ध्") return text.slice(0, -2) + "ध";
-    // ख : ख् + ा => ख
-    if (lastTwoChars === "ख्") return text.slice(0, -2) + "ख";
-    // ण : ण् + ा => ण
     if (lastTwoChars === "ण्") return text.slice(0, -2) + "ण";
-    // थ : थ् + ा => थ
-    if (lastTwoChars === "थ्") return text.slice(0, -2) + "थ";
-    // भ : भ् + ा => भ
-    if (lastTwoChars === "भ्") return text.slice(0, -2) + "भ";
-    // श : श् + ा => श
     if (lastTwoChars === "श्") return text.slice(0, -2) + "श";
-    // ष : ष् + ा => ष
+    if (lastTwoChars === "ख्") return text.slice(0, -2) + "ख";
+    if (lastTwoChars === "थ्") return text.slice(0, -2) + "थ";
+    if (lastTwoChars === "भ्") return text.slice(0, -2) + "भ";
     if (lastTwoChars === "ष्") return text.slice(0, -2) + "ष";
-    // क : क् + ा => क
     if (lastTwoChars === "क्") return text.slice(0, -2) + "क";
-    // ग : ग् + ा => ग
     if (lastTwoChars === "ग्") return text.slice(0, -2) + "ग";
-    // च : च् + ा => च
     if (lastTwoChars === "च्") return text.slice(0, -2) + "च";
-    // ज : ज् + ा => ज
     if (lastTwoChars === "ज्") return text.slice(0, -2) + "ज";
-    // त : त् + ा => त
     if (lastTwoChars === "त्") return text.slice(0, -2) + "त";
-    // न : न् + ा => न
     if (lastTwoChars === "न्") return text.slice(0, -2) + "न";
-    // प : प् + ा => प
     if (lastTwoChars === "प्") return text.slice(0, -2) + "प";
-    // म : म् + ा => म
     if (lastTwoChars === "म्") return text.slice(0, -2) + "म";
-    // ल : ल् + ा => ल
     if (lastTwoChars === "ल्") return text.slice(0, -2) + "ल";
-    // व : व् + ा => व
     if (lastTwoChars === "व्") return text.slice(0, -2) + "व";
-    // स : स् + ा => स
     if (lastTwoChars === "स्") return text.slice(0, -2) + "स";
-
-    // स्वर : अ + ा => आ
+    if (lastTwoChars === "घ्") return text.slice(0, -2) + "घ";
     if (lastChar === "अ") return text.slice(0, -1) + "आ";
   }
 
-  // ========================================================
-  // ३. स्वरांची जोडणी (अ, आ, ए, इ, उ)
-  // ========================================================
+  // ३. स्वर जोडणी
   if (lastChar === "आ" && char === "े") return text.slice(0, -1) + "ओ";
   if ((lastChar === "आ" || lastChar === "ओ") && (char === "ै" || char === "े"))
     return text.slice(0, -1) + "औ";
@@ -92,11 +66,9 @@ function combineLigatures(text: string, char: string): string {
 
 const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
   ({ value, onChangeValue, onChange, isMarathi = true, ...props }, ref) => {
-    // वेलांटी बफर स्टेट
     const [pendingVelanti, setPendingVelanti] = useState(false);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      // Tab Key Handle
       if (e.key === "Tab") {
         e.preventDefault();
         setPendingVelanti(false);
@@ -147,22 +119,19 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         return;
       }
 
-      // १. जर 'f' (पहिली वेलांटी) दाबली असेल
+      // पहिली वेलांटी ('f')
       if (!e.shiftKey && e.key === "f") {
         e.preventDefault();
         setPendingVelanti(true);
         return;
       }
 
-      // २. कीबोर्ड मॅपिंग
       let mappedChar = e.shiftKey ? shiftKeyMap[e.key] : normalKeyMap[e.key];
 
       if (mappedChar) {
         e.preventDefault();
 
-        // जर वेलांटी पेंडिंग असेल
         if (pendingVelanti) {
-          // अ) जर युझरने काना दाबायचे ठरवले (अर्धे अक्षर पूर्ण करण्यासाठी, उदा. ध् + k => धि)
           if ((e.key === "k" || mappedChar === "\u093E" || mappedChar === "ा") && value.endsWith("्")) {
             setPendingVelanti(false);
             const baseWithoutHalant = combineLigatures(value, mappedChar);
@@ -171,13 +140,11 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
             return;
           }
 
-          // ब) जर पूर्ण व्यंजन दाबले (उदा. d => कि, u => नि) आणि ते अर्धे नसेल
           if (!mappedChar.endsWith("्")) {
             setPendingVelanti(false);
             mappedChar = mappedChar + "ि";
           }
         } else {
-          // जर वेलांटी पेंडिंग नव्हती पण मागील अक्षर अर्धे होते आणि काना आला
           if (mappedChar === "\u093E" || mappedChar === "ा") {
             const nextVal = combineLigatures(value, mappedChar);
             if (onChangeValue) onChangeValue(nextVal);
