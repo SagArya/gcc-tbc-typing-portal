@@ -30,7 +30,8 @@ import {
   Upload,
   Layers,
   FileText,
-  Activity,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 
 interface Passage {
@@ -62,9 +63,15 @@ function normalizeText(str: string): string {
 export default function SpeedTestPage() {
   const [passages, setPassages] = useState<Passage[]>([]);
   const [selectedPassage, setSelectedPassage] = useState<Passage | null>(null);
-  const [language, setLanguage] = useState("english");
+  const [language, setLanguage] = useState("marathi");
   const [speed, setSpeed] = useState("40");
   const [loading, setLoading] = useState(true);
+
+  // 🔍 Font Size Zoom Controller (13px to 24px)
+  const [fontSize, setFontSize] = useState<number>(15);
+
+  const handleZoomIn = () => setFontSize((prev) => Math.min(prev + 1, 24));
+  const handleZoomOut = () => setFontSize((prev) => Math.max(prev - 1, 13));
 
   // Passage Source: Batch vs Custom
   const [passageSource, setPassageSource] = useState<"batch" | "custom">("batch");
@@ -94,7 +101,7 @@ export default function SpeedTestPage() {
     wpm: 0,
     accuracy: 100,
     targetSpeed: 40,
-    language: "english",
+    language: "marathi",
     isPassed: false,
   });
 
@@ -111,7 +118,7 @@ export default function SpeedTestPage() {
     }
   }, []);
 
-  // भाषा व स्पीडनुसार लोकल व API पॅसेजेस लोड करणे
+  // भाषा व स्पीडनुसार पॅसेजेस लोड करणे
   useEffect(() => {
     async function loadPassages() {
       if (passageSource === "custom") return;
@@ -134,7 +141,7 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // २. मराठी ४० WPM (नवीन ४५ उतारे)
+      // २. मराठी ४० WPM
       if (language === "marathi" && speed === "40") {
         const formatted: Passage[] = (marathi40Passages || []).map((p: any) => ({
           id: String(p.id),
@@ -166,7 +173,7 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ४. इंग्रजी ५० WPM (नवीन २४ उतारे)
+      // ४. इंग्रजी ५० WPM
       if (language === "english" && speed === "50") {
         const formatted: Passage[] = (english50Passages || []).map((p: any) => ({
           id: String(p.id),
@@ -182,7 +189,7 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ५. इंग्रजी ६० WPM (नवीन २४ उतारे)
+      // ५. इंग्रजी ६० WPM
       if (language === "english" && speed === "60") {
         const formatted: Passage[] = (english60Passages || []).map((p: any) => ({
           id: String(p.id),
@@ -198,11 +205,11 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ६. इतर कॉम्बिनेशन्ससाठी फॉलबॅक API
+      // ६. फॉलबॅक API
       try {
         const res = await fetch(`/api/passages?lang=${language}&speed=${speed}`);
         const result = await res.json();
-        if (result.success && result.data.length > 0) {
+        if (result.success && result.data?.length > 0) {
           setPassages(result.data);
           setSelectedPassage(result.data[0]);
         } else {
@@ -355,270 +362,244 @@ export default function SpeedTestPage() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const sortedWeakKeys = Object.entries(weakKeysMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8);
-
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-amber-400 selection:text-black font-sans relative overflow-x-hidden p-4 sm:p-6">
-      {/* Background Glow Engine */}
+    <main className="h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col selection:bg-amber-400 selection:text-black font-sans relative px-3 pt-2 pb-2">
       <GlowCursor />
 
-      {/* Grid Pattern Overlay */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.04]"
-        style={{
-          backgroundImage: `radial-gradient(currentColor 1px, transparent 1px)`,
-          backgroundSize: "24px 24px",
-        }}
-      />
-
-      <div className="relative z-10 max-w-7xl mx-auto w-full space-y-5">
-        {/* Top Floating Navigation */}
-        <header className="glass-panel p-4 sm:p-5 rounded-3xl flex flex-wrap justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
+      <div className="relative z-10 w-full flex-1 flex flex-col gap-2 max-w-[1600px] mx-auto min-h-0">
+        
+        {/* 🌟 Unified All-in-One Top Header Tab */}
+        <header className="glass-panel px-3 py-1.5 rounded-2xl flex flex-wrap justify-between items-center gap-2 shrink-0">
+          
+          {/* Left: Back + Status Indicator + Hint */}
+          <div className="flex items-center gap-2.5">
             <Link
               href="/"
-              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5 font-medium"
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 font-medium cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-              <span>Back</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-amber-500" />
+              <span className="hidden sm:inline">Back</span>
             </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-extrabold tracking-tight">
-                  Speed Test Simulator
-                </h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                  Official Exam
-                </span>
-              </div>
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                40 Marks • Passing: 16 Marks • Strict 7 Min Window
+
+            <div className="flex items-center gap-2">
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isReviewMode
+                    ? "bg-amber-500 shadow-[0_0_8px_#f59e0b]"
+                    : isActive
+                    ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"
+                    : "bg-slate-400 dark:bg-slate-600"
+                }`}
+              />
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate max-w-[220px] md:max-w-[320px]">
+                {isReviewMode
+                  ? "Review Mode: Green = Match, Red = Error"
+                  : isActive
+                  ? "Exam Active..."
+                  : "Type in workspace to start 7-min timer."}
               </span>
             </div>
           </div>
 
-          {/* Selectors & Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Source Switcher */}
-            <div>
-              <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
-                Source
-              </label>
-              <div className="bg-slate-100 dark:bg-black/40 p-1 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-1">
-                <button
-                  onClick={() => setPassageSource("batch")}
-                  disabled={isActive || isReviewMode}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 disabled:opacity-50 ${
-                    passageSource === "batch"
-                      ? "bg-amber-500 text-slate-950 shadow-sm"
-                      : "text-slate-600 dark:text-slate-400"
-                  }`}
-                >
-                  <Layers className="w-3 h-3" />
-                  <span>Batches</span>
-                </button>
-                <button
-                  onClick={() => setPassageSource("custom")}
-                  disabled={isActive || isReviewMode}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 disabled:opacity-50 ${
-                    passageSource === "custom"
-                      ? "bg-amber-500 text-slate-950 shadow-sm"
-                      : "text-slate-600 dark:text-slate-400"
-                  }`}
-                >
-                  <Upload className="w-3 h-3" />
-                  <span>Custom</span>
-                </button>
-              </div>
+          {/* Right: Controls + Zoom + Timer + Actions */}
+          <div className="flex flex-wrap items-center gap-2">
+            
+            {/* Batches / Custom Switcher */}
+            <div className="bg-slate-100 dark:bg-black/40 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-0.5">
+              <button
+                onClick={() => setPassageSource("batch")}
+                disabled={isActive || isReviewMode}
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                  passageSource === "batch"
+                    ? "bg-amber-500 text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400"
+                }`}
+              >
+                <Layers className="w-3 h-3" />
+                <span>Batches</span>
+              </button>
+              <button
+                onClick={() => setPassageSource("custom")}
+                disabled={isActive || isReviewMode}
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                  passageSource === "custom"
+                    ? "bg-amber-500 text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400"
+                }`}
+              >
+                <Upload className="w-3 h-3" />
+                <span>Custom</span>
+              </button>
             </div>
 
-            {/* Language Selector */}
-            <div>
-              <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
-                Language
-              </label>
+            {/* Language */}
+            <select
+              value={language}
+              disabled={isActive || isReviewMode}
+              onChange={(e) => {
+                const newLang = e.target.value;
+                setLanguage(newLang);
+                if (newLang === "marathi" && (speed === "50" || speed === "60")) {
+                  setSpeed("40");
+                }
+              }}
+              className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+            >
+              <option value="marathi" className="bg-white dark:bg-slate-900">🇮🇳 Marathi</option>
+              <option value="english" className="bg-white dark:bg-slate-900">🇬🇧 English</option>
+            </select>
+
+            {/* Target Speed */}
+            <select
+              value={speed}
+              disabled={isActive || isReviewMode}
+              onChange={(e) => setSpeed(e.target.value)}
+              className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+            >
+              <option value="30" className="bg-white dark:bg-slate-900">30 WPM</option>
+              <option value="40" className="bg-white dark:bg-slate-900">40 WPM</option>
+              {language === "english" && (
+                <>
+                  <option value="50" className="bg-white dark:bg-slate-900">50 WPM</option>
+                  <option value="60" className="bg-white dark:bg-slate-900">60 WPM</option>
+                </>
+              )}
+            </select>
+
+            {/* Passage Selector */}
+            {passageSource === "batch" && (
               <select
-                value={language}
+                value={selectedPassage?.id || ""}
                 disabled={isActive || isReviewMode}
                 onChange={(e) => {
-                  const newLang = e.target.value;
-                  setLanguage(newLang);
-                  if (newLang === "marathi" && (speed === "50" || speed === "60")) {
-                    setSpeed("40");
+                  const found = passages.find((p) => p.id === e.target.value);
+                  if (found) {
+                    setSelectedPassage(found);
+                    resetTest();
                   }
                 }}
-                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 disabled:opacity-50 cursor-pointer"
+                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:border-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
               >
-                <option value="marathi" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇮🇳 Marathi (मराठी)</option>
-                <option value="english" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇬🇧 English (इंग्रजी)</option>
+                {passages.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900">
+                    {p.title}
+                  </option>
+                ))}
               </select>
-            </div>
-
-            {/* Target Speed Selector */}
-            <div>
-              <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
-                Target Speed
-              </label>
-              <select
-                value={speed}
-                disabled={isActive || isReviewMode}
-                onChange={(e) => setSpeed(e.target.value)}
-                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 disabled:opacity-50 cursor-pointer"
-              >
-                <option value="30" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">30 WPM (210 Words)</option>
-                <option value="40" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">40 WPM (280 Words)</option>
-                {language === "english" && (
-                  <>
-                    <option value="50" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">50 WPM (350 Words)</option>
-                    <option value="60" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">60 WPM (420 Words)</option>
-                  </>
-                )}
-              </select>
-            </div>
-
-            {/* Exam Batch Selector */}
-            {passageSource === "batch" && (
-              <div>
-                <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
-                  Passage ({passages.length})
-                </label>
-                <select
-                  value={selectedPassage?.id || ""}
-                  disabled={isActive || isReviewMode}
-                  onChange={(e) => {
-                    const found = passages.find((p) => p.id === e.target.value);
-                    if (found) {
-                      setSelectedPassage(found);
-                      resetTest();
-                    }
-                  }}
-                  className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:border-amber-500 disabled:opacity-50 max-w-[190px] truncate cursor-pointer"
-                >
-                  {passages.map((p) => (
-                    <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-                      {p.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
             )}
 
-            <div className="flex items-end gap-2 pt-4 sm:pt-0">
+            {/* 🔍 Zoom In / Out Controls */}
+            <div className="bg-slate-100 dark:bg-black/50 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex items-center gap-1">
               <button
-                onClick={() => setShowHistoryModal(true)}
-                className="px-3.5 py-1.5 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5 shadow-sm cursor-pointer"
+                type="button"
+                onClick={handleZoomOut}
+                title="Font Size लहान करा"
+                className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer"
               >
-                <History className="w-3.5 h-3.5 text-sky-500 dark:text-cyan-400" />
-                <span>History ({history.length})</span>
+                <ZoomOut className="w-3 h-3" />
               </button>
-
-              {isReviewMode && (
-                <button
-                  onClick={() => setShowResultModal(true)}
-                  className="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs transition duration-200 shadow-md cursor-pointer flex items-center gap-1.5"
-                >
-                  <Award className="w-3.5 h-3.5" />
-                  <span>Result Card</span>
-                </button>
-              )}
-
-              {isActive && (
-                <button
-                  onClick={finishTest}
-                  className="px-4 py-1.5 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-xs transition duration-200 shadow-md cursor-pointer flex items-center gap-1.5"
-                >
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>Submit Exam</span>
-                </button>
-              )}
-
+              <span className="text-[11px] font-mono font-bold px-1 text-amber-600 dark:text-amber-400">
+                {fontSize}px
+              </span>
               <button
-                onClick={resetTest}
-                className="px-3.5 py-1.5 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs border border-slate-200 dark:border-white/[0.08] transition duration-200 flex items-center gap-1.5 cursor-pointer"
+                type="button"
+                onClick={handleZoomIn}
+                title="Font Size मोठी करा"
+                className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>{isReviewMode ? "New Test" : "Restart"}</span>
+                <ZoomIn className="w-3 h-3" />
               </button>
-
-              <ThemeToggle />
             </div>
+
+            {/* ⏱️ Timer Badge */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-black/60 border border-slate-200 dark:border-white/[0.08] rounded-xl font-mono text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400">
+              <Timer className="w-3.5 h-3.5 text-amber-500" />
+              <span>{isReviewMode ? `${metrics.marksObtained}/40` : formatTime(timeLeft)}</span>
+            </div>
+
+            {/* History */}
+            <button
+              onClick={() => setShowHistoryModal(true)}
+              className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer"
+            >
+              <History className="w-3.5 h-3.5 text-sky-500" />
+              <span>({history.length})</span>
+            </button>
+
+            {isReviewMode && (
+              <button
+                onClick={() => setShowResultModal(true)}
+                className="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1"
+              >
+                <Award className="w-3.5 h-3.5" />
+                <span>Result</span>
+              </button>
+            )}
+
+            {isActive && (
+              <button
+                onClick={finishTest}
+                className="px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 animate-pulse"
+              >
+                <CheckCircle className="w-3.5 h-3.5" />
+                <span>Submit</span>
+              </button>
+            )}
+
+            <button
+              onClick={resetTest}
+              className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>{isReviewMode ? "New" : "Reset"}</span>
+            </button>
+
+            <ThemeToggle />
           </div>
         </header>
 
-        {/* Custom Passage Input Drawer */}
+        {/* 📝 Custom Passage Drawer (Only when Custom is selected) */}
         {passageSource === "custom" && !isActive && !isReviewMode && (
-          <div className="glass-panel p-5 rounded-3xl space-y-3">
+          <div className="glass-panel p-3 rounded-2xl space-y-2 shrink-0">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
               <FileText className="w-4 h-4 text-amber-500" />
-              <span>Paste Custom Exam Passage (येथे तुमचा स्वतःचा सराव उतारा पेस्ट करा):</span>
+              <span>Paste Custom Exam Passage:</span>
             </div>
             <textarea
-              rows={3}
+              rows={2}
               value={customPassageInput}
               onChange={(e) => setCustomPassageInput(e.target.value)}
-              placeholder="Paste your custom Marathi or English paragraph here..."
-              className="w-full bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-2xl p-4 text-xs sm:text-sm font-mono focus:outline-none focus:border-amber-500 resize-none placeholder-slate-400"
+              placeholder="Paste your Marathi/English passage here..."
+              className="w-full bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl p-2.5 text-xs font-mono focus:outline-none focus:border-amber-500 resize-none"
             />
             <button
               onClick={handleApplyCustomPassage}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
+              className="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
             >
-              Apply Custom Passage
+              Apply Passage
             </button>
           </div>
         )}
 
-        {/* Live Status Ribbon */}
-        <div className="glass-panel px-5 py-3 rounded-2xl flex flex-wrap justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <span
-              className={`w-3 h-3 rounded-full ${
-                isReviewMode
-                  ? "bg-amber-500 shadow-[0_0_8px_#f59e0b]"
-                  : isActive
-                  ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"
-                  : "bg-slate-400 dark:bg-slate-600"
-              }`}
-            />
-            <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">
-              {isReviewMode
-                ? "Diagnostic Review Mode • Red: Mistake, Green: Exact Match"
-                : isActive
-                ? "Exam Session Active • Type precisely as per official rules..."
-                : "Type in the right box to auto-trigger the official 7-minute timer."}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
-              {isReviewMode ? "Score:" : "Time Left:"}
-            </span>
-            <div className="flex items-center gap-1.5 px-3.5 py-1 bg-slate-100 dark:bg-black/50 border border-slate-200 dark:border-white/[0.08] rounded-xl font-mono text-lg sm:text-xl font-black text-amber-600 dark:text-amber-400">
-              <Timer className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-              <span>{isReviewMode ? `${metrics.marksObtained}/40` : formatTime(timeLeft)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Split Screen Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        {/* 🖥️ Split Screen Layout (Screen Bottom 100% Touch) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-stretch flex-1 min-h-0 pb-0">
+          
           {/* Left Column: Passage Viewer */}
-          <div className="flex flex-col">
+          <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col h-full min-h-0">
             <PassageViewer
               passageText={selectedPassage?.text || ""}
               userInput={userInput}
               title={selectedPassage?.title}
               loading={loading}
+              fontSize={fontSize}
             />
           </div>
 
           {/* Right Column: Workspace OR Mistake Reviewer */}
-          <div className="glass-panel p-6 rounded-3xl flex flex-col min-h-[420px] lg:min-h-[500px]">
-            <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-200 dark:border-white/[0.06]">
-              <div className="flex items-center gap-2 font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider text-[11px]">
-                <Keyboard className="w-4 h-4 text-sky-500 dark:text-sky-400" />
+          <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col h-full min-h-0">
+            <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-200 dark:border-white/[0.06] shrink-0">
+              <div className="flex items-center gap-1.5 font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider text-[11px]">
+                <Keyboard className="w-3.5 h-3.5 text-sky-500" />
                 <span>{isReviewMode ? "Candidate Submission Review" : "Answer Typing Workspace"}</span>
               </div>
               <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
@@ -628,32 +609,11 @@ export default function SpeedTestPage() {
             </div>
 
             {isReviewMode ? (
-              <div className="flex-1 flex flex-col justify-between space-y-4">
+              <div className="flex-1 overflow-y-auto pr-1 space-y-2.5 min-h-0">
                 <MistakeReviewer
                   originalText={selectedPassage?.text || ""}
                   userTypedText={userInput}
                 />
-
-                {/* Weak Keys Display in Review Mode */}
-                {sortedWeakKeys.length > 0 && (
-                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-2">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
-                      <Activity className="w-3.5 h-3.5" />
-                      <span>Weak Keys Diagnostic (या अक्षरांमध्ये सर्वाधिक चुका झाल्या):</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {sortedWeakKeys.map(([char, count]) => (
-                        <span
-                          key={char}
-                          className="px-2.5 py-1 bg-white dark:bg-black/50 border border-amber-500/30 rounded-lg text-xs font-mono font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1"
-                        >
-                          <span className="text-rose-600 font-black">{char}</span>
-                          <span className="text-[10px] text-slate-400">({count}x)</span>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <MarathiTextarea
@@ -668,7 +628,8 @@ export default function SpeedTestPage() {
                 isMarathi={language === "marathi"}
                 disabled={timeLeft === 0 || isFinished || loading}
                 placeholder="येथे डाव्या बाजूचा उतारा पाहून टाईप करा (परिच्छेदासाठी Tab आणि Enter वापरा)..."
-                className="flex-1 w-full p-5 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.06] rounded-2xl focus:outline-none focus:border-amber-500 text-[14px] sm:text-[15px] text-slate-900 dark:text-slate-100 font-mono leading-relaxed resize-none placeholder-slate-400 dark:placeholder-slate-600 shadow-inner transition-colors duration-200"
+                style={{ fontSize: `${fontSize}px` }}
+                className="flex-1 w-full p-3 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.06] rounded-xl focus:outline-none focus:border-amber-500 text-slate-900 dark:text-slate-100 font-mono leading-relaxed resize-none placeholder-slate-400 dark:placeholder-slate-600 shadow-inner overflow-y-auto min-h-0"
               />
             )}
           </div>
@@ -695,10 +656,6 @@ export default function SpeedTestPage() {
           }}
         />
       </div>
-
-      <footer className="relative z-10 max-w-7xl mx-auto w-full pt-8 text-center text-xs text-slate-500 font-mono">
-        <span>GCC-TBC Verified Speed Simulator • 7 Minute Timed Engine</span>
-      </footer>
     </main>
   );
 }

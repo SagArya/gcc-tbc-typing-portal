@@ -9,6 +9,7 @@ interface PassageViewerProps {
   userInput: string;
   title?: string;
   loading?: boolean;
+  fontSize?: number; // 🔍 Font Size (Zoom) Support
 }
 
 // देवनागरीतील काना-मात्रा, जोडाक्षरे व अदृश्य कॅरेक्टर्स यांचे १००% अचूक एकत्रीकरण
@@ -35,10 +36,11 @@ export default function PassageViewer({
   userInput,
   title,
   loading,
+  fontSize = 15,
 }: PassageViewerProps) {
   if (loading) {
     return (
-      <div className="glass-panel p-6 rounded-3xl flex flex-col items-center justify-center min-h-[350px] lg:min-h-[500px]">
+      <div className="glass-panel p-6 rounded-3xl flex flex-col items-center justify-center h-full min-h-[350px]">
         <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs sm:text-sm animate-pulse">
           <Loader2 className="w-5 h-5 animate-spin text-amber-500" />
           <span>उतारा लोड होत आहे...</span>
@@ -64,9 +66,9 @@ export default function PassageViewer({
   let globalWordCounter = 0;
 
   return (
-    <div className="glass-panel p-5 sm:p-6 rounded-3xl flex flex-col min-h-[420px] lg:min-h-[500px]">
+    <div className="flex flex-col h-full">
       {/* Title Header */}
-      <div className="flex justify-between items-center mb-3 pb-3 border-b border-slate-200 dark:border-white/[0.06]">
+      <div className="flex justify-between items-center mb-3 pb-3 border-b border-slate-200 dark:border-white/[0.06] shrink-0">
         <div className="flex items-center gap-2 font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-[11px] sm:text-xs">
           <FileText className="w-4 h-4 text-amber-500 dark:text-amber-400" />
           <span>मूळ परीक्षा उतारा (Question Passage)</span>
@@ -78,8 +80,11 @@ export default function PassageViewer({
         )}
       </div>
 
-      {/* Paragraphs with Tab & Enter Preserved - Light / Dark Adaptable */}
-      <div className="flex-1 p-4 sm:p-5 bg-slate-50 dark:bg-black/40 rounded-2xl border border-slate-200 dark:border-white/[0.06] text-[13px] sm:text-[14px] font-normal font-mono tracking-normal leading-relaxed space-y-3 select-none overflow-y-auto min-h-[350px] lg:min-h-[440px] shadow-inner">
+      {/* Paragraphs with Dynamic Font Size & Internal Scroll */}
+      <div
+        style={{ fontSize: `${fontSize}px` }}
+        className="flex-1 p-4 sm:p-5 bg-slate-50 dark:bg-black/40 rounded-2xl border border-slate-200 dark:border-white/[0.06] font-normal font-mono tracking-normal leading-relaxed space-y-3 select-none overflow-y-auto shadow-inner"
+      >
         {paragraphs.map((para, paraIndex) => {
           const paraWords = para.trim().split(/\s+/).filter(Boolean);
 
