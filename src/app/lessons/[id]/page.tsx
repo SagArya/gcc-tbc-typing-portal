@@ -122,7 +122,9 @@ export default function LessonPlayerPage() {
     if (!startTime) setStartTime(currentTime);
     setUserInput(val);
 
+    const hasSpaceAtEnd = /\s$/.test(val);
     const typedList = val.trimStart().split(/\s+/).filter(Boolean);
+
     let correctWords = 0;
     typedList.forEach((word, idx) => {
       if (targetWords[idx] && normalizeText(word) === normalizeText(targetWords[idx])) {
@@ -139,21 +141,29 @@ export default function LessonPlayerPage() {
     const currentWpm = Math.round(wordsTyped / elapsedMins);
     setWpm(currentWpm);
 
-    // Auto-step completion
-    const hasFinishedBySpace = typedList.length >= targetWords.length && isTrailingSpace;
-    const hasFinishedExactLastWord =
-      typedList.length === targetWords.length &&
-      normalizeText(typedList[typedList.length - 1]) ===
-        normalizeText(targetWords[targetWords.length - 1]);
+    // 🎯 अचूक समाप्ती लॉजिक:
+    if (targetWords.length > 0) {
+      const lastTarget = targetWords[targetWords.length - 1];
+      const lastTyped = typedList[typedList.length - 1] || "";
 
-    if (targetWords.length > 0 && (hasFinishedBySpace || hasFinishedExactLastWord)) {
-      setIsStepFinished(true);
+      // केस १: सर्व शब्द टाईप करून शेवटी स्पेस दिली
+      const hasFinishedBySpace = typedList.length >= targetWords.length && hasSpaceAtEnd;
 
-      if (currentLesson && currentStepIdx === currentLesson.steps.length - 1) {
-        const finalStars = calculateStars(currentAcc);
-        setEarnedStars(finalStars);
-        saveProgress(finalStars);
-        setIsLessonComplete(true);
+      // केस २: शेवटचा शब्द तंतोतंत जुळला (अपूर्ण अक्षरावर नव्हे तर संपूर्ण शब्द बरोबर आल्यावर)
+      const hasFinishedExactLastWord =
+        typedList.length === targetWords.length &&
+        normalizeText(lastTyped) === normalizeText(lastTarget) &&
+        lastTyped.length >= lastTarget.length;
+
+      if (hasFinishedBySpace || hasFinishedExactLastWord) {
+        setIsStepFinished(true);
+
+        if (currentLesson && currentStepIdx === currentLesson.steps.length - 1) {
+          const finalStars = calculateStars(currentAcc);
+          setEarnedStars(finalStars);
+          saveProgress(finalStars);
+          setIsLessonComplete(true);
+        }
       }
     }
   };
