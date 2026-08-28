@@ -1,7 +1,7 @@
 // src/app/speed-test/page.tsx
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import PassageViewer from "@/components/PassageViewer";
 import MarathiTextarea from "@/components/MarathiTextarea";
@@ -11,8 +11,14 @@ import HistoryDashboard, { TestRecord } from "@/components/HistoryDashboard";
 import GlowCursor from "@/components/GlowCursor";
 import ThemeToggle from "@/components/ThemeToggle";
 import { updateDailyStreak } from "@/utils/streakManager";
-import { ENGLISH_40_PASSAGES } from "@/data/english40Passages";
+
+// 📚 Passages Data Imports
 import { MARATHI_30_PASSAGES } from "@/data/marathi30Passages";
+import { marathi40Passages } from "@/data/marathi40Passages";
+import { ENGLISH_40_PASSAGES } from "@/data/english40Passages";
+import { english50Passages } from "@/data/english50Passages";
+import { english60Passages } from "@/data/english60Passages";
+
 import {
   ArrowLeft,
   Timer,
@@ -76,21 +82,21 @@ export default function SpeedTestPage() {
   const [weakKeysMap, setWeakKeysMap] = useState<{ [char: string]: number }>({});
 
   const [metrics, setMetrics] = useState({
-  totalTargetWords: 0,
-  typedWordsCount: 0,
-  correctWordsCount: 0,
-  wrongWordsCount: 0,
-  remainingWordsCount: 0,
-  mistakesCount: 0,
-  marksObtained: 0,
-  totalMarks: TOTAL_EXAM_MARKS,
-  passingMarks: PASSING_MARKS,
-  wpm: 0,
-  accuracy: 100,
-  targetSpeed: 40,
-  language: "english",
-  isPassed: false,
-});
+    totalTargetWords: 0,
+    typedWordsCount: 0,
+    correctWordsCount: 0,
+    wrongWordsCount: 0,
+    remainingWordsCount: 0,
+    mistakesCount: 0,
+    marksObtained: 0,
+    totalMarks: TOTAL_EXAM_MARKS,
+    passingMarks: PASSING_MARKS,
+    wpm: 0,
+    accuracy: 100,
+    targetSpeed: 40,
+    language: "english",
+    isPassed: false,
+  });
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -105,48 +111,94 @@ export default function SpeedTestPage() {
     }
   }, []);
 
-  // भाषा व स्पीडनुसार पॅसेजेस लोड करणे
+  // भाषा व स्पीडनुसार लोकल व API पॅसेजेस लोड करणे
   useEffect(() => {
     async function loadPassages() {
       if (passageSource === "custom") return;
 
       setLoading(true);
 
-      // १. मराठी ३० WPM साठी लोकल डेटा
+      // १. मराठी ३० WPM
       if (language === "marathi" && speed === "30") {
-        const formattedPassages: Passage[] = MARATHI_30_PASSAGES.map((p: any) => ({
-          id: p.id,
+        const formatted: Passage[] = (MARATHI_30_PASSAGES || []).map((p: any) => ({
+          id: String(p.id),
           language: "marathi",
           speed: 30,
-          title: p.title || `Batch ${p.batchNo}`,
+          title: p.title || `Batch ${p.batchNo || p.id}`,
           text: p.text || p.content || "",
         }));
-
-        setPassages(formattedPassages);
-        setSelectedPassage(formattedPassages[0] || null);
+        setPassages(formatted);
+        setSelectedPassage(formatted[0] || null);
         setLoading(false);
         resetTest();
         return;
       }
 
-      // २. इंग्रजी ४० WPM साठी लोकल डेटा
+      // २. मराठी ४० WPM (नवीन ४५ उतारे)
+      if (language === "marathi" && speed === "40") {
+        const formatted: Passage[] = (marathi40Passages || []).map((p: any) => ({
+          id: String(p.id),
+          language: "marathi",
+          speed: 40,
+          title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
+          text: p.content || p.text || "",
+        }));
+        setPassages(formatted);
+        setSelectedPassage(formatted[0] || null);
+        setLoading(false);
+        resetTest();
+        return;
+      }
+
+      // ३. इंग्रजी ४० WPM
       if (language === "english" && speed === "40") {
-        const formattedPassages: Passage[] = ENGLISH_40_PASSAGES.map((p: any) => ({
-          id: p.id,
+        const formatted: Passage[] = (ENGLISH_40_PASSAGES || []).map((p: any) => ({
+          id: String(p.id),
           language: "english",
           speed: 40,
-          title: p.title || `Batch ${p.batchNo}`,
+          title: p.title || `Batch ${p.batchNo || p.id}`,
           text: p.text || p.content || "",
         }));
-
-        setPassages(formattedPassages);
-        setSelectedPassage(formattedPassages[0] || null);
+        setPassages(formatted);
+        setSelectedPassage(formatted[0] || null);
         setLoading(false);
         resetTest();
         return;
       }
 
-      // ३. इतर कॉम्बिनेशन्ससाठी API
+      // ४. इंग्रजी ५० WPM (नवीन २४ उतारे)
+      if (language === "english" && speed === "50") {
+        const formatted: Passage[] = (english50Passages || []).map((p: any) => ({
+          id: String(p.id),
+          language: "english",
+          speed: 50,
+          title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
+          text: p.content || p.text || "",
+        }));
+        setPassages(formatted);
+        setSelectedPassage(formatted[0] || null);
+        setLoading(false);
+        resetTest();
+        return;
+      }
+
+      // ५. इंग्रजी ६० WPM (नवीन २४ उतारे)
+      if (language === "english" && speed === "60") {
+        const formatted: Passage[] = (english60Passages || []).map((p: any) => ({
+          id: String(p.id),
+          language: "english",
+          speed: 60,
+          title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
+          text: p.content || p.text || "",
+        }));
+        setPassages(formatted);
+        setSelectedPassage(formatted[0] || null);
+        setLoading(false);
+        resetTest();
+        return;
+      }
+
+      // ६. इतर कॉम्बिनेशन्ससाठी फॉलबॅक API
       try {
         const res = await fetch(`/api/passages?lang=${language}&speed=${speed}`);
         const result = await res.json();
@@ -309,21 +361,19 @@ export default function SpeedTestPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-amber-400 selection:text-black font-sans relative overflow-x-hidden p-4 sm:p-6">
-      
       {/* Background Glow Engine */}
       <GlowCursor />
 
       {/* Grid Pattern Overlay */}
-      <div 
+      <div
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.04]"
         style={{
           backgroundImage: `radial-gradient(currentColor 1px, transparent 1px)`,
-          backgroundSize: '24px 24px'
+          backgroundSize: "24px 24px",
         }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto w-full space-y-5">
-        
         {/* Top Floating Navigation */}
         <header className="glass-panel p-4 sm:p-5 rounded-3xl flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
@@ -384,6 +434,7 @@ export default function SpeedTestPage() {
               </div>
             </div>
 
+            {/* Language Selector */}
             <div>
               <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
                 Language
@@ -395,16 +446,17 @@ export default function SpeedTestPage() {
                   const newLang = e.target.value;
                   setLanguage(newLang);
                   if (newLang === "marathi" && (speed === "50" || speed === "60")) {
-                    setSpeed("30");
+                    setSpeed("40");
                   }
                 }}
-                className="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 disabled:opacity-50 cursor-pointer"
               >
-                <option value="marathi">🇮🇳 Marathi (मराठी)</option>
-                <option value="english">🇬🇧 English (इंग्रजी)</option>
+                <option value="marathi" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇮🇳 Marathi (मराठी)</option>
+                <option value="english" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇬🇧 English (इंग्रजी)</option>
               </select>
             </div>
 
+            {/* Target Speed Selector */}
             <div>
               <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
                 Target Speed
@@ -413,23 +465,24 @@ export default function SpeedTestPage() {
                 value={speed}
                 disabled={isActive || isReviewMode}
                 onChange={(e) => setSpeed(e.target.value)}
-                className="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 disabled:opacity-50 cursor-pointer"
               >
-                <option value="30">30 WPM (210 Words)</option>
-                <option value="40">40 WPM (280 Words)</option>
+                <option value="30" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">30 WPM (210 Words)</option>
+                <option value="40" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">40 WPM (280 Words)</option>
                 {language === "english" && (
                   <>
-                    <option value="50">50 WPM (350 Words)</option>
-                    <option value="60">60 WPM (420 Words)</option>
+                    <option value="50" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">50 WPM (350 Words)</option>
+                    <option value="60" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">60 WPM (420 Words)</option>
                   </>
                 )}
               </select>
             </div>
 
+            {/* Exam Batch Selector */}
             {passageSource === "batch" && (
               <div>
                 <label className="block text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-1">
-                  Exam Batch
+                  Passage ({passages.length})
                 </label>
                 <select
                   value={selectedPassage?.id || ""}
@@ -441,10 +494,10 @@ export default function SpeedTestPage() {
                       resetTest();
                     }
                   }}
-                  className="bg-white dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:border-amber-500 disabled:opacity-50 max-w-[170px] truncate"
+                  className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:border-amber-500 disabled:opacity-50 max-w-[190px] truncate cursor-pointer"
                 >
                   {passages.map((p) => (
-                    <option key={p.id} value={p.id}>
+                    <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
                       {p.title}
                     </option>
                   ))}
@@ -551,7 +604,6 @@ export default function SpeedTestPage() {
 
         {/* Split Screen Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-          
           {/* Left Column: Passage Viewer */}
           <div className="flex flex-col">
             <PassageViewer
