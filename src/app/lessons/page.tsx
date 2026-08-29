@@ -13,7 +13,6 @@ import {
   Star,
   Trophy,
   CheckCircle2,
-  BookOpen,
 } from "lucide-react";
 
 export default function LessonsDashboardPage() {
@@ -39,9 +38,16 @@ export default function LessonsDashboardPage() {
   const intermediateLessons = filteredLessons.filter((l) => l.tier === "intermediate");
   const advancedLessons = filteredLessons.filter((l) => l.tier === "advanced");
 
-  const totalStars = Object.values(userProgress).reduce((acc, curr) => acc + (curr.stars || 0), 0);
-  const completedCount = Object.values(userProgress).filter((p) => p.completed).length;
-const renderTierSection = (
+  // 🎯 निवडलेल्या भाषेनुसार अचूक स्टार्स आणि कम्प्लीट काउंट
+  const totalStars = filteredLessons.reduce(
+    (acc, curr) => acc + (userProgress[curr.id]?.stars || 0),
+    0
+  );
+  const completedCount = filteredLessons.filter(
+    (l) => userProgress[l.id]?.completed
+  ).length;
+
+  const renderTierSection = (
     tierTitle: string,
     tierBadgeColor: string,
     lessons: LessonItem[]
@@ -65,11 +71,14 @@ const renderTierSection = (
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {lessons.map((lesson, idx) => {
+          {lessons.map((lesson) => {
             const progress = userProgress[lesson.id] || { stars: 0, completed: false };
-            const prevLesson = lessons[idx - 1];
+            
+            // 🔒 संपूर्ण क्रमातील जागतिक इंडेक्स (Global Index) तपासून लॉक/अनलॉक ठरवणे
+            const globalIdx = filteredLessons.findIndex((l) => l.id === lesson.id);
+            const prevLesson = filteredLessons[globalIdx - 1];
             const isUnlocked =
-              idx === 0 ||
+              globalIdx === 0 ||
               (prevLesson && userProgress[prevLesson.id]?.completed) ||
               progress.completed;
 
@@ -85,7 +94,7 @@ const renderTierSection = (
                 <div className="space-y-3">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08]">
-                      Lesson {idx + 1}
+                      Lesson {globalIdx + 1}
                     </span>
 
                     {/* Stars Display */}
@@ -174,7 +183,7 @@ const renderTierSection = (
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Step-by-step touch typing mastery (Beginner $\rightarrow$ Common Words $\rightarrow$ Advanced)
+                Step-by-step touch typing mastery (Beginner → Common Words → Advanced)
               </p>
             </div>
           </div>
@@ -253,10 +262,10 @@ const renderTierSection = (
 
         {/* 4 Distinct Tier Sections */}
         <div className="space-y-10">
-            {renderTierSection("Tier 1: Beginner (Row Foundation)", "bg-emerald-500", beginnerLessons)}
-            {renderTierSection("Tier 2: Common Words (High-Frequency Flow)", "bg-sky-500", commonWordsLessons)}
-            {renderTierSection("Tier 3: Intermediate (Diacritics & Shift Keys)", "bg-amber-500", intermediateLessons)}
-            {renderTierSection("Tier 4: Advanced (Speed Exam & Paragraphs)", "bg-purple-500", advancedLessons)}
+          {renderTierSection("Tier 1: Beginner (Row Foundation)", "bg-emerald-500", beginnerLessons)}
+          {renderTierSection("Tier 2: Common Words (High-Frequency Flow)", "bg-sky-500", commonWordsLessons)}
+          {renderTierSection("Tier 3: Intermediate (Diacritics & Shift Keys)", "bg-amber-500", intermediateLessons)}
+          {renderTierSection("Tier 4: Advanced (Speed Exam & Paragraphs)", "bg-purple-500", advancedLessons)}
         </div>
       </div>
 

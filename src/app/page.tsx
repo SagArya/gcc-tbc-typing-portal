@@ -209,7 +209,7 @@ export default function HomePage() {
 
           {/* Card 3: MCQ Exam */}
           <Link
-            href="/mcq"
+            href="/mcq-test"
             className="glass-panel p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-white/[0.08] hover:border-emerald-500/60 dark:hover:border-emerald-500/60 transition-all duration-300 group flex flex-col justify-between space-y-4 hover:shadow-xl hover:shadow-emerald-500/10 cursor-pointer"
           >
             <div className="space-y-3">
