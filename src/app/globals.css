@@ -133,3 +133,16 @@ textarea {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
+
+/* 
+:focus-visible {
+  outline: 2px solid #a855f7 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.25) !important;
+}
+
+:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+*/

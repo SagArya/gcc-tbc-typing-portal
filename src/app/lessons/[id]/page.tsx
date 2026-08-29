@@ -1,7 +1,7 @@
 // src/app/lessons/[id]/page.tsx
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import GlowCursor from "@/components/GlowCursor";
@@ -50,9 +50,18 @@ export default function LessonPlayerPage() {
   const [earnedStars, setEarnedStars] = useState<number>(0);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const nextStepBtnRef = useRef<HTMLButtonElement>(null);
+  const nextLessonBtnRef = useRef<HTMLButtonElement>(null);
 
   const currentStep: LessonStep | undefined = currentLesson?.steps[currentStepIdx];
   const isMarathi = currentLesson?.language === "marathi";
+
+  // लेसन ज्या भाषेचा आहे ती LocalStorage मध्ये सिंक ठेवणे
+  useEffect(() => {
+    if (currentLesson?.language) {
+      localStorage.setItem("typeforge_selected_lang", currentLesson.language);
+    }
+  }, [currentLesson]);
 
   const targetWords = useMemo(() => {
     return (currentStep?.targetText || "").trim().split(/\s+/).filter(Boolean);
@@ -79,18 +88,20 @@ export default function LessonPlayerPage() {
   const activeTargetWord = targetWords[activeWordIdx] || "";
   const activeChar = activeTargetWord[currentWord.length] || activeTargetWord[0] || "";
 
-  useEffect(() => {
-    handleResetStep();
-  }, [currentStepIdx, lessonId]);
-
-  const handleResetStep = () => {
+  const handleResetStep = useCallback(() => {
     setUserInput("");
     setStartTime(null);
     setWpm(0);
     setAccuracy(100);
     setIsStepFinished(false);
-    inputRef.current?.focus();
-  };
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    handleResetStep();
+  }, [currentStepIdx, lessonId, handleResetStep]);
 
   const calculateStars = (finalAcc: number) => {
     if (finalAcc >= 97) return 3;
@@ -114,6 +125,24 @@ export default function LessonPlayerPage() {
       console.error("Failed to save progress", e);
     }
   };
+
+  const handleNextStep = useCallback(() => {
+    if (currentLesson && currentStepIdx < currentLesson.steps.length - 1) {
+      setCurrentStepIdx((prev) => prev + 1);
+    }
+  }, [currentLesson, currentStepIdx]);
+
+  const handleNextLesson = useCallback(() => {
+    const allFiltered = LESSONS_DATA.filter((l) => l.language === currentLesson?.language);
+    const currentLessonIdx = allFiltered.findIndex((l) => l.id === lessonId);
+    const nextLesson = allFiltered[currentLessonIdx + 1];
+
+    if (nextLesson) {
+      router.push(`/lessons/${nextLesson.id}`);
+    } else {
+      router.push(`/lessons?lang=${currentLesson?.language || "marathi"}`);
+    }
+  }, [currentLesson, lessonId, router]);
 
   const updateTypingState = (val: string) => {
     if (isStepFinished || isLessonComplete) return;
@@ -141,15 +170,11 @@ export default function LessonPlayerPage() {
     const currentWpm = Math.round(wordsTyped / elapsedMins);
     setWpm(currentWpm);
 
-    // 🎯 अचूक समाप्ती लॉजिक:
     if (targetWords.length > 0) {
       const lastTarget = targetWords[targetWords.length - 1];
       const lastTyped = typedList[typedList.length - 1] || "";
 
-      // केस १: सर्व शब्द टाईप करून शेवटी स्पेस दिली
       const hasFinishedBySpace = typedList.length >= targetWords.length && hasSpaceAtEnd;
-
-      // केस २: शेवटचा शब्द तंतोतंत जुळला (अपूर्ण अक्षरावर नव्हे तर संपूर्ण शब्द बरोबर आल्यावर)
       const hasFinishedExactLastWord =
         typedList.length === targetWords.length &&
         normalizeText(lastTyped) === normalizeText(lastTarget) &&
@@ -163,36 +188,46 @@ export default function LessonPlayerPage() {
           setEarnedStars(finalStars);
           saveProgress(finalStars);
           setIsLessonComplete(true);
+          setTimeout(() => nextLessonBtnRef.current?.focus(), 200);
+        } else {
+          setTimeout(() => nextStepBtnRef.current?.focus(), 150);
         }
       }
     }
   };
 
-  const handleNextStep = () => {
-    if (currentLesson && currentStepIdx < currentLesson.steps.length - 1) {
-      setCurrentStepIdx((prev) => prev + 1);
-    }
-  };
+  // Keyboard Shortcuts (Enter for Next Step / Next Lesson, Esc for Back)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        router.push(`/lessons?lang=${currentLesson?.language || "marathi"}`);
+        return;
+      }
 
-  const handleNextLesson = () => {
-    const allFiltered = LESSONS_DATA.filter((l) => l.language === currentLesson?.language);
-    const currentLessonIdx = allFiltered.findIndex((l) => l.id === lessonId);
-    const nextLesson = allFiltered[currentLessonIdx + 1];
+      if (isLessonComplete && e.key === "Enter") {
+        e.preventDefault();
+        handleNextLesson();
+        return;
+      }
 
-    if (nextLesson) {
-      router.push(`/lessons/${nextLesson.id}`);
-    } else {
-      router.push("/lessons");
-    }
-  };
+      if (isStepFinished && !isLessonComplete && e.key === "Enter") {
+        e.preventDefault();
+        handleNextStep();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLessonComplete, isStepFinished, handleNextStep, handleNextLesson, currentLesson, router]);
 
   if (!currentLesson || !currentStep) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 text-center">
         <div className="glass-panel p-8 rounded-3xl space-y-4">
           <p className="text-sm font-bold text-slate-500">धडा सापडला नाही (Lesson Not Found)</p>
-          <Link href="/lessons" className="px-4 py-2 bg-cyan-500 text-black font-bold rounded-xl text-xs inline-block">
-            धड्यांच्या यादीकडे परत जा
+          <Link href={`/lessons?lang=${currentLesson?.language || "marathi"}`} className="px-4 py-2 bg-cyan-500 text-black font-bold rounded-xl text-xs inline-block">
+            धड्यांच्या यादीकडे परत जा (Esc)
           </Link>
         </div>
       </div>
@@ -205,7 +240,6 @@ export default function LessonPlayerPage() {
     <main className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 font-sans relative overflow-x-hidden p-2 sm:p-4 selection:bg-cyan-400 selection:text-black">
       <GlowCursor />
 
-      {/* Grid Pattern Overlay */}
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.04]"
         style={{
@@ -215,15 +249,16 @@ export default function LessonPlayerPage() {
       />
 
       <div className="relative z-10 max-w-4xl mx-auto w-full flex flex-col gap-2.5">
-        {/* Top Floating Navigation Header */}
+        {/* Top Navigation Header */}
         <header className="glass-panel px-3.5 py-2 rounded-xl flex flex-wrap justify-between items-center gap-2">
           <div className="flex items-center gap-3">
             <Link
-              href="/lessons"
-              className="p-1.5 px-2.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 font-medium"
+              href={`/lessons?lang=${currentLesson.language}`}
+              tabIndex={1}
+              className="p-1.5 px-2.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 font-medium focus:ring-2 focus:ring-cyan-500 focus:outline-none"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-              <span>Lessons</span>
+              <span>Lessons (Esc)</span>
             </Link>
 
             <div>
@@ -245,8 +280,9 @@ export default function LessonPlayerPage() {
 
           <div className="flex items-center gap-2">
             <button
+              tabIndex={2}
               onClick={handleResetStep}
-              className="px-2.5 py-1 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg transition duration-200 flex items-center gap-1 cursor-pointer"
+              className="px-2.5 py-1 bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg transition duration-200 flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-cyan-500 focus:outline-none"
             >
               <RotateCcw className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
               <span>Restart</span>
@@ -263,7 +299,7 @@ export default function LessonPlayerPage() {
           />
         </div>
 
-        {/* Compact Typing Bento Card */}
+        {/* Typing Bento Card */}
         <div className="glass-panel p-3.5 sm:p-4 rounded-2xl space-y-3">
           {/* Target Stream */}
           <div className="flex flex-wrap gap-1.5 text-base sm:text-lg font-medium leading-normal tracking-wide font-mono bg-slate-100 dark:bg-black/40 p-3 rounded-xl border border-slate-200 dark:border-white/[0.06] max-h-32 overflow-y-auto select-none shadow-inner">
@@ -298,6 +334,7 @@ export default function LessonPlayerPage() {
           {/* Input Box */}
           <MarathiTextarea
             ref={inputRef}
+            tabIndex={3}
             rows={1}
             value={userInput}
             onChangeValue={updateTypingState}
@@ -305,7 +342,7 @@ export default function LessonPlayerPage() {
             disabled={isStepFinished || isLessonComplete}
             placeholder={
               isStepFinished
-                ? "🎉 Screen completed! Click Next Screen below."
+                ? "🎉 Screen completed! Press Enter ↵ for Next Screen."
                 : isMarathi
                 ? "येथे पाहून टाईप करा (Space दाबा)..."
                 : "Type the target text here (press Space)..."
@@ -331,10 +368,13 @@ export default function LessonPlayerPage() {
 
             {isStepFinished && !isLessonComplete && (
               <button
+                ref={nextStepBtnRef}
+                tabIndex={4}
+                autoFocus
                 onClick={handleNextStep}
-                className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-lg text-xs transition duration-200 shadow-md shadow-cyan-500/25 cursor-pointer flex items-center gap-1 animate-bounce"
+                className="px-4 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-lg text-xs transition duration-200 shadow-md shadow-cyan-500/25 cursor-pointer flex items-center gap-1 animate-bounce focus:ring-2 focus:ring-cyan-400 focus:outline-none"
               >
-                <span>Next Screen</span>
+                <span>Next Screen (Enter ↵)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             )}
@@ -350,7 +390,7 @@ export default function LessonPlayerPage() {
         </div>
       </div>
 
-      {/* 🏆 LESSON COMPLETION FINAL MODAL */}
+      {/* Lesson Completion Modal */}
       {isLessonComplete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
           <div className="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full text-center space-y-5 shadow-2xl relative">
@@ -405,22 +445,26 @@ export default function LessonPlayerPage() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
               <button
+                tabIndex={2}
                 onClick={() => {
                   setIsLessonComplete(false);
                   setCurrentStepIdx(0);
                   handleResetStep();
                 }}
-                className="flex-1 py-2.5 bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-white/[0.1] cursor-pointer flex items-center justify-center gap-1"
+                className="flex-1 py-2.5 bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-white/[0.1] cursor-pointer flex items-center justify-center gap-1 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>पुन्हा सोडवा</span>
+                <span>पुन्हा सोडवा (Shift+Tab)</span>
               </button>
 
               <button
+                ref={nextLessonBtnRef}
+                tabIndex={1}
+                autoFocus
                 onClick={handleNextLesson}
-                className="flex-1 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition duration-200 shadow-lg shadow-cyan-500/25 cursor-pointer flex items-center justify-center gap-1"
+                className="flex-1 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition duration-200 shadow-lg shadow-cyan-500/25 cursor-pointer flex items-center justify-center gap-1 focus:ring-4 focus:ring-cyan-400 focus:outline-none"
               >
-                <span>पुढचा धडा</span>
+                <span>पुढचा धडा (Enter ↵)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

@@ -1,7 +1,7 @@
 // src/app/speed-test/page.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import PassageViewer from "@/components/PassageViewer";
 import MarathiTextarea from "@/components/MarathiTextarea";
@@ -118,6 +118,19 @@ export default function SpeedTestPage() {
     }
   }, []);
 
+  const resetTest = useCallback(() => {
+    setUserInput("");
+    setTimeLeft(EXAM_TIME_SECONDS);
+    setIsActive(false);
+    setIsFinished(false);
+    setShowResultModal(false);
+    setIsReviewMode(false);
+    setWeakKeysMap({});
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  }, []);
+
   // भाषा व स्पीडनुसार पॅसेजेस लोड करणे
   useEffect(() => {
     async function loadPassages() {
@@ -125,7 +138,6 @@ export default function SpeedTestPage() {
 
       setLoading(true);
 
-      // १. मराठी ३० WPM
       if (language === "marathi" && speed === "30") {
         const formatted: Passage[] = (MARATHI_30_PASSAGES || []).map((p: any) => ({
           id: String(p.id),
@@ -141,7 +153,6 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // २. मराठी ४० WPM
       if (language === "marathi" && speed === "40") {
         const formatted: Passage[] = (marathi40Passages || []).map((p: any) => ({
           id: String(p.id),
@@ -157,7 +168,6 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ३. इंग्रजी ४० WPM
       if (language === "english" && speed === "40") {
         const formatted: Passage[] = (ENGLISH_40_PASSAGES || []).map((p: any) => ({
           id: String(p.id),
@@ -173,7 +183,6 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ४. इंग्रजी ५० WPM
       if (language === "english" && speed === "50") {
         const formatted: Passage[] = (english50Passages || []).map((p: any) => ({
           id: String(p.id),
@@ -189,7 +198,6 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ५. इंग्रजी ६० WPM
       if (language === "english" && speed === "60") {
         const formatted: Passage[] = (english60Passages || []).map((p: any) => ({
           id: String(p.id),
@@ -205,7 +213,6 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // ६. फॉलबॅक API
       try {
         const res = await fetch(`/api/passages?lang=${language}&speed=${speed}`);
         const result = await res.json();
@@ -224,35 +231,9 @@ export default function SpeedTestPage() {
       }
     }
     loadPassages();
-  }, [language, speed, passageSource]);
+  }, [language, speed, passageSource, resetTest]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isActive) {
-      finishTest();
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
-
-  const handleApplyCustomPassage = () => {
-    if (customPassageInput.trim().length > 10) {
-      const customP: Passage = {
-        id: "custom-" + Date.now(),
-        language: language,
-        speed: Number(speed),
-        title: "Custom Uploaded Passage",
-        text: customPassageInput.trim(),
-      };
-      setSelectedPassage(customP);
-      resetTest();
-    }
-  };
-
-  const finishTest = () => {
+  const finishTest = useCallback(() => {
     setIsActive(false);
     setIsFinished(true);
     setShowResultModal(true);
@@ -338,17 +319,69 @@ export default function SpeedTestPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
 
     updateDailyStreak();
-  };
+  }, [selectedPassage, timeLeft, userInput, speed, language, history]);
 
-  const resetTest = () => {
-    setUserInput("");
-    setTimeLeft(EXAM_TIME_SECONDS);
-    setIsActive(false);
-    setIsFinished(false);
-    setShowResultModal(false);
-    setIsReviewMode(false);
-    setWeakKeysMap({});
-    inputRef.current?.focus();
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isActive) {
+      finishTest();
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft, finishTest]);
+
+  // Global Keyboard Shortcuts (Ctrl+Enter to Submit, Esc, Enter to Restart)
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // १. Ctrl + Enter: थेट टेस्ट सबमिट करा
+      if (e.ctrlKey && e.key === "Enter") {
+        e.preventDefault();
+        if (isActive && !isFinished) {
+          finishTest();
+        }
+        return;
+      }
+
+      // २. Escape: मॉडल्स बंद करणे किंवा टेस्ट रिसेट
+      if (e.key === "Escape") {
+        if (showHistoryModal) {
+          setShowHistoryModal(false);
+          return;
+        }
+        if (showResultModal) {
+          setShowResultModal(false);
+          return;
+        }
+      }
+
+      // ३. रिझल्ट किंवा रिव्ह्यू मोडमध्ये असताना 'Enter' किंवा 'R' ने रीस्टार्ट
+      if ((showResultModal || isReviewMode) && (e.key === "Enter" || e.key.toLowerCase() === "r")) {
+        if ((e.target as HTMLElement).tagName.toLowerCase() !== "textarea") {
+          e.preventDefault();
+          resetTest();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [isActive, isFinished, showHistoryModal, showResultModal, isReviewMode, finishTest, resetTest]);
+
+  const handleApplyCustomPassage = () => {
+    if (customPassageInput.trim().length > 10) {
+      const customP: Passage = {
+        id: "custom-" + Date.now(),
+        language: language,
+        speed: Number(speed),
+        title: "Custom Uploaded Passage",
+        text: customPassageInput.trim(),
+      };
+      setSelectedPassage(customP);
+      resetTest();
+    }
   };
 
   const handleReview = () => {
@@ -367,15 +400,14 @@ export default function SpeedTestPage() {
       <GlowCursor />
 
       <div className="relative z-10 w-full flex-1 flex flex-col gap-2 max-w-[1600px] mx-auto min-h-0">
-        
-        {/* 🌟 Unified All-in-One Top Header Tab */}
+        {/* Top Header Tab */}
         <header className="glass-panel px-3 py-1.5 rounded-2xl flex flex-wrap justify-between items-center gap-2 shrink-0">
-          
-          {/* Left: Back + Status Indicator + Hint */}
+          {/* Left: Back + Status Indicator */}
           <div className="flex items-center gap-2.5">
             <Link
               href="/"
-              className="p-1.5 rounded-xl bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 font-medium cursor-pointer"
+              tabIndex={1}
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 font-medium cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
               <ArrowLeft className="w-3.5 h-3.5 text-amber-500" />
               <span className="hidden sm:inline">Back</span>
@@ -395,7 +427,7 @@ export default function SpeedTestPage() {
                 {isReviewMode
                   ? "Review Mode: Green = Match, Red = Error"
                   : isActive
-                  ? "Exam Active..."
+                  ? "Exam Active... [Ctrl+Enter: Submit]"
                   : "Type in workspace to start 7-min timer."}
               </span>
             </div>
@@ -403,13 +435,13 @@ export default function SpeedTestPage() {
 
           {/* Right: Controls + Zoom + Timer + Actions */}
           <div className="flex flex-wrap items-center gap-2">
-            
             {/* Batches / Custom Switcher */}
             <div className="bg-slate-100 dark:bg-black/40 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-0.5">
               <button
+                tabIndex={2}
                 onClick={() => setPassageSource("batch")}
                 disabled={isActive || isReviewMode}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none ${
                   passageSource === "batch"
                     ? "bg-amber-500 text-slate-950 shadow-sm"
                     : "text-slate-600 dark:text-slate-400"
@@ -419,9 +451,10 @@ export default function SpeedTestPage() {
                 <span>Batches</span>
               </button>
               <button
+                tabIndex={3}
                 onClick={() => setPassageSource("custom")}
                 disabled={isActive || isReviewMode}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none ${
                   passageSource === "custom"
                     ? "bg-amber-500 text-slate-950 shadow-sm"
                     : "text-slate-600 dark:text-slate-400"
@@ -434,6 +467,7 @@ export default function SpeedTestPage() {
 
             {/* Language */}
             <select
+              tabIndex={4}
               value={language}
               disabled={isActive || isReviewMode}
               onChange={(e) => {
@@ -443,7 +477,7 @@ export default function SpeedTestPage() {
                   setSpeed("40");
                 }
               }}
-              className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+              className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             >
               <option value="marathi" className="bg-white dark:bg-slate-900">🇮🇳 Marathi</option>
               <option value="english" className="bg-white dark:bg-slate-900">🇬🇧 English</option>
@@ -451,10 +485,11 @@ export default function SpeedTestPage() {
 
             {/* Target Speed */}
             <select
+              tabIndex={5}
               value={speed}
               disabled={isActive || isReviewMode}
               onChange={(e) => setSpeed(e.target.value)}
-              className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer"
+              className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             >
               <option value="30" className="bg-white dark:bg-slate-900">30 WPM</option>
               <option value="40" className="bg-white dark:bg-slate-900">40 WPM</option>
@@ -469,6 +504,7 @@ export default function SpeedTestPage() {
             {/* Passage Selector */}
             {passageSource === "batch" && (
               <select
+                tabIndex={6}
                 value={selectedPassage?.id || ""}
                 disabled={isActive || isReviewMode}
                 onChange={(e) => {
@@ -478,7 +514,7 @@ export default function SpeedTestPage() {
                     resetTest();
                   }
                 }}
-                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:border-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
+                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
               >
                 {passages.map((p) => (
                   <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900">
@@ -488,13 +524,14 @@ export default function SpeedTestPage() {
               </select>
             )}
 
-            {/* 🔍 Zoom In / Out Controls */}
+            {/* Zoom Controls */}
             <div className="bg-slate-100 dark:bg-black/50 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex items-center gap-1">
               <button
                 type="button"
+                tabIndex={7}
                 onClick={handleZoomOut}
                 title="Font Size लहान करा"
-                className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
               >
                 <ZoomOut className="w-3 h-3" />
               </button>
@@ -503,15 +540,16 @@ export default function SpeedTestPage() {
               </span>
               <button
                 type="button"
+                tabIndex={8}
                 onClick={handleZoomIn}
                 title="Font Size मोठी करा"
-                className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
               >
                 <ZoomIn className="w-3 h-3" />
               </button>
             </div>
 
-            {/* ⏱️ Timer Badge */}
+            {/* Timer Badge */}
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-black/60 border border-slate-200 dark:border-white/[0.08] rounded-xl font-mono text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400">
               <Timer className="w-3.5 h-3.5 text-amber-500" />
               <span>{isReviewMode ? `${metrics.marksObtained}/40` : formatTime(timeLeft)}</span>
@@ -519,8 +557,9 @@ export default function SpeedTestPage() {
 
             {/* History */}
             <button
+              tabIndex={9}
               onClick={() => setShowHistoryModal(true)}
-              className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer"
+              className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
               <History className="w-3.5 h-3.5 text-sky-500" />
               <span>({history.length})</span>
@@ -528,8 +567,9 @@ export default function SpeedTestPage() {
 
             {isReviewMode && (
               <button
+                tabIndex={10}
                 onClick={() => setShowResultModal(true)}
-                className="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1"
+                className="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 focus:ring-2 focus:ring-sky-300 focus:outline-none"
               >
                 <Award className="w-3.5 h-3.5" />
                 <span>Result</span>
@@ -538,27 +578,29 @@ export default function SpeedTestPage() {
 
             {isActive && (
               <button
+                tabIndex={10}
                 onClick={finishTest}
-                className="px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 animate-pulse"
+                className="px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 animate-pulse focus:ring-2 focus:ring-rose-300 focus:outline-none"
               >
                 <CheckCircle className="w-3.5 h-3.5" />
-                <span>Submit</span>
+                <span>Submit (Ctrl+↵)</span>
               </button>
             )}
 
             <button
+              tabIndex={11}
               onClick={resetTest}
-              className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer"
+              className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>{isReviewMode ? "New" : "Reset"}</span>
+              <span>{isReviewMode ? "New (Enter)" : "Reset"}</span>
             </button>
 
             <ThemeToggle />
           </div>
         </header>
 
-        {/* 📝 Custom Passage Drawer (Only when Custom is selected) */}
+        {/* Custom Passage Drawer */}
         {passageSource === "custom" && !isActive && !isReviewMode && (
           <div className="glass-panel p-3 rounded-2xl space-y-2 shrink-0">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
@@ -567,23 +609,24 @@ export default function SpeedTestPage() {
             </div>
             <textarea
               rows={2}
+              tabIndex={12}
               value={customPassageInput}
               onChange={(e) => setCustomPassageInput(e.target.value)}
               placeholder="Paste your Marathi/English passage here..."
-              className="w-full bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl p-2.5 text-xs font-mono focus:outline-none focus:border-amber-500 resize-none"
+              className="w-full bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl p-2.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
             />
             <button
+              tabIndex={13}
               onClick={handleApplyCustomPassage}
-              className="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-md cursor-pointer"
+              className="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-md cursor-pointer focus:ring-2 focus:ring-amber-400 focus:outline-none"
             >
               Apply Passage
             </button>
           </div>
         )}
 
-        {/* 🖥️ Split Screen Layout (Screen Bottom 100% Touch) */}
+        {/* Split Screen Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-stretch flex-1 min-h-0 pb-0">
-          
           {/* Left Column: Passage Viewer */}
           <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col h-full min-h-0">
             <PassageViewer
@@ -618,6 +661,7 @@ export default function SpeedTestPage() {
             ) : (
               <MarathiTextarea
                 ref={inputRef}
+                tabIndex={14}
                 value={userInput}
                 onChangeValue={(val) => {
                   if (!isActive && timeLeft > 0 && !isFinished) {
@@ -627,7 +671,7 @@ export default function SpeedTestPage() {
                 }}
                 isMarathi={language === "marathi"}
                 disabled={timeLeft === 0 || isFinished || loading}
-                placeholder="येथे डाव्या बाजूचा उतारा पाहून टाईप करा (परिच्छेदासाठी Tab आणि Enter वापरा)..."
+                placeholder="येथे डाव्या बाजूचा उतारा पाहून टाईप करा (सबमिट करण्यासाठी Ctrl+Enter वापरा)..."
                 style={{ fontSize: `${fontSize}px` }}
                 className="flex-1 w-full p-3 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.06] rounded-xl focus:outline-none focus:border-amber-500 text-slate-900 dark:text-slate-100 font-mono leading-relaxed resize-none placeholder-slate-400 dark:placeholder-slate-600 shadow-inner overflow-y-auto min-h-0"
               />

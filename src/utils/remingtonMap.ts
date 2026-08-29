@@ -28,7 +28,7 @@ export const normalKeyMap: Record<string, string> = {
   "i": "प",
   "o": "व",
   "p": "च",
-  "[": "ख",
+  "[": "ख्",
   "]": ",",
   "\\": ".",
 
@@ -86,7 +86,7 @@ export const shiftKeyMap: Record<string, string> = {
   "I": "प्",
   "O": "व्",
   "P": "च्",
-  "{": "क्ष",
+  "{": "क्ष्",
   "}": "द्व",
   "|": ")",
 

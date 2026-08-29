@@ -17,7 +17,18 @@ function combineLigatures(text: string, char: string): string {
   const lastChar = text.slice(-1);
   const lastTwoChars = text.slice(-2);
 
-  // १. रफार लॉजिक (उदा. माग + र् => मार्ग)
+  // 🌟 १. पदन / त्रिशूळ (्र) + वेलांटी रीऑर्डरिंग फिक्स (उदा. टि + ्र => ट्रि, ति + ्र => त्रि, पि + ्र => प्रि)
+  const PADAN = "\u094D\u0930"; // ् + र
+  const isPadan = char === "्र" || char === PADAN || char === "़";
+
+  if (isPadan && lastChar === "ि" && text.length >= 2) {
+    // वेलांटीच्या आधीचे मूळ अक्षर शोधणे
+    const textWithoutVelanti = text.slice(0, -1);
+    const padanChar = char === "़" ? "़" : "्र";
+    return textWithoutVelanti + padanChar + "ि";
+  }
+
+  // २. रफार लॉजिक (उदा. माग + र् => मार्ग)
   const RAFAAR = "\u0930\u094D";
   if (char === RAFAAR || char === "र्") {
     const match = text.match(/([\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/);
@@ -28,7 +39,7 @@ function combineLigatures(text: string, char: string): string {
     }
   }
 
-  // २. अर्ध्या अक्षरांना काना (k / Shift+A) लागल्यास पूर्ण बनवणे
+  // ३. अर्ध्या अक्षरांना काना (k / Shift+A) लागल्यास पूर्ण बनवणे
   if (char === "\u093E" || char === "ा") {
     if (lastTwoChars === "ध्") return text.slice(0, -2) + "ध";
     if (lastTwoChars === "ण्") return text.slice(0, -2) + "ण";
@@ -52,7 +63,7 @@ function combineLigatures(text: string, char: string): string {
     if (lastChar === "अ") return text.slice(0, -1) + "आ";
   }
 
-  // ३. स्वर जोडणी
+  // ४. स्वर जोडणी
   if (lastChar === "आ" && char === "े") return text.slice(0, -1) + "ओ";
   if ((lastChar === "आ" || lastChar === "ओ") && (char === "ै" || char === "े"))
     return text.slice(0, -1) + "औ";

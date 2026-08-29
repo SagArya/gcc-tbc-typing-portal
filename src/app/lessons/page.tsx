@@ -1,8 +1,9 @@
 // src/app/lessons/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import GlowCursor from "@/components/GlowCursor";
 import ThemeToggle from "@/components/ThemeToggle";
 import { LESSONS_DATA, LessonItem } from "@/data/lessonsData";
@@ -15,11 +16,35 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-export default function LessonsDashboardPage() {
-  const [language, setLanguage] = useState<"marathi" | "english">("english");
+function LessonsDashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlLang = searchParams.get("lang") as "marathi" | "english" | null;
+
+  const [language, setLanguage] = useState<"marathi" | "english">("marathi");
   const [userProgress, setUserProgress] = useState<{
     [lessonId: string]: { stars: number; completed: boolean };
   }>({});
+
+  // १. आधी URL पॅरामीटर किंवा LocalStorage मधून भाषा लोड करणे
+  useEffect(() => {
+    if (urlLang === "marathi" || urlLang === "english") {
+      setLanguage(urlLang);
+      localStorage.setItem("typeforge_selected_lang", urlLang);
+    } else {
+      const savedLang = localStorage.getItem("typeforge_selected_lang") as "marathi" | "english" | null;
+      if (savedLang) {
+        setLanguage(savedLang);
+      }
+    }
+  }, [urlLang]);
+
+  // २. भाषा बदलल्यावर LocalStorage व URL अपडेट करणे
+  const handleLanguageChange = (newLang: "marathi" | "english") => {
+    setLanguage(newLang);
+    localStorage.setItem("typeforge_selected_lang", newLang);
+    router.replace(`/lessons?lang=${newLang}`);
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem("typeforge_lessons_progress");
@@ -32,13 +57,23 @@ export default function LessonsDashboardPage() {
     }
   }, []);
 
+  // Global Escape Key to go Home
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        router.push("/");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router]);
+
   const filteredLessons = LESSONS_DATA.filter((l) => l.language === language);
   const beginnerLessons = filteredLessons.filter((l) => l.tier === "beginner");
   const commonWordsLessons = filteredLessons.filter((l) => l.tier === "common_words");
   const intermediateLessons = filteredLessons.filter((l) => l.tier === "intermediate");
   const advancedLessons = filteredLessons.filter((l) => l.tier === "advanced");
 
-  // 🎯 निवडलेल्या भाषेनुसार अचूक स्टार्स आणि कम्प्लीट काउंट
   const totalStars = filteredLessons.reduce(
     (acc, curr) => acc + (userProgress[curr.id]?.stars || 0),
     0
@@ -74,7 +109,6 @@ export default function LessonsDashboardPage() {
           {lessons.map((lesson) => {
             const progress = userProgress[lesson.id] || { stars: 0, completed: false };
             
-            // 🔒 संपूर्ण क्रमातील जागतिक इंडेक्स (Global Index) तपासून लॉक/अनलॉक ठरवणे
             const globalIdx = filteredLessons.findIndex((l) => l.id === lesson.id);
             const prevLesson = filteredLessons[globalIdx - 1];
             const isUnlocked =
@@ -87,7 +121,7 @@ export default function LessonsDashboardPage() {
                 key={lesson.id}
                 className={`glass-panel p-5 rounded-3xl flex flex-col justify-between transition-all duration-200 ${
                   isUnlocked
-                    ? "hover:border-cyan-500/50 hover:shadow-xl cursor-pointer"
+                    ? "hover:border-cyan-500/50 hover:shadow-xl"
                     : "opacity-60 grayscale cursor-not-allowed"
                 }`}
               >
@@ -97,7 +131,6 @@ export default function LessonsDashboardPage() {
                       Lesson {globalIdx + 1}
                     </span>
 
-                    {/* Stars Display */}
                     <div className="flex items-center gap-1">
                       {[1, 2, 3].map((s) => (
                         <Star
@@ -130,7 +163,8 @@ export default function LessonsDashboardPage() {
                   {isUnlocked ? (
                     <Link
                       href={`/lessons/${lesson.id}`}
-                      className="px-3.5 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition duration-200 shadow-md shadow-cyan-500/20 flex items-center gap-1.5"
+                      tabIndex={0}
+                      className="px-3.5 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition duration-200 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 focus:ring-2 focus:ring-cyan-400 focus:outline-none cursor-pointer"
                     >
                       <Play className="w-3 h-3 fill-slate-950" />
                       <span>{progress.completed ? "Review" : "Start"}</span>
@@ -168,10 +202,11 @@ export default function LessonsDashboardPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5 font-medium"
+              tabIndex={0}
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs transition duration-200 border border-slate-200 dark:border-white/[0.08] flex items-center gap-1.5 font-medium focus:ring-2 focus:ring-cyan-500 focus:outline-none"
             >
               <ArrowLeft className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-              <span>Back to Home</span>
+              <span>Back (Esc)</span>
             </Link>
             <div>
               <div className="flex items-center gap-2">
@@ -182,8 +217,11 @@ export default function LessonsDashboardPage() {
                   Curriculum
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Step-by-step touch typing mastery (Beginner → Common Words → Advanced)
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                <span>Step-by-step touch typing mastery</span>
+                <span className="hidden sm:inline text-cyan-600 dark:text-cyan-400 font-semibold">
+                  • [Tab ➔ Enter to open lesson]
+                </span>
               </p>
             </div>
           </div>
@@ -192,8 +230,9 @@ export default function LessonsDashboardPage() {
             {/* Language Switcher */}
             <div className="bg-slate-100 dark:bg-black/50 p-1 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-1">
               <button
-                onClick={() => setLanguage("marathi")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                tabIndex={0}
+                onClick={() => handleLanguageChange("marathi")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer focus:ring-2 focus:ring-amber-400 focus:outline-none ${
                   language === "marathi"
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -202,8 +241,9 @@ export default function LessonsDashboardPage() {
                 🇮🇳 Marathi
               </button>
               <button
-                onClick={() => setLanguage("english")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                tabIndex={0}
+                onClick={() => handleLanguageChange("english")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer focus:ring-2 focus:ring-amber-400 focus:outline-none ${
                   language === "english"
                     ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -260,7 +300,7 @@ export default function LessonsDashboardPage() {
           </div>
         </div>
 
-        {/* 4 Distinct Tier Sections */}
+        {/* Tier Sections */}
         <div className="space-y-10">
           {renderTierSection("Tier 1: Beginner (Row Foundation)", "bg-emerald-500", beginnerLessons)}
           {renderTierSection("Tier 2: Common Words (High-Frequency Flow)", "bg-sky-500", commonWordsLessons)}
@@ -273,5 +313,13 @@ export default function LessonsDashboardPage() {
         <span>TypeForge PRO • Structured Typing Academy</span>
       </footer>
     </main>
+  );
+}
+
+export default function LessonsDashboardPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm font-bold">Loading...</div>}>
+      <LessonsDashboardContent />
+    </Suspense>
   );
 }
