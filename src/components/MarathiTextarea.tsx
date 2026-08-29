@@ -17,18 +17,15 @@ function combineLigatures(text: string, char: string): string {
   const lastChar = text.slice(-1);
   const lastTwoChars = text.slice(-2);
 
-  // 🌟 १. पदन / त्रिशूळ (्र) + वेलांटी रीऑर्डरिंग फिक्स (उदा. टि + ्र => ट्रि, ति + ्र => त्रि, पि + ्र => प्रि)
-  const PADAN = "\u094D\u0930"; // ् + र
+  const PADAN = "\u094D\u0930";
   const isPadan = char === "्र" || char === PADAN || char === "़";
 
   if (isPadan && lastChar === "ि" && text.length >= 2) {
-    // वेलांटीच्या आधीचे मूळ अक्षर शोधणे
     const textWithoutVelanti = text.slice(0, -1);
     const padanChar = char === "़" ? "़" : "्र";
     return textWithoutVelanti + padanChar + "ि";
   }
 
-  // २. रफार लॉजिक (उदा. माग + र् => मार्ग)
   const RAFAAR = "\u0930\u094D";
   if (char === RAFAAR || char === "र्") {
     const match = text.match(/([\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/);
@@ -39,7 +36,6 @@ function combineLigatures(text: string, char: string): string {
     }
   }
 
-  // ३. अर्ध्या अक्षरांना काना (k / Shift+A) लागल्यास पूर्ण बनवणे
   if (char === "\u093E" || char === "ा") {
     if (lastTwoChars === "ध्") return text.slice(0, -2) + "ध";
     if (lastTwoChars === "ण्") return text.slice(0, -2) + "ण";
@@ -63,7 +59,6 @@ function combineLigatures(text: string, char: string): string {
     if (lastChar === "अ") return text.slice(0, -1) + "आ";
   }
 
-  // ४. स्वर जोडणी
   if (lastChar === "आ" && char === "े") return text.slice(0, -1) + "ओ";
   if ((lastChar === "आ" || lastChar === "ओ") && (char === "ै" || char === "े"))
     return text.slice(0, -1) + "औ";
@@ -76,7 +71,7 @@ function combineLigatures(text: string, char: string): string {
 }
 
 const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
-  ({ value, onChangeValue, onChange, isMarathi = true, ...props }, ref) => {
+  ({ value, onChangeValue, onChange, isMarathi = true, className, style, ...props }, ref) => {
     const [pendingVelanti, setPendingVelanti] = useState(false);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -100,7 +95,6 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         return;
       }
 
-      // Spacebar
       if (e.key === " " || e.code === "Space") {
         e.preventDefault();
         setPendingVelanti(false);
@@ -109,7 +103,6 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         return;
       }
 
-      // Backspace
       if (e.key === "Backspace") {
         e.preventDefault();
         if (pendingVelanti) {
@@ -121,7 +114,6 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         return;
       }
 
-      // Enter
       if (e.key === "Enter") {
         e.preventDefault();
         setPendingVelanti(false);
@@ -130,7 +122,6 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         return;
       }
 
-      // पहिली वेलांटी ('f')
       if (!e.shiftKey && e.key === "f") {
         e.preventDefault();
         setPendingVelanti(true);
@@ -186,6 +177,11 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         data-gramm="false"
         data-gramm_editor="false"
         data-enable-grammarly="false"
+        style={{
+          fontFamily: "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+          ...style,
+        }}
+        className={className}
         {...props}
       />
     );

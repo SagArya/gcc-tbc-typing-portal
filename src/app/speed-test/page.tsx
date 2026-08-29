@@ -32,6 +32,7 @@ import {
   FileText,
   ZoomIn,
   ZoomOut,
+  Shuffle,
 } from "lucide-react";
 
 interface Passage {
@@ -42,7 +43,7 @@ interface Passage {
   text: string;
 }
 
-const EXAM_TIME_SECONDS = 420; // ७ मिनिटे (GCC-TBC Standard)
+const EXAM_TIME_SECONDS = 420; // ७ मिनिटे
 const TOTAL_EXAM_MARKS = 40;
 const PASSING_MARKS = 16;
 const STORAGE_KEY = "gcc_tbc_typing_history";
@@ -60,20 +61,23 @@ function normalizeText(str: string): string {
     .trim();
 }
 
+function getRandomItem<T>(items: T[]): T | null {
+  if (!items || items.length === 0) return null;
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 export default function SpeedTestPage() {
   const [passages, setPassages] = useState<Passage[]>([]);
   const [selectedPassage, setSelectedPassage] = useState<Passage | null>(null);
-  const [language, setLanguage] = useState("marathi");
+
+  const [language, setLanguage] = useState("english");
   const [speed, setSpeed] = useState("40");
   const [loading, setLoading] = useState(true);
-
-  // 🔍 Font Size Zoom Controller (13px to 24px)
-  const [fontSize, setFontSize] = useState<number>(15);
+  const [fontSize, setFontSize] = useState<number>(16);
 
   const handleZoomIn = () => setFontSize((prev) => Math.min(prev + 1, 24));
-  const handleZoomOut = () => setFontSize((prev) => Math.max(prev - 1, 13));
+  const handleZoomOut = () => setFontSize((prev) => Math.max(prev - 1, 14));
 
-  // Passage Source: Batch vs Custom
   const [passageSource, setPassageSource] = useState<"batch" | "custom">("batch");
   const [customPassageInput, setCustomPassageInput] = useState("");
 
@@ -101,11 +105,21 @@ export default function SpeedTestPage() {
     wpm: 0,
     accuracy: 100,
     targetSpeed: 40,
-    language: "marathi",
+    language: "english",
     isPassed: false,
   });
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const userInputRef = useRef(userInput);
+  userInputRef.current = userInput;
+
+  const timeLeftRef = useRef(timeLeft);
+  timeLeftRef.current = timeLeft;
+
+  const selectedPassageRef = useRef(selectedPassage);
+  selectedPassageRef.current = selectedPassage;
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -118,7 +132,15 @@ export default function SpeedTestPage() {
     }
   }, []);
 
-  const resetTest = useCallback(() => {
+  // 🛑 Safe Reset Logic (No re-render loops)
+  const resetTest = useCallback((newPassage?: Passage) => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (newPassage) {
+      setSelectedPassage(newPassage);
+    }
     setUserInput("");
     setTimeLeft(EXAM_TIME_SECONDS);
     setIsActive(false);
@@ -128,97 +150,78 @@ export default function SpeedTestPage() {
     setWeakKeysMap({});
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 100);
+    }, 50);
   }, []);
 
-  // भाषा व स्पीडनुसार पॅसेजेस लोड करणे
+  // 📚 Safe Passage Loading
   useEffect(() => {
-    async function loadPassages() {
-      if (passageSource === "custom") return;
+    if (passageSource === "custom") return;
 
-      setLoading(true);
+    let formatted: Passage[] = [];
 
-      if (language === "marathi" && speed === "30") {
-        const formatted: Passage[] = (MARATHI_30_PASSAGES || []).map((p: any) => ({
-          id: String(p.id),
-          language: "marathi",
-          speed: 30,
-          title: p.title || `Batch ${p.batchNo || p.id}`,
-          text: p.text || p.content || "",
-        }));
-        setPassages(formatted);
-        setSelectedPassage(formatted[0] || null);
-        setLoading(false);
-        resetTest();
-        return;
-      }
+    if (language === "marathi" && speed === "30") {
+      formatted = (MARATHI_30_PASSAGES || []).map((p: any) => ({
+        id: String(p.id),
+        language: "marathi",
+        speed: 30,
+        title: p.title || `Batch ${p.batchNo || p.id}`,
+        text: p.text || p.content || "",
+      }));
+    } else if (language === "marathi" && speed === "40") {
+      formatted = (marathi40Passages || []).map((p: any) => ({
+        id: String(p.id),
+        language: "marathi",
+        speed: 40,
+        title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
+        text: p.content || p.text || "",
+      }));
+    } else if (language === "english" && speed === "40") {
+      formatted = (ENGLISH_40_PASSAGES || []).map((p: any) => ({
+        id: String(p.id),
+        language: "english",
+        speed: 40,
+        title: p.title || `Batch ${p.batchNo || p.id}`,
+        text: p.text || p.content || "",
+      }));
+    } else if (language === "english" && speed === "50") {
+      formatted = (english50Passages || []).map((p: any) => ({
+        id: String(p.id),
+        language: "english",
+        speed: 50,
+        title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
+        text: p.content || p.text || "",
+      }));
+    } else if (language === "english" && speed === "60") {
+      formatted = (english60Passages || []).map((p: any) => ({
+        id: String(p.id),
+        language: "english",
+        speed: 60,
+        title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
+        text: p.content || p.text || "",
+      }));
+    }
 
-      if (language === "marathi" && speed === "40") {
-        const formatted: Passage[] = (marathi40Passages || []).map((p: any) => ({
-          id: String(p.id),
-          language: "marathi",
-          speed: 40,
-          title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
-          text: p.content || p.text || "",
-        }));
-        setPassages(formatted);
-        setSelectedPassage(formatted[0] || null);
-        setLoading(false);
-        resetTest();
-        return;
-      }
+    if (formatted.length > 0) {
+      setPassages(formatted);
+      const randP = getRandomItem(formatted);
+      setSelectedPassage(randP);
+      setLoading(false);
+      setUserInput("");
+      setTimeLeft(EXAM_TIME_SECONDS);
+      setIsActive(false);
+      setIsFinished(false);
+      return;
+    }
 
-      if (language === "english" && speed === "40") {
-        const formatted: Passage[] = (ENGLISH_40_PASSAGES || []).map((p: any) => ({
-          id: String(p.id),
-          language: "english",
-          speed: 40,
-          title: p.title || `Batch ${p.batchNo || p.id}`,
-          text: p.text || p.content || "",
-        }));
-        setPassages(formatted);
-        setSelectedPassage(formatted[0] || null);
-        setLoading(false);
-        resetTest();
-        return;
-      }
-
-      if (language === "english" && speed === "50") {
-        const formatted: Passage[] = (english50Passages || []).map((p: any) => ({
-          id: String(p.id),
-          language: "english",
-          speed: 50,
-          title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
-          text: p.content || p.text || "",
-        }));
-        setPassages(formatted);
-        setSelectedPassage(formatted[0] || null);
-        setLoading(false);
-        resetTest();
-        return;
-      }
-
-      if (language === "english" && speed === "60") {
-        const formatted: Passage[] = (english60Passages || []).map((p: any) => ({
-          id: String(p.id),
-          language: "english",
-          speed: 60,
-          title: p.title ? `${p.id}. ${p.title}` : `Passage ${p.id}`,
-          text: p.content || p.text || "",
-        }));
-        setPassages(formatted);
-        setSelectedPassage(formatted[0] || null);
-        setLoading(false);
-        resetTest();
-        return;
-      }
-
+    async function fetchFromApi() {
       try {
+        setLoading(true);
         const res = await fetch(`/api/passages?lang=${language}&speed=${speed}`);
         const result = await res.json();
         if (result.success && result.data?.length > 0) {
           setPassages(result.data);
-          setSelectedPassage(result.data[0]);
+          const randApi = getRandomItem(result.data as Passage[]);
+          setSelectedPassage(randApi);
         } else {
           setPassages([]);
           setSelectedPassage(null);
@@ -227,22 +230,41 @@ export default function SpeedTestPage() {
         console.error("API Error:", error);
       } finally {
         setLoading(false);
-        resetTest();
+        setUserInput("");
+        setTimeLeft(EXAM_TIME_SECONDS);
+        setIsActive(false);
+        setIsFinished(false);
       }
     }
-    loadPassages();
-  }, [language, speed, passageSource, resetTest]);
+
+    fetchFromApi();
+  }, [language, speed, passageSource]);
+
+  const handlePickRandomPassage = () => {
+    if (passages.length > 0) {
+      const rand = getRandomItem(passages);
+      if (rand) resetTest(rand);
+    }
+  };
 
   const finishTest = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     setIsActive(false);
     setIsFinished(true);
     setShowResultModal(true);
 
-    if (!selectedPassage) return;
+    const currentPassage = selectedPassageRef.current;
+    if (!currentPassage) return;
 
-    const timeSpentMinutes = (EXAM_TIME_SECONDS - timeLeft) / 60 || 1 / 60;
-    const typedWords = userInput.trim().split(/\s+/).filter(Boolean);
-    const targetWords = selectedPassage.text.trim().split(/\s+/).filter(Boolean);
+    const currentTyped = userInputRef.current;
+    const currentRemainingTime = timeLeftRef.current;
+
+    const timeSpentMinutes = (EXAM_TIME_SECONDS - currentRemainingTime) / 60 || 1 / 60;
+    const typedWords = currentTyped.trim().split(/\s+/).filter(Boolean);
+    const targetWords = currentPassage.text.trim().split(/\s+/).filter(Boolean);
 
     let correctCount = 0;
     let wrongCount = 0;
@@ -277,7 +299,7 @@ export default function SpeedTestPage() {
 
     const passed = marks >= PASSING_MARKS;
 
-    const resultMetrics = {
+    setMetrics({
       totalTargetWords: targetWords.length,
       typedWordsCount: typedWords.length,
       correctWordsCount: correctCount,
@@ -292,9 +314,7 @@ export default function SpeedTestPage() {
       targetSpeed: Number(speed),
       language: language,
       isPassed: passed,
-    };
-
-    setMetrics(resultMetrics);
+    });
 
     const newRecord: TestRecord = {
       id: Date.now().toString(),
@@ -311,32 +331,48 @@ export default function SpeedTestPage() {
       marksObtained: marks,
       totalMarks: TOTAL_EXAM_MARKS,
       isPassed: passed,
-      passageTitle: selectedPassage.title,
+      passageTitle: currentPassage.title,
     };
 
-    const updatedHistory = [newRecord, ...history];
-    setHistory(updatedHistory);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedHistory));
+    setHistory((prev) => {
+      const updated = [newRecord, ...prev];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
 
     updateDailyStreak();
-  }, [selectedPassage, timeLeft, userInput, speed, language, history]);
+  }, [speed, language]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+    if (isActive && !isFinished) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            timerRef.current = null;
+            finishTest();
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-    } else if (timeLeft === 0 && isActive) {
-      finishTest();
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft, finishTest]);
 
-  // Global Keyboard Shortcuts (Ctrl+Enter to Submit, Esc, Enter to Restart)
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [isActive, isFinished, finishTest]);
+
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      // १. Ctrl + Enter: थेट टेस्ट सबमिट करा
       if (e.ctrlKey && e.key === "Enter") {
         e.preventDefault();
         if (isActive && !isFinished) {
@@ -345,7 +381,6 @@ export default function SpeedTestPage() {
         return;
       }
 
-      // २. Escape: मॉडल्स बंद करणे किंवा टेस्ट रिसेट
       if (e.key === "Escape") {
         if (showHistoryModal) {
           setShowHistoryModal(false);
@@ -357,9 +392,8 @@ export default function SpeedTestPage() {
         }
       }
 
-      // ३. रिझल्ट किंवा रिव्ह्यू मोडमध्ये असताना 'Enter' किंवा 'R' ने रीस्टार्ट
       if ((showResultModal || isReviewMode) && (e.key === "Enter" || e.key.toLowerCase() === "r")) {
-        if ((e.target as HTMLElement).tagName.toLowerCase() !== "textarea") {
+        if ((e.target as HTMLElement).tagName?.toLowerCase() !== "textarea") {
           e.preventDefault();
           resetTest();
         }
@@ -380,13 +414,8 @@ export default function SpeedTestPage() {
         text: customPassageInput.trim(),
       };
       setSelectedPassage(customP);
-      resetTest();
+      resetTest(customP);
     }
-  };
-
-  const handleReview = () => {
-    setShowResultModal(false);
-    setIsReviewMode(true);
   };
 
   const formatTime = (seconds: number) => {
@@ -402,7 +431,6 @@ export default function SpeedTestPage() {
       <div className="relative z-10 w-full flex-1 flex flex-col gap-2 max-w-[1600px] mx-auto min-h-0">
         {/* Top Header Tab */}
         <header className="glass-panel px-3 py-1.5 rounded-2xl flex flex-wrap justify-between items-center gap-2 shrink-0">
-          {/* Left: Back + Status Indicator */}
           <div className="flex items-center gap-2.5">
             <Link
               href="/"
@@ -433,9 +461,7 @@ export default function SpeedTestPage() {
             </div>
           </div>
 
-          {/* Right: Controls + Zoom + Timer + Actions */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* Batches / Custom Switcher */}
             <div className="bg-slate-100 dark:bg-black/40 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-0.5">
               <button
                 tabIndex={2}
@@ -465,7 +491,6 @@ export default function SpeedTestPage() {
               </button>
             </div>
 
-            {/* Language */}
             <select
               tabIndex={4}
               value={language}
@@ -479,11 +504,10 @@ export default function SpeedTestPage() {
               }}
               className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             >
-              <option value="marathi" className="bg-white dark:bg-slate-900">🇮🇳 Marathi</option>
               <option value="english" className="bg-white dark:bg-slate-900">🇬🇧 English</option>
+              <option value="marathi" className="bg-white dark:bg-slate-900">🇮🇳 Marathi</option>
             </select>
 
-            {/* Target Speed */}
             <select
               tabIndex={5}
               value={speed}
@@ -491,8 +515,8 @@ export default function SpeedTestPage() {
               onChange={(e) => setSpeed(e.target.value)}
               className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
             >
-              <option value="30" className="bg-white dark:bg-slate-900">30 WPM</option>
               <option value="40" className="bg-white dark:bg-slate-900">40 WPM</option>
+              <option value="30" className="bg-white dark:bg-slate-900">30 WPM</option>
               {language === "english" && (
                 <>
                   <option value="50" className="bg-white dark:bg-slate-900">50 WPM</option>
@@ -501,34 +525,44 @@ export default function SpeedTestPage() {
               )}
             </select>
 
-            {/* Passage Selector */}
             {passageSource === "batch" && (
-              <select
-                tabIndex={6}
-                value={selectedPassage?.id || ""}
-                disabled={isActive || isReviewMode}
-                onChange={(e) => {
-                  const found = passages.find((p) => p.id === e.target.value);
-                  if (found) {
-                    setSelectedPassage(found);
-                    resetTest();
-                  }
-                }}
-                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
-              >
-                {passages.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900">
-                    {p.title}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-1">
+                <select
+                  tabIndex={6}
+                  value={selectedPassage?.id || ""}
+                  disabled={isActive || isReviewMode}
+                  onChange={(e) => {
+                    const found = passages.find((p) => p.id === e.target.value);
+                    if (found) {
+                      resetTest(found);
+                    }
+                  }}
+                  className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
+                >
+                  {passages.map((p) => (
+                    <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900">
+                      {p.title}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  type="button"
+                  tabIndex={7}
+                  onClick={handlePickRandomPassage}
+                  disabled={isActive || isReviewMode}
+                  title="Random Passage निवडा"
+                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-amber-500 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                >
+                  <Shuffle className="w-3.5 h-3.5" />
+                </button>
+              </div>
             )}
 
-            {/* Zoom Controls */}
             <div className="bg-slate-100 dark:bg-black/50 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex items-center gap-1">
               <button
                 type="button"
-                tabIndex={7}
+                tabIndex={8}
                 onClick={handleZoomOut}
                 title="Font Size लहान करा"
                 className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
@@ -540,7 +574,7 @@ export default function SpeedTestPage() {
               </span>
               <button
                 type="button"
-                tabIndex={8}
+                tabIndex={9}
                 onClick={handleZoomIn}
                 title="Font Size मोठी करा"
                 className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
@@ -549,15 +583,13 @@ export default function SpeedTestPage() {
               </button>
             </div>
 
-            {/* Timer Badge */}
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-black/60 border border-slate-200 dark:border-white/[0.08] rounded-xl font-mono text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400">
               <Timer className="w-3.5 h-3.5 text-amber-500" />
               <span>{isReviewMode ? `${metrics.marksObtained}/40` : formatTime(timeLeft)}</span>
             </div>
 
-            {/* History */}
             <button
-              tabIndex={9}
+              tabIndex={10}
               onClick={() => setShowHistoryModal(true)}
               className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
@@ -567,7 +599,7 @@ export default function SpeedTestPage() {
 
             {isReviewMode && (
               <button
-                tabIndex={10}
+                tabIndex={11}
                 onClick={() => setShowResultModal(true)}
                 className="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 focus:ring-2 focus:ring-sky-300 focus:outline-none"
               >
@@ -578,7 +610,7 @@ export default function SpeedTestPage() {
 
             {isActive && (
               <button
-                tabIndex={10}
+                tabIndex={12}
                 onClick={finishTest}
                 className="px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 animate-pulse focus:ring-2 focus:ring-rose-300 focus:outline-none"
               >
@@ -588,8 +620,8 @@ export default function SpeedTestPage() {
             )}
 
             <button
-              tabIndex={11}
-              onClick={resetTest}
+              tabIndex={13}
+              onClick={() => resetTest()}
               className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -609,14 +641,14 @@ export default function SpeedTestPage() {
             </div>
             <textarea
               rows={2}
-              tabIndex={12}
+              tabIndex={14}
               value={customPassageInput}
               onChange={(e) => setCustomPassageInput(e.target.value)}
               placeholder="Paste your Marathi/English passage here..."
               className="w-full bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl p-2.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
             />
             <button
-              tabIndex={13}
+              tabIndex={15}
               onClick={handleApplyCustomPassage}
               className="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-md cursor-pointer focus:ring-2 focus:ring-amber-400 focus:outline-none"
             >
@@ -640,12 +672,16 @@ export default function SpeedTestPage() {
 
           {/* Right Column: Workspace OR Mistake Reviewer */}
           <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col h-full min-h-0">
-            <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-200 dark:border-white/[0.06] shrink-0">
-              <div className="flex items-center gap-1.5 font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider text-[11px]">
-                <Keyboard className="w-3.5 h-3.5 text-sky-500" />
-                <span>{isReviewMode ? "Candidate Submission Review" : "Answer Typing Workspace"}</span>
+            <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-slate-200/80 dark:border-white/[0.08] shrink-0">
+              <div className="flex items-center gap-2 font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider text-[11px]">
+                <span className="p-1 rounded-lg bg-sky-500/10 border border-sky-500/25 text-sky-500 shadow-sm">
+                  <Keyboard className="w-3.5 h-3.5" />
+                </span>
+                <span className="font-black">
+                  {isReviewMode ? "Candidate Submission Review" : "Answer Typing Workspace"}
+                </span>
               </div>
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-white/[0.06] px-3 py-1 rounded-xl border border-slate-200 dark:border-white/[0.08] shadow-sm">
                 Words: {userInput.trim().split(/\s+/).filter(Boolean).length} /{" "}
                 {selectedPassage?.text.trim().split(/\s+/).filter(Boolean).length || 0}
               </span>
@@ -660,21 +696,32 @@ export default function SpeedTestPage() {
               </div>
             ) : (
               <MarathiTextarea
-                ref={inputRef}
-                tabIndex={14}
-                value={userInput}
-                onChangeValue={(val) => {
-                  if (!isActive && timeLeft > 0 && !isFinished) {
-                    setIsActive(true);
+                  ref={inputRef}
+                  tabIndex={16}
+                  value={userInput}
+                  onChangeValue={(val) => {
+                    if (!isActive && timeLeft > 0 && !isFinished) {
+                      setIsActive(true);
+                    }
+                    setUserInput(val);
+                  }}
+                  isMarathi={language === "marathi"}
+                  disabled={timeLeft === 0 || isFinished || loading}
+                  placeholder={
+                    language === "marathi"
+                      ? "येथे डाव्या बाजूचा उतारा पाहून टाईप करा (परिच्छेदासाठी Tab आणि Enter वापरा)..."
+                      : "Type the left side passage here (use Tab for paragraph and Ctrl+Enter to submit)..."
                   }
-                  setUserInput(val);
-                }}
-                isMarathi={language === "marathi"}
-                disabled={timeLeft === 0 || isFinished || loading}
-                placeholder="येथे डाव्या बाजूचा उतारा पाहून टाईप करा (सबमिट करण्यासाठी Ctrl+Enter वापरा)..."
-                style={{ fontSize: `${fontSize}px` }}
-                className="flex-1 w-full p-3 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.06] rounded-xl focus:outline-none focus:border-amber-500 text-slate-900 dark:text-slate-100 font-mono leading-relaxed resize-none placeholder-slate-400 dark:placeholder-slate-600 shadow-inner overflow-y-auto min-h-0"
-              />
+                  style={{
+                    fontSize: `${fontSize}px`,
+                    lineHeight: "1.8",
+                    letterSpacing: "0px",
+                    fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+                    fontWeight: 400,
+                    tabSize: 4,
+                  }}
+                  className="flex-1 w-full p-4 sm:p-5 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/[0.06] rounded-2xl focus:outline-none focus:border-amber-500 text-slate-600 dark:text-slate-400 leading-relaxed resize-none placeholder-slate-400 dark:placeholder-slate-600 shadow-inner overflow-y-auto min-h-0 text-left antialiased selection:bg-amber-500 selection:text-black"
+                />
             )}
           </div>
         </div>
@@ -682,8 +729,11 @@ export default function SpeedTestPage() {
         {/* Modals & Dialogs */}
         <ResultCard
           isOpen={showResultModal}
-          onRestart={resetTest}
-          onReview={handleReview}
+          onRestart={() => resetTest()}
+          onReview={() => {
+            setShowResultModal(false);
+            setIsReviewMode(true);
+          }}
           metrics={metrics}
           weakKeys={weakKeysMap}
         />
