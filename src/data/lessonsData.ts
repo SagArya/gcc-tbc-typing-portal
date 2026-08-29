@@ -13,13 +13,13 @@ export interface LessonStep {
 export interface LessonItem {
   id: string;
   language: "marathi" | "english";
-  tier: "beginner" | "intermediate" | "advanced";
-  lessonNumber: number;
+  tier: "beginner" | "common_words" | "intermediate" | "advanced"; // 👈 येथे "common_words" ॲड करा
   title: string;
-  marathiTitle: string;
+  marathiTitle?: string;
   description: string;
   totalSteps: number;
-  steps: LessonStep[];
+  keysIntroduced?: string[];
+  steps: any[];
 }
 
 // 🎯 संपूर्ण ६१ मराठी + २५ इंग्रजी = एकूण ८६ लेसन्स
