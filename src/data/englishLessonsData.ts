@@ -98,7 +98,7 @@ export const ENGLISH_LESSONS: LessonItem[] = [
       {
         stepNumber: 3,
         instruction: "Vocabulary with E, I and Home row.",
-        targetText: "shield alkali diesel skilled slide leaf lease legal झील eagle sail",
+        targetText: "shield alkali diesel skilled slide leaf lease legal eagle sail",
       },
       {
         stepNumber: 4,

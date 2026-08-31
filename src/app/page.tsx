@@ -10,16 +10,13 @@ import {
   BookOpen,
   Keyboard,
   Award,
-  CheckCircle2,
   ShieldCheck,
-  Zap,
   ArrowRight,
   Flame,
   FileCheck,
   TrendingUp,
   GraduationCap,
   Sparkles,
-  Layers,
   HelpCircle,
 } from "lucide-react";
 
@@ -27,7 +24,7 @@ export default function HomePage() {
   const [streak, setStreak] = useState(0);
 
   useEffect(() => {
-    const savedStreak = localStorage.getItem("typeforge_daily_streak");
+    const savedStreak = localStorage.getItem("gcctbc_daily_streak");
     if (savedStreak) {
       try {
         const data = JSON.parse(savedStreak);
@@ -64,7 +61,7 @@ export default function HomePage() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-black text-base sm:text-lg tracking-tight bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 bg-clip-text text-transparent">
-                  TypeForge PRO
+                  GCC TBC Typing
                 </span>
                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 tracking-wider">
                   Official Exam Suite
@@ -128,7 +125,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 🎯 Primary Action Cards (Enhanced Animations & Badges) */}
+        {/* Primary Action Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Card 1: Speed Test */}
           <Link
@@ -172,7 +169,7 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Card 2: MCQ Test (Emphasizing Real Exam Questions) */}
+          {/* Card 2: MCQ Test */}
           <Link
             href="/mcq-test"
             className="group relative glass-panel p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-emerald-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between overflow-hidden"
@@ -257,7 +254,7 @@ export default function HomePage() {
           </Link>
         </section>
 
-        {/* 🏆 Why GCC-TBC Aspirants Choose TypeForge PRO? */}
+        {/* Why GCC-TBC Aspirants Choose GCC TBC Typing? */}
         <section className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] space-y-8 shadow-xl">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
@@ -323,7 +320,7 @@ export default function HomePage() {
         <footer className="border-t border-slate-200 dark:border-white/[0.08] pt-8 pb-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-slate-400 font-medium">
           <div className="flex items-center gap-2">
             <GraduationCap className="w-4 h-4 text-amber-500" />
-            <span>TypeForge PRO • शासकीय GCC-TBC टायपिंग परीक्षा पोर्टल</span>
+            <span>GCC TBC Typing • शासकीय GCC-TBC टायपिंग परीक्षा पोर्टल</span>
           </div>
           <div>
             <span>Maharashtra State Council of Examination (MSCE) Pattern Aligned</span>
