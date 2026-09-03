@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import GlowCursor from "@/components/GlowCursor";
 import ThemeToggle from "@/components/ThemeToggle";
+import SeoContentSection from "@/components/SeoContentSection";
 import {
   Timer,
   BookOpen,
@@ -314,6 +315,11 @@ export default function HomePage() {
               </p>
             </div>
           </div>
+        </section>
+
+        {/* 📖 SEO Rich Content & FAQ Section */}
+        <section className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] shadow-xl">
+          <SeoContentSection />
         </section>
 
         {/* Footer */}

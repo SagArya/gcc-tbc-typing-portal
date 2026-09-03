@@ -54,12 +54,28 @@ const STORAGE_KEY = "gcc_tbc_typing_history";
 function normalizeText(str: string): string {
   if (!str) return "";
   return str
+    // १. अदृश्य स्पेस, Zero-Width Characters, Non-Breaking Space काढून टाका
     .replace(/[\u200B-\u200D\uFEFF\u00AD\u00A0]/g, "")
-    .normalize("NFD")
+    
+    // २. विरामचिन्हे काढून टाका
+    .replace(/[,\.!?:;'"।॥\(\)\[\]\{\}\+\-=_/\\`~]/g, "")
+    
+    // ३. 'काना + मात्रा' दोन्ही क्रमांमध्ये (ा + े किंवा े + ा) -> थेट 'ो' (\u094B) करा
+    .replace(/\u093E\u0947/g, "\u094B") // काना + मात्रा = ो
+    .replace(/\u0947\u093E/g, "\u094B") // मात्रा + काना = ो
+    
+    // ४. 'काना + दोन मात्रे' (ा + ै किंवा ै + ा) -> थेट 'ौ' (\u094C) करा
     .replace(/\u093E\u0948/g, "\u094C")
-    .replace(/\u093E\u0947/g, "\u094B")
+    .replace(/\u0948\u093E/g, "\u094C")
+    
+    // ५. 'काना + अर्धचंद्र' (ा + ॅ) -> 'ॉ' (\u0949) करा
     .replace(/\u093E\u0945/g, "\u0949")
-    .replace(/\./g, "।")
+    .replace(/\u0945\u093E/g, "\u0949")
+
+    // ६. विसर्ग (:) आणि देवनागरी विसर्ग (ः) एकसारखे करा
+    .replace(/:/g, "\u0903")
+    
+    // ७. मराठी रफार / जोडाक्षर आणि इतर युनिकोड नॉर्मलायझेशन
     .normalize("NFC")
     .trim();
 }
