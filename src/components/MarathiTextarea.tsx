@@ -17,6 +17,13 @@ function combineLigatures(text: string, char: string): string {
   const lastChar = text.slice(-1);
   const lastTwoChars = text.slice(-2);
 
+  // 🎯 फिक्स १: जर मागचा अक्षर 'इ' असेल आणि रफार (र् किंवा \u0930\u094D) आला तर थेट 'ई' (\u0908) बनवा
+  const RAFAAR = "\u0930\u094D";
+  const isRafaar = char === RAFAAR || char === "र्" || char === "\u094D\u0930";
+  if (isRafaar && lastChar === "इ") {
+    return text.slice(0, -1) + "ई";
+  }
+
   const PADAN = "\u094D\u0930";
   const isPadan = char === "्र" || char === PADAN || char === "़";
 
@@ -26,8 +33,8 @@ function combineLigatures(text: string, char: string): string {
     return textWithoutVelanti + padanChar + "ि";
   }
 
-  const RAFAAR = "\u0930\u094D";
   if (char === RAFAAR || char === "र्") {
+    // व्यंजनावर रफार जोडणे
     const match = text.match(/([\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/);
     if (match) {
       const targetCluster = match[0];
@@ -154,7 +161,17 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
           }
         }
 
-        const nextVal = combineLigatures(value, mappedChar);
+        let nextVal = combineLigatures(value, mappedChar);
+
+        // 🎯 फिक्स २: सुरक्षा तपासणी - कोणत्याही मार्गाने 'इर्' किंवा 'इ' + रफार तयार झाल्यास थेट 'ई' करा
+        if (nextVal.includes("इर्") || /\u0907[\u094D\u0930\u200C\u200D]+/.test(nextVal)) {
+          nextVal = nextVal
+            .replace(/इर्/g, "ई")
+            .replace(/\u0907\u094D\u0930/g, "ई")
+            .replace(/\u0907\u0930\u094D/g, "ई")
+            .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "ई");
+        }
+
         if (onChangeValue) onChangeValue(nextVal);
       }
     };
