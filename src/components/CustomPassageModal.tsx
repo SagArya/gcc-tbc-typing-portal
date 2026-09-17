@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Timer, FileText } from "lucide-react";
 
 interface CustomPassageModalProps {
   isOpen: boolean;
@@ -9,9 +10,20 @@ interface CustomPassageModalProps {
   onApplyPassage: (
     title: string,
     text: string,
-    lang?: "marathi" | "english"
+    lang: "marathi" | "english",
+    timeLimitSeconds: number // 0 = No timer, बाकी सेकंद (उदा. 60, 120, 180, 300, 420, 600)
   ) => void;
 }
+
+const TIMER_OPTIONS = [
+  { label: "विना-टाइमर (No Timer)", seconds: 0 },
+  { label: "१ मिनिट", seconds: 60 },
+  { label: "२ मिनिटे", seconds: 120 },
+  { label: "३ मिनिटे", seconds: 180 },
+  { label: "५ मिनिटे", seconds: 300 },
+  { label: "७ मिनिटे (Exam)", seconds: 420 },
+  { label: "१० मिनिटे", seconds: 600 },
+];
 
 export default function CustomPassageModal({
   isOpen,
@@ -21,6 +33,7 @@ export default function CustomPassageModal({
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [lang, setLang] = useState<"marathi" | "english">("marathi");
+  const [selectedDuration, setSelectedDuration] = useState<number>(0); // डिफॉल्ट: विना-टाइमर
 
   if (!isOpen) return null;
 
@@ -41,7 +54,7 @@ export default function CustomPassageModal({
 
   const handleStart = () => {
     if (!text.trim()) return;
-    onApplyPassage(title.trim() || "कस्टम सराव उतारा", text.trim(), lang);
+    onApplyPassage(title.trim() || "कस्टम सराव उतारा", text.trim(), lang, selectedDuration);
     onClose();
   };
 
@@ -53,7 +66,7 @@ export default function CustomPassageModal({
       >
         <div className="flex justify-between items-center border-b border-slate-800 pb-3">
           <h3 className="text-base font-bold text-amber-400">
-            📝 स्वतःचा उतारा जोडा (Marathi / English Passage)
+            📝 स्वतःचा उतारा जोडा (Custom Passage Setup)
           </h3>
           <button
             type="button"
@@ -65,9 +78,10 @@ export default function CustomPassageModal({
         </div>
 
         <div className="space-y-3">
+          {/* भाषा निवड */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1.5">
-              उताऱ्याची भाषा निवडा (Language):
+              उताऱ्याची भाषा (Language):
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -95,6 +109,32 @@ export default function CustomPassageModal({
             </div>
           </div>
 
+          {/* टाइमर निवड (१, २, ३, ५, ७, १० मिनिटे किंवा No Timer) */}
+          <div>
+            <label className="text-xs font-semibold text-slate-400 block mb-1.5">
+              वेळ मर्यादा निवडा (Practice Duration):
+            </label>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {TIMER_OPTIONS.map((opt) => (
+                <button
+                  key={opt.seconds}
+                  type="button"
+                  onClick={() => setSelectedDuration(opt.seconds)}
+                  className={`py-2 px-2.5 rounded-xl border text-center transition cursor-pointer text-xs font-bold ${
+                    selectedDuration === opt.seconds
+                      ? opt.seconds === 0 
+                        ? "bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-sm"
+                        : "bg-amber-500/20 border-amber-500 text-amber-300 shadow-sm"
+                      : "bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* उताऱ्याचे नाव */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1">
               उताऱ्याचे नाव (Title):
@@ -103,11 +143,12 @@ export default function CustomPassageModal({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="उदा. GCC-TBC सराव उतारा"
+              placeholder="उदा. सराव उतारा १"
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500"
             />
           </div>
 
+          {/* फाईल अपलोड */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1">
               टेक्स्ट फाईल (.txt) निवडा:
@@ -120,15 +161,16 @@ export default function CustomPassageModal({
             />
           </div>
 
+          {/* टेक्स्ट इनपुट */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1">
               किंवा मजकूर थेट पेस्ट करा:
             </label>
             <textarea
-              rows={5}
+              rows={4}
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="येथे तुमचा मराठी किंवा इंग्रजी उतारा पेस्ट करा..."
+              placeholder="येथे तुमचा उतारा पेस्ट करा..."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-amber-500 leading-relaxed font-sans"
             />
           </div>

@@ -15,10 +15,10 @@ import {
   ArrowRight,
   Flame,
   FileCheck,
-  TrendingUp,
   GraduationCap,
   Sparkles,
   HelpCircle,
+  FileEdit,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -101,7 +101,8 @@ export default function HomePage() {
 
           <p className="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
             शासकीय परीक्षेतील <strong className="text-slate-900 dark:text-white font-bold">मूळ बॅचेसचे उतारे</strong>, 
-            तंतोतंत <strong className="text-slate-900 dark:text-white font-bold">७ मिनिटांची स्पीड टेस्ट</strong> आणि 
+            तंतोतंत <strong className="text-slate-900 dark:text-white font-bold">७ मिनिटांची स्पीड टेस्ट</strong>, 
+            स्वतःचा मजकूर जोडून <strong className="text-violet-600 dark:text-violet-400 font-bold">कस्टम पॅसेज सराव</strong> आणि 
             मागील वर्षांत प्रत्यक्ष विचारलेले <strong className="text-emerald-600 dark:text-emerald-400 font-bold">१०००+ अधिकृत Computer MCQ प्रश्न</strong>.
           </p>
 
@@ -116,6 +117,15 @@ export default function HomePage() {
             </Link>
 
             <Link
+              href="/typing-practice"
+              className="px-6 py-3.5 rounded-2xl bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/15 text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl border border-slate-800 dark:border-white/10 flex items-center gap-2 cursor-pointer"
+            >
+              <FileEdit className="w-4 h-4 text-violet-400" />
+              <span>कस्टम सराव लॅब</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+
+            <Link
               href="/mcq-test"
               className="px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/25 flex items-center gap-2 cursor-pointer"
             >
@@ -126,136 +136,178 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Primary Action Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Primary Action Cards (4 Cards Grid) */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1: Speed Test */}
           <Link
             href="/speed-test"
-            className="group relative glass-panel p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-amber-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between overflow-hidden"
+            className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-amber-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all duration-500" />
             
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
-                <div className="w-13 h-13 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
-                  <Timer className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
+                  <Timer className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                   ७ मिनिटे • ४० गुण
                 </span>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
+                <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
                   GCC-TBC स्पीड टेस्ट
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  प्रत्यक्ष शासकीय परीक्षेतील मूळ बॅचेसचे उतारे (Original Exam Passages). उणे गुण पद्धत आणि रिअल-टाईम Word Highlight सह थेट परीक्षा हॉलसारखा अनुभव.
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                  प्रत्यक्ष शासकीय परीक्षेतील मूळ बॅचेसचे उतारे. उणे गुण पद्धत आणि रिअल-टाईम गुणदानासह हुबेहूब परीक्षा हॉल अनुभव.
                 </p>
               </div>
 
-              <div className="pt-2 flex flex-wrap gap-1.5">
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
-                  मराठी ३० / ४० WPM
+              <div className="pt-1 flex flex-wrap gap-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
+                  मराठी ३०/४०
                 </span>
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
-                  English 40 / 50 / 60 WPM
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
+                  Eng 30/40/50/60
                 </span>
               </div>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 relative z-10">
+            <div className="pt-4 mt-5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 relative z-10">
               <span>टेस्ट सुरू करा</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
             </div>
           </Link>
 
-          {/* Card 2: MCQ Test */}
+          {/* Card 2: Custom Passage Practice Lab */}
+          <Link
+            href="/typing-practice"
+            className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-violet-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-violet-500/10 flex flex-col justify-between overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl group-hover:bg-violet-500/20 transition-all duration-500" />
+            
+            <div className="space-y-4 relative z-10">
+              <div className="flex justify-between items-start">
+                <div className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-500 group-hover:scale-110 group-hover:bg-violet-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                  <FileEdit className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/30">
+                  Custom • No Timer
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-violet-500 transition-colors">
+                  कस्टम सराव लॅब
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                  स्वतःचा मजकूर किंवा फाईल अपलोड करून वेळेच्या दबावाशिवाय शांतपणे सराव करा. शब्द मोजणी व कमजोर की ट्रॅकर उपलब्ध.
+                </p>
+              </div>
+
+              <div className="pt-1 flex flex-wrap gap-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                  Word Count Only
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
+                  Weak Keys Tracker
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-4 mt-5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-violet-600 dark:text-violet-400 relative z-10">
+              <span>सराव लॅब उघडा</span>
+              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Card 3: MCQ Test */}
           <Link
             href="/mcq-test"
-            className="group relative glass-panel p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-emerald-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between overflow-hidden"
+            className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-emerald-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
 
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
-                <div className="w-13 h-13 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
-                  <Award className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
+                  <Award className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                  ५० गुण • १००% Exam MCQs
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                  ५० गुण • १००% Exam
                 </span>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">
+                <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">
                   परीक्षेतील अधिकृत MCQs
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  GCC-TBC परीक्षेत वारंवार येणारे <strong className="text-slate-800 dark:text-slate-200">१०००+ मूळ प्रश्न</strong>. Word, Excel, PowerPoint, Windows व Internet चे मराठी व इंग्रजी २५ वस्तुनिष्ठ प्रश्न.
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                  GCC-TBC परीक्षेत वारंवार येणारे १०००+ मूळ प्रश्न. Word, Excel, PowerPoint, Windows व Internet चे २५ वस्तुनिष्ठ प्रश्न.
                 </p>
               </div>
 
-              <div className="pt-2 flex flex-wrap gap-1.5">
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+              <div className="pt-1 flex flex-wrap gap-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
                   २५ प्रश्न • २५ मिनिटे
                 </span>
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
-                  मराठी / English Switch
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
+                  मराठी/English
                 </span>
               </div>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 relative z-10">
+            <div className="pt-4 mt-5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 relative z-10">
               <span>MCQ सराव सुरू करा</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
             </div>
           </Link>
 
-          {/* Card 3: Guided Lessons */}
+          {/* Card 4: Guided Lessons */}
           <Link
             href="/lessons"
-            className="group relative glass-panel p-6 sm:p-7 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-cyan-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/10 flex flex-col justify-between overflow-hidden sm:col-span-2 lg:col-span-1"
+            className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-cyan-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all duration-500" />
 
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
-                <div className="w-13 h-13 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-500 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
-                  <BookOpen className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-500 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
+                  <BookOpen className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
                   स्टेप-बाय-स्टेप
                 </span>
               </div>
 
               <div>
-                <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-cyan-500 transition-colors">
-                  टायपिंग अकॅडमी (Lessons)
+                <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-cyan-500 transition-colors">
+                  टायपिंग अकॅडमी
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  होम रो, अप्पर रो, बॉटम रो, वेलांटी-काण्याचे अचूक नियम आणि परीक्षेतील हाय-फ्रीक्वेन्सी शब्द. नवशिक्यांपासून ॲडव्हान्स विद्यार्थ्यांसाठी संपूर्ण अभ्यासक्रम.
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+                  Home row, Upper row, Bottom row आणि वेलांटी-काण्याचे अचूक नियम. नवशिक्यांपासून ॲडव्हान्स विद्यार्थ्यांसाठी संपूर्ण धडे.
                 </p>
               </div>
 
-              <div className="pt-2 flex flex-wrap gap-1.5">
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
-                  Remington GAIL कीबोर्ड
+              <div className="pt-1 flex flex-wrap gap-1">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
+                  Remington GAIL
                 </span>
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
-                  Star & Accuracy Progression
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
+                  Star Progression
                 </span>
               </div>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-cyan-600 dark:text-cyan-400 relative z-10">
+            <div className="pt-4 mt-5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-xs font-bold text-cyan-600 dark:text-cyan-400 relative z-10">
               <span>धडे उघडा</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
             </div>
           </Link>
         </section>
 
-        {/* Why GCC-TBC Aspirants Choose GCC TBC Typing? */}
+        {/* Features Section */}
         <section className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] space-y-8 shadow-xl">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
@@ -317,7 +369,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 📖 SEO Rich Content & FAQ Section */}
+        {/* SEO Rich Content & FAQ Section */}
         <section className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] shadow-xl">
           <SeoContentSection />
         </section>

@@ -11,34 +11,18 @@ interface MistakeReviewerProps {
 function normalizeText(str: string): string {
   if (!str) return "";
   return str
-    // १. अदृश्य स्पेस, Zero-Width Characters, Non-Breaking Space काढून टाका
     .replace(/[\u200B-\u200D\uFEFF\u00AD\u00A0]/g, "")
-    
-    // २. विरामचिन्हे काढून टाका
     .replace(/[,\.!?:;'"।॥\(\)\[\]\{\}\+\-=_/\\`~]/g, "")
-
-    // ३. 🎯 'इ' + रफार (इर्) चे सर्व प्रकार थेट 'ई' (\u0908) मध्ये रूपांतरित करा
-    // 🎯 'इ' नंतर रफार येण्याचे सर्व युनिकोड कॉम्बिनेशन्स थेट 'ई' (\u0908) मध्ये बदलणे
-      .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "\u0908")
-      .replace(/\u0907\u0930\u094D/g, "\u0908")
-      .replace(/इर्/g, "ई")                    // डायरेक्ट स्ट्रिंग मॅच
-
-    // ४. 'काना + मात्रा' दोन्ही क्रमांमध्ये (ा + े किंवा े + ा) -> थेट 'ो' (\u094B) करा
-    .replace(/\u093E\u0947/g, "\u094B") // काना + मात्रा = ो
-    .replace(/\u0947\u093E/g, "\u094B") // मात्रा + काना = ो
-    
-    // ५. 'काना + दोन मात्रे' (ा + ै किंवा ै + ा) -> थेट 'ौ' (\u094C) करा
+    .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "\u0908")
+    .replace(/\u0907\u0930\u094D/g, "\u0908")
+    .replace(/इर्/g, "ई")
+    .replace(/\u093E\u0947/g, "\u094B")
+    .replace(/\u0947\u093E/g, "\u094B")
     .replace(/\u093E\u0948/g, "\u094C")
     .replace(/\u0948\u093E/g, "\u094C")
-    
-    // ६. 'काना + अर्धचंद्र' (ा + ॅ) -> 'ॉ' (\u0949) करा
     .replace(/\u093E\u0945/g, "\u0949")
     .replace(/\u0945\u093E/g, "\u0949")
-
-    // ७. विसर्ग (:) आणि देवनागरी विसर्ग (ः) एकसारखे करा
     .replace(/:/g, "\u0903")
-    
-    // ८. मराठी रफार / जोडाक्षर आणि इतर युनिकोड नॉर्मलायझेशन
     .normalize("NFC")
     .trim();
 }
@@ -74,7 +58,7 @@ export default function MistakeReviewer({
       }
     }
 
-    // Backtracking to align matches, mistakes, and skipped words
+    // 🎯 नवीन स्मार्ट अलाइनमेंट (Substitution + Skipped/Extra Words)
     const result: DiffItem[] = [];
     let i = m;
     let j = n;
@@ -85,25 +69,40 @@ export default function MistakeReviewer({
         j > 0 &&
         normalizeText(typedTokens[i - 1]) === normalizeText(origTokens[j - 1])
       ) {
+        // १. शब्द बरोबर जुळला
         result.push({
           type: "match",
           word: typedTokens[i - 1],
         });
         i--;
         j--;
+      } else if (
+        i > 0 &&
+        j > 0 &&
+        dp[i - 1][j] === dp[i][j] &&
+        dp[i][j - 1] === dp[i][j]
+      ) {
+        // २. 🎯 Substitution (एका शब्दाच्या जागी चुकीचा स्पेलिंग टाईप झाला)
+        // इथे 1 चूक मोजली जाईल, आणि expectedWord तंतोतंत तोच शब्द असेल!
+        result.push({
+          type: "error",
+          userWord: typedTokens[i - 1],
+          expectedWord: origTokens[j - 1],
+        });
+        i--;
+        j--;
       } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
-        // सुटलेला शब्द (Omitted word)
+        // ३. मूळ उताऱ्यातील शब्द पूर्णपणे सुटला (Skip झाला)
         result.push({
           type: "omitted",
           expectedWord: origTokens[j - 1],
         });
         j--;
       } else if (i > 0) {
-        // चुकीचा किंवा अतिरिक्त शब्द (Mistyped/Extra word)
+        // ४. युझरने अतिरिक्त टाईप केलेला शब्द (Extra Word)
         result.push({
           type: "error",
           userWord: typedTokens[i - 1],
-          expectedWord: j > 0 ? origTokens[j - 1] : undefined,
         });
         i--;
       }
@@ -125,7 +124,7 @@ export default function MistakeReviewer({
             );
           }
 
-          // २. चुकलेला शब्द
+          // २. चुकलेला शब्द (लाल बॉक्स + खाली मूळ बरोबर शब्द)
           if (token.type === "error") {
             return (
               <span
@@ -136,7 +135,7 @@ export default function MistakeReviewer({
                   {token.userWord}
                 </span>
                 {token.expectedWord && (
-                  <span className="text-[10px] text-emerald-400 font-medium leading-none mt-0.5">
+                  <span className="text-[10px] text-emerald-400 font-semibold leading-none mt-0.5">
                     ✓ {token.expectedWord}
                   </span>
                 )}

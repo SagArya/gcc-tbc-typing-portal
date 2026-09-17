@@ -18,7 +18,6 @@ import { ALL_ENGLISH_30_PASSAGES } from "@/data/english30Passages";
 import { ALL_ENGLISH_40_PASSAGES } from "@/data/english40Passages";
 import { english50Passages } from "@/data/english50Passages";
 import { english60Passages } from "@/data/english60Passages";
-import { PassageItem } from "@/data/types";
 
 import {
   ArrowLeft,
@@ -28,13 +27,9 @@ import {
   CheckCircle,
   Keyboard,
   Award,
-  Upload,
-  Layers,
-  FileText,
   ZoomIn,
   ZoomOut,
   Shuffle,
-  Calendar,
 } from "lucide-react";
 
 interface Passage {
@@ -54,34 +49,18 @@ const STORAGE_KEY = "gcc_tbc_typing_history";
 function normalizeText(str: string): string {
   if (!str) return "";
   return str
-    // १. अदृश्य स्पेस, Zero-Width Characters, Non-Breaking Space काढून टाका
     .replace(/[\u200B-\u200D\uFEFF\u00AD\u00A0]/g, "")
-    
-    // २. विरामचिन्हे काढून टाका
     .replace(/[,\.!?:;'"।॥\(\)\[\]\{\}\+\-=_/\\`~]/g, "")
-
-    // ३. 🎯 'इ' + रफार (इर्) चे सर्व प्रकार थेट 'ई' (\u0908) मध्ये रूपांतरित करा
-    // 🎯 'इ' नंतर रफार येण्याचे सर्व युनिकोड कॉम्बिनेशन्स थेट 'ई' (\u0908) मध्ये बदलणे
-      .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "\u0908")
-      .replace(/\u0907\u0930\u094D/g, "\u0908")
-      .replace(/इर्/g, "ई")                    // डायरेक्ट स्ट्रिंग मॅच
-
-    // ४. 'काना + मात्रा' दोन्ही क्रमांमध्ये (ा + े किंवा े + ा) -> थेट 'ो' (\u094B) करा
-    .replace(/\u093E\u0947/g, "\u094B") // काना + मात्रा = ो
-    .replace(/\u0947\u093E/g, "\u094B") // मात्रा + काना = ो
-    
-    // ५. 'काना + दोन मात्रे' (ा + ै किंवा ै + ा) -> थेट 'ौ' (\u094C) करा
+    .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "\u0908")
+    .replace(/\u0907\u0930\u094D/g, "\u0908")
+    .replace(/इर्/g, "ई")
+    .replace(/\u093E\u0947/g, "\u094B")
+    .replace(/\u0947\u093E/g, "\u094B")
     .replace(/\u093E\u0948/g, "\u094C")
     .replace(/\u0948\u093E/g, "\u094C")
-    
-    // ६. 'काना + अर्धचंद्र' (ा + ॅ) -> 'ॉ' (\u0949) करा
     .replace(/\u093E\u0945/g, "\u0949")
     .replace(/\u0945\u093E/g, "\u0949")
-
-    // ७. विसर्ग (:) आणि देवनागरी विसर्ग (ः) एकसारखे करा
     .replace(/:/g, "\u0903")
-    
-    // ८. मराठी रफार / जोडाक्षर आणि इतर युनिकोड नॉर्मलायझेशन
     .normalize("NFC")
     .trim();
 }
@@ -104,9 +83,6 @@ export default function SpeedTestPage() {
 
   const handleZoomIn = () => setFontSize((prev) => Math.min(prev + 1, 24));
   const handleZoomOut = () => setFontSize((prev) => Math.max(prev - 1, 14));
-
-  const [passageSource, setPassageSource] = useState<"batch" | "custom">("batch");
-  const [customPassageInput, setCustomPassageInput] = useState("");
 
   const [userInput, setUserInput] = useState("");
   const [timeLeft, setTimeLeft] = useState(EXAM_TIME_SECONDS);
@@ -180,7 +156,7 @@ export default function SpeedTestPage() {
     ];
   }, []);
 
-  // 🔍 Step 1 -> Step 2 -> Step 3 Filtered Passages
+  // 🔍 Filtered Passages
   const availablePassages = useMemo(() => {
     return allMasterPassages.filter((p) => {
       if (p.language !== language) return false;
@@ -190,7 +166,7 @@ export default function SpeedTestPage() {
     });
   }, [allMasterPassages, language, speed, session]);
 
-  // 🔄 Available Sessions for current Language + Speed
+  // 🔄 Available Sessions
   const availableSessions = useMemo(() => {
     const defaultOrder = ["July 2026", "April 2026", "January 2026", "October 2025"];
     const matching = allMasterPassages.filter(
@@ -232,8 +208,6 @@ export default function SpeedTestPage() {
 
   // 📚 Load initial/matching passage on filter changes
   useEffect(() => {
-    if (passageSource === "custom") return;
-
     if (availablePassages.length > 0) {
       const stillValid = availablePassages.some((p) => p.id === selectedPassage?.id);
       if (!stillValid) {
@@ -245,7 +219,7 @@ export default function SpeedTestPage() {
       setSelectedPassage(null);
     }
     setLoading(false);
-  }, [availablePassages, passageSource, selectedPassage?.id, resetTest]);
+  }, [availablePassages, selectedPassage?.id, resetTest]);
 
   const handlePickRandomPassage = () => {
     if (availablePassages.length > 0) {
@@ -411,21 +385,6 @@ export default function SpeedTestPage() {
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, [isActive, isFinished, showHistoryModal, showResultModal, isReviewMode, finishTest, resetTest]);
 
-  const handleApplyCustomPassage = () => {
-    if (customPassageInput.trim().length > 10) {
-      const customP: Passage = {
-        id: "custom-" + Date.now(),
-        language: language,
-        speed: Number(speed),
-        session: "Custom",
-        title: "Custom Uploaded Passage",
-        text: customPassageInput.trim(),
-      };
-      setSelectedPassage(customP);
-      resetTest(customP);
-    }
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -470,39 +429,9 @@ export default function SpeedTestPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {/* Batch vs Custom Toggle */}
-            <div className="bg-slate-100 dark:bg-black/40 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex gap-0.5">
-              <button
-                tabIndex={2}
-                onClick={() => setPassageSource("batch")}
-                disabled={isActive || isReviewMode}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none ${
-                  passageSource === "batch"
-                    ? "bg-amber-500 text-slate-950 shadow-sm"
-                    : "text-slate-600 dark:text-slate-400"
-                }`}
-              >
-                <Layers className="w-3 h-3" />
-                <span>Batches</span>
-              </button>
-              <button
-                tabIndex={3}
-                onClick={() => setPassageSource("custom")}
-                disabled={isActive || isReviewMode}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none ${
-                  passageSource === "custom"
-                    ? "bg-amber-500 text-slate-950 shadow-sm"
-                    : "text-slate-600 dark:text-slate-400"
-                }`}
-              >
-                <Upload className="w-3 h-3" />
-                <span>Custom</span>
-              </button>
-            </div>
-
             {/* Step 1: Language */}
             <select
-              tabIndex={4}
+              tabIndex={2}
               value={language}
               disabled={isActive || isReviewMode}
               onChange={(e) => {
@@ -520,7 +449,7 @@ export default function SpeedTestPage() {
 
             {/* Step 2: Speed */}
             <select
-              tabIndex={5}
+              tabIndex={3}
               value={speed}
               disabled={isActive || isReviewMode}
               onChange={(e) => setSpeed(e.target.value)}
@@ -536,61 +465,59 @@ export default function SpeedTestPage() {
               )}
             </select>
 
-            {/* Step 3: Month / Session */}
-            {passageSource === "batch" && (
-              <div className="flex items-center gap-1">
-                <select
-                  tabIndex={6}
-                  value={session}
-                  disabled={isActive || isReviewMode}
-                  onChange={(e) => setSession(e.target.value)}
-                  className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-blue-600 dark:text-blue-400 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
-                >
-                  {availableSessions.map((s) => (
-                    <option key={s} value={s} className="bg-white dark:bg-slate-900">
-                      {s === "All" ? "📅 All Months" : `📅 ${s}`}
-                    </option>
-                  ))}
-                </select>
+            {/* Step 3: Month / Session & Batch */}
+            <div className="flex items-center gap-1">
+              <select
+                tabIndex={4}
+                value={session}
+                disabled={isActive || isReviewMode}
+                onChange={(e) => setSession(e.target.value)}
+                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-blue-600 dark:text-blue-400 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+              >
+                {availableSessions.map((s) => (
+                  <option key={s} value={s} className="bg-white dark:bg-slate-900">
+                    {s === "All" ? "📅 All Months" : `📅 ${s}`}
+                  </option>
+                ))}
+              </select>
 
-                {/* Batch Selector */}
-                <select
-                  tabIndex={7}
-                  value={selectedPassage?.id || ""}
-                  disabled={isActive || isReviewMode}
-                  onChange={(e) => {
-                    const found = availablePassages.find((p) => p.id === e.target.value);
-                    if (found) {
-                      resetTest(found);
-                    }
-                  }}
-                  className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
-                >
-                  {availablePassages.map((p) => (
-                    <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900">
-                      {p.title}
-                    </option>
-                  ))}
-                </select>
+              {/* Batch Selector */}
+              <select
+                tabIndex={5}
+                value={selectedPassage?.id || ""}
+                disabled={isActive || isReviewMode}
+                onChange={(e) => {
+                  const found = availablePassages.find((p) => p.id === e.target.value);
+                  if (found) {
+                    resetTest(found);
+                  }
+                }}
+                className="bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl px-2 py-1 text-[11px] text-amber-600 dark:text-amber-300 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 max-w-[130px] sm:max-w-[170px] truncate cursor-pointer"
+              >
+                {availablePassages.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900">
+                    {p.title}
+                  </option>
+                ))}
+              </select>
 
-                <button
-                  type="button"
-                  tabIndex={8}
-                  onClick={handlePickRandomPassage}
-                  disabled={isActive || isReviewMode}
-                  title="Random Passage निवडा"
-                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-amber-500 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                >
-                  <Shuffle className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
+              <button
+                type="button"
+                tabIndex={6}
+                onClick={handlePickRandomPassage}
+                disabled={isActive || isReviewMode}
+                title="Random Passage निवडा"
+                className="p-1.5 rounded-xl bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-amber-500 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
             {/* Font Zoom Controls */}
             <div className="bg-slate-100 dark:bg-black/50 p-0.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex items-center gap-1">
               <button
                 type="button"
-                tabIndex={9}
+                tabIndex={7}
                 onClick={handleZoomOut}
                 title="Font Size लहान करा"
                 className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
@@ -602,7 +529,7 @@ export default function SpeedTestPage() {
               </span>
               <button
                 type="button"
-                tabIndex={10}
+                tabIndex={8}
                 onClick={handleZoomIn}
                 title="Font Size मोठी करा"
                 className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 transition cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
@@ -619,7 +546,7 @@ export default function SpeedTestPage() {
 
             {/* History Button */}
             <button
-              tabIndex={11}
+              tabIndex={9}
               onClick={() => setShowHistoryModal(true)}
               className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
@@ -629,7 +556,7 @@ export default function SpeedTestPage() {
 
             {isReviewMode && (
               <button
-                tabIndex={12}
+                tabIndex={10}
                 onClick={() => setShowResultModal(true)}
                 className="px-2.5 py-1 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 focus:ring-2 focus:ring-sky-300 focus:outline-none"
               >
@@ -640,7 +567,7 @@ export default function SpeedTestPage() {
 
             {isActive && (
               <button
-                tabIndex={13}
+                tabIndex={11}
                 onClick={finishTest}
                 className="px-3 py-1 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl text-[11px] shadow-sm cursor-pointer flex items-center gap-1 animate-pulse focus:ring-2 focus:ring-rose-300 focus:outline-none"
               >
@@ -650,7 +577,7 @@ export default function SpeedTestPage() {
             )}
 
             <button
-              tabIndex={14}
+              tabIndex={12}
               onClick={() => resetTest()}
               className="px-2 py-1 bg-slate-100 dark:bg-black/40 hover:bg-slate-200 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-[11px] border border-slate-200 dark:border-white/[0.08] flex items-center gap-1 cursor-pointer focus:ring-2 focus:ring-amber-500 focus:outline-none"
             >
@@ -661,31 +588,6 @@ export default function SpeedTestPage() {
             <ThemeToggle />
           </div>
         </header>
-
-        {/* Custom Passage Drawer */}
-        {passageSource === "custom" && !isActive && !isReviewMode && (
-          <div className="glass-panel p-3 rounded-2xl space-y-2 shrink-0">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
-              <FileText className="w-4 h-4 text-amber-500" />
-              <span>Paste Custom Exam Passage:</span>
-            </div>
-            <textarea
-              rows={2}
-              tabIndex={15}
-              value={customPassageInput}
-              onChange={(e) => setCustomPassageInput(e.target.value)}
-              placeholder="Paste your Marathi/English passage here..."
-              className="w-full bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/[0.08] rounded-xl p-2.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
-            />
-            <button
-              tabIndex={16}
-              onClick={handleApplyCustomPassage}
-              className="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-md cursor-pointer focus:ring-2 focus:ring-amber-400 focus:outline-none"
-            >
-              Apply Passage
-            </button>
-          </div>
-        )}
 
         {/* Split Screen Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-stretch flex-1 min-h-0 pb-0">
@@ -727,22 +629,21 @@ export default function SpeedTestPage() {
             ) : (
               <MarathiTextarea
                 ref={inputRef}
-                tabIndex={17}
+                tabIndex={13}
                 value={userInput}
                 onChangeValue={(val) => {
                   if (!isActive && timeLeft > 0 && !isFinished) {
                     setIsActive(true);
                   }
-                    // 🎯 'इर्' किंवा 'इ' + रफार चे थेट 'ई' मध्ये रिअल-टाइम रूपांतर
-                    let cleanVal = val;
-                    if (cleanVal.includes("इर्") || /\u0907[\u094D\u0930\u200C\u200D]+/.test(cleanVal)) {
-                      cleanVal = cleanVal
-                        .replace(/इर्/g, "ई")
-                        .replace(/\u0907\u094D\u0930/g, "ई")
-                        .replace(/\u0907\u0930\u094D/g, "ई")
-                        .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "ई");
-                    }
-                  setUserInput(val);
+                  let cleanVal = val;
+                  if (cleanVal.includes("इर्") || /\u0907[\u094D\u0930\u200C\u200D]+/.test(cleanVal)) {
+                    cleanVal = cleanVal
+                      .replace(/इर्/g, "ई")
+                      .replace(/\u0907\u094D\u0930/g, "ई")
+                      .replace(/\u0907\u0930\u094D/g, "ई")
+                      .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "ई");
+                  }
+                  setUserInput(cleanVal);
                 }}
                 isMarathi={language === "marathi"}
                 disabled={timeLeft === 0 || isFinished || loading}

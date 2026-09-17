@@ -21,7 +21,7 @@ import {
   CheckCircle,
   FileText,
   Keyboard,
-  Sparkles,
+  Hash,
 } from "lucide-react";
 
 export interface PassageItem {
@@ -29,6 +29,7 @@ export interface PassageItem {
   title: string;
   text: string;
   lang?: "marathi" | "english";
+  hasTimer?: boolean; // ✨ नवीन: टाइमर सुरू ठेवायचा की नाही
 }
 
 const DEFAULT_PASSAGES: PassageItem[] = [
@@ -37,12 +38,14 @@ const DEFAULT_PASSAGES: PassageItem[] = [
     title: "शासकीय परिपत्रक सराव - १ (मराठी ३० WPM)",
     text: "शासकीय सेवेतील सर्व अधिकारी व कर्मचारी यांनी कार्यालयीन कामकाजाच्या वेळेत उपस्थित राहणे अनिवार्य आहे. संगणकीय प्रणालीद्वारे दैनंदिन नोंदी वेळेवर पूर्ण कराव्यात.",
     lang: "marathi",
+    hasTimer: true,
   },
   {
     id: "default-2",
     title: "Official Government Circular (English 40 WPM)",
     text: "It is mandatory for all officers and employees in government service to be present during official working hours. Daily entries should be completed on time through the computerized system.",
     lang: "english",
+    hasTimer: true,
   },
 ];
 
@@ -68,16 +71,18 @@ export default function TypingPracticePage() {
   }, [passages, selectedPassageId]);
 
   const isEnglish = currentPassage.lang === "english";
+  const hasTimer = currentPassage.hasTimer ?? true; // ✨ सध्याच्या पॅसेजला टाइमर आहे की नाही
 
+  // टाइमर इफेक्ट: जर hasTimer = false असेल तर टाइमर चालणार नाही
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isTypingActive && startTime) {
+    if (hasTimer && isTypingActive && startTime) {
       interval = setInterval(() => {
         setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isTypingActive, startTime]);
+  }, [hasTimer, isTypingActive, startTime]);
 
   // चालू शब्द व अक्षराचे ट्रॅकिंग
   const typedTokens = userInput.trimStart().split(/\s+/);
@@ -115,8 +120,9 @@ export default function TypingPracticePage() {
     const wrong = Math.max(0, total - correct);
     const timeInMinutes = Math.max(elapsedSeconds / 60, 0.1);
 
-    const grossWpm = Math.round(total / timeInMinutes);
-    const netWpm = Math.max(0, Math.round(correct / timeInMinutes));
+    // जर टाइमर नसेल तर WPM मोजण्याची गरज नसते, फक्त अचूकता मुख्य असते
+    const grossWpm = hasTimer ? Math.round(total / timeInMinutes) : 0;
+    const netWpm = hasTimer ? Math.max(0, Math.round(correct / timeInMinutes)) : 0;
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
     return {
@@ -127,13 +133,16 @@ export default function TypingPracticePage() {
       grossWpm,
       netWpm,
       timeTakenSeconds: elapsedSeconds,
+      hasTimer, // निकाल मोडलसाठी फ्लॅग
     };
-  }, [userInput, currentPassage, elapsedSeconds]);
+  }, [userInput, currentPassage, elapsedSeconds, hasTimer]);
 
   const handleInputChange = (val: string) => {
     if (!isTypingActive && val.length > 0) {
       setIsTypingActive(true);
-      setStartTime(Date.now());
+      if (hasTimer) {
+        setStartTime(Date.now());
+      }
     }
     setUserInput(val);
   };
@@ -146,10 +155,12 @@ export default function TypingPracticePage() {
     textareaRef.current?.focus();
   };
 
+  // ✨ मोडलमधून आलेला hasTimer पॅरामीटर स्वीकारणे
   const handleApplyCustomPassage = (
     title: string,
     text: string,
-    lang?: "marathi" | "english"
+    lang?: "marathi" | "english",
+    customHasTimer: boolean = false
   ) => {
     const selectedLang = lang || (/[^\u0900-\u097F]/.test(text) ? "english" : "marathi");
     const customItem: PassageItem = {
@@ -157,6 +168,7 @@ export default function TypingPracticePage() {
       title: `${selectedLang === "english" ? "🇬🇧" : "🇮🇳"} ${title}`,
       text: text,
       lang: selectedLang,
+      hasTimer: customHasTimer, // निवडलेला मोड लागू केला
     };
     setPassages((prev) => [customItem, ...prev]);
     setSelectedPassageId(customItem.id);
@@ -173,7 +185,8 @@ export default function TypingPracticePage() {
     handleApplyCustomPassage(
       "🎯 कमजोर अक्षरांचा सराव",
       drillText.trim(),
-      "marathi"
+      "marathi",
+      false // कमजोर अक्षरांच्या सरावाला टाइमर नको
     );
   };
 
@@ -210,7 +223,7 @@ export default function TypingPracticePage() {
                   Practice Lab
                 </h1>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-                  Diagnostic
+                  {hasTimer ? "Speed Test" : "No Timer Practice"}
                 </span>
               </div>
               <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
@@ -220,14 +233,23 @@ export default function TypingPracticePage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* Live Timer Pill */}
-            <div className="px-3.5 py-1.5 bg-slate-100 dark:bg-black/50 rounded-xl border border-slate-200 dark:border-white/[0.08] text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 shadow-inner">
-              <Timer className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
-              <span>
-                {Math.floor(elapsedSeconds / 60)}:
-                {(elapsedSeconds % 60).toString().padStart(2, "0")}
-              </span>
-            </div>
+            {/* ✨ जर टाइमर चालू असेल तर घड्याळ, नसेल तर लाईव्ह शब्द संख्या (Word Counter) */}
+            {hasTimer ? (
+              <div className="px-3.5 py-1.5 bg-slate-100 dark:bg-black/50 rounded-xl border border-slate-200 dark:border-white/[0.08] text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 shadow-inner">
+                <Timer className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+                <span>
+                  {Math.floor(elapsedSeconds / 60)}:
+                  {(elapsedSeconds % 60).toString().padStart(2, "0")}
+                </span>
+              </div>
+            ) : (
+              <div className="px-3.5 py-1.5 bg-emerald-500/10 rounded-xl border border-emerald-500/30 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 shadow-inner">
+                <Hash className="w-3.5 h-3.5 text-emerald-500" />
+                <span>
+                  शब्द: {typedTokens.filter(Boolean).length} / {passageWords.length}
+                </span>
+              </div>
+            )}
 
             <button
               onClick={() => setIsCustomModalOpen(true)}
