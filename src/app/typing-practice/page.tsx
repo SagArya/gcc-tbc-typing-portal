@@ -29,7 +29,7 @@ export interface PassageItem {
   title: string;
   text: string;
   lang?: "marathi" | "english";
-  hasTimer?: boolean; // ✨ नवीन: टाइमर सुरू ठेवायचा की नाही
+  timeLimitSeconds: number;
 }
 
 const DEFAULT_PASSAGES: PassageItem[] = [
@@ -38,14 +38,14 @@ const DEFAULT_PASSAGES: PassageItem[] = [
     title: "शासकीय परिपत्रक सराव - १ (मराठी ३० WPM)",
     text: "शासकीय सेवेतील सर्व अधिकारी व कर्मचारी यांनी कार्यालयीन कामकाजाच्या वेळेत उपस्थित राहणे अनिवार्य आहे. संगणकीय प्रणालीद्वारे दैनंदिन नोंदी वेळेवर पूर्ण कराव्यात.",
     lang: "marathi",
-    hasTimer: true,
+    timeLimitSeconds: 420,
   },
   {
     id: "default-2",
     title: "Official Government Circular (English 40 WPM)",
     text: "It is mandatory for all officers and employees in government service to be present during official working hours. Daily entries should be completed on time through the computerized system.",
     lang: "english",
-    hasTimer: true,
+    timeLimitSeconds: 420,
   },
 ];
 
@@ -71,20 +71,28 @@ export default function TypingPracticePage() {
   }, [passages, selectedPassageId]);
 
   const isEnglish = currentPassage.lang === "english";
-  const hasTimer = currentPassage.hasTimer ?? true; // ✨ सध्याच्या पॅसेजला टाइमर आहे की नाही
+  const timeLimit = currentPassage.timeLimitSeconds ?? 0;
+  const hasTimer = timeLimit > 0;
 
-  // टाइमर इफेक्ट: जर hasTimer = false असेल तर टाइमर चालणार नाही
+  const remainingSeconds = hasTimer ? Math.max(0, timeLimit - elapsedSeconds) : elapsedSeconds;
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (hasTimer && isTypingActive && startTime) {
+    if (isTypingActive && startTime) {
       interval = setInterval(() => {
         setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [hasTimer, isTypingActive, startTime]);
+  }, [isTypingActive, startTime]);
 
-  // चालू शब्द व अक्षराचे ट्रॅकिंग
+  useEffect(() => {
+    if (hasTimer && isTypingActive && remainingSeconds <= 0) {
+      setIsTypingActive(false);
+      setIsResultOpen(true);
+    }
+  }, [hasTimer, isTypingActive, remainingSeconds]);
+
   const typedTokens = userInput.trimStart().split(/\s+/);
   const isTrailingSpace = /\s$/.test(userInput);
   const currentWordIndex = isTrailingSpace
@@ -101,7 +109,6 @@ export default function TypingPracticePage() {
   const activeCharIndex = currentTypedWord.length;
   const activeChar = activeTargetWord[activeCharIndex] || activeTargetWord[0] || "";
 
-  // निकाल मोजणी (NFC Normalization सह)
   const resultStats = useMemo(() => {
     const userWords = userInput.trim().split(/\s+/).filter(Boolean);
     const targetWords = currentPassage.text.trim().split(/\s+/).filter(Boolean);
@@ -110,7 +117,7 @@ export default function TypingPracticePage() {
     userWords.forEach((word, idx) => {
       if (
         targetWords[idx] &&
-        word.normalize("NFC") === targetWords[idx].normalize("NFC")
+        word.normalize("NFC").trim() === targetWords[idx].normalize("NFC").trim()
       ) {
         correct++;
       }
@@ -118,11 +125,11 @@ export default function TypingPracticePage() {
 
     const total = userWords.length;
     const wrong = Math.max(0, total - correct);
-    const timeInMinutes = Math.max(elapsedSeconds / 60, 0.1);
+    const effectiveTimeSeconds = hasTimer && remainingSeconds === 0 ? timeLimit : Math.max(elapsedSeconds, 3);
+    const timeInMinutes = effectiveTimeSeconds / 60;
 
-    // जर टाइमर नसेल तर WPM मोजण्याची गरज नसते, फक्त अचूकता मुख्य असते
-    const grossWpm = hasTimer ? Math.round(total / timeInMinutes) : 0;
-    const netWpm = hasTimer ? Math.max(0, Math.round(correct / timeInMinutes)) : 0;
+    const grossWpm = Math.round(total / timeInMinutes);
+    const netWpm = Math.max(0, Math.round(correct / timeInMinutes));
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
     return {
@@ -132,17 +139,15 @@ export default function TypingPracticePage() {
       accuracy,
       grossWpm,
       netWpm,
-      timeTakenSeconds: elapsedSeconds,
-      hasTimer, // निकाल मोडलसाठी फ्लॅग
+      wpm: netWpm || grossWpm,
+      timeTakenSeconds: effectiveTimeSeconds,
     };
-  }, [userInput, currentPassage, elapsedSeconds, hasTimer]);
+  }, [userInput, currentPassage, elapsedSeconds, hasTimer, timeLimit, remainingSeconds]);
 
   const handleInputChange = (val: string) => {
     if (!isTypingActive && val.length > 0) {
       setIsTypingActive(true);
-      if (hasTimer) {
-        setStartTime(Date.now());
-      }
+      setStartTime(Date.now());
     }
     setUserInput(val);
   };
@@ -155,20 +160,18 @@ export default function TypingPracticePage() {
     textareaRef.current?.focus();
   };
 
-  // ✨ मोडलमधून आलेला hasTimer पॅरामीटर स्वीकारणे
   const handleApplyCustomPassage = (
     title: string,
     text: string,
-    lang?: "marathi" | "english",
-    customHasTimer: boolean = false
+    lang: "marathi" | "english",
+    timeLimitSeconds: number
   ) => {
-    const selectedLang = lang || (/[^\u0900-\u097F]/.test(text) ? "english" : "marathi");
     const customItem: PassageItem = {
       id: `custom-${Date.now()}`,
-      title: `${selectedLang === "english" ? "🇬🇧" : "🇮🇳"} ${title}`,
+      title: `${lang === "english" ? "🇬🇧" : "🇮🇳"} ${title}`,
       text: text,
-      lang: selectedLang,
-      hasTimer: customHasTimer, // निवडलेला मोड लागू केला
+      lang: lang,
+      timeLimitSeconds: timeLimitSeconds,
     };
     setPassages((prev) => [customItem, ...prev]);
     setSelectedPassageId(customItem.id);
@@ -186,17 +189,14 @@ export default function TypingPracticePage() {
       "🎯 कमजोर अक्षरांचा सराव",
       drillText.trim(),
       "marathi",
-      false // कमजोर अक्षरांच्या सरावाला टाइमर नको
+      0
     );
   };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col justify-between selection:bg-emerald-400 selection:text-black font-sans relative overflow-x-hidden p-4 sm:p-6">
-      
-      {/* Dynamic Background Glow */}
       <GlowCursor />
 
-      {/* Grid Pattern Overlay */}
       <div 
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] dark:opacity-[0.04]"
         style={{
@@ -206,8 +206,6 @@ export default function TypingPracticePage() {
       />
 
       <div className="relative z-10 max-w-7xl mx-auto w-full space-y-6">
-        
-        {/* Top Floating Glass Navigation */}
         <header className="glass-panel p-4 rounded-2xl flex flex-wrap justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <Link
@@ -223,7 +221,7 @@ export default function TypingPracticePage() {
                   Practice Lab
                 </h1>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-                  {hasTimer ? "Speed Test" : "No Timer Practice"}
+                  {hasTimer ? `${timeLimit / 60} Min Timer` : "No Timer Practice"}
                 </span>
               </div>
               <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
@@ -233,13 +231,12 @@ export default function TypingPracticePage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* ✨ जर टाइमर चालू असेल तर घड्याळ, नसेल तर लाईव्ह शब्द संख्या (Word Counter) */}
             {hasTimer ? (
-              <div className="px-3.5 py-1.5 bg-slate-100 dark:bg-black/50 rounded-xl border border-slate-200 dark:border-white/[0.08] text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5 shadow-inner">
-                <Timer className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+              <div className="px-3.5 py-1.5 bg-slate-100 dark:bg-black/50 rounded-xl border border-slate-200 dark:border-white/[0.08] text-xs font-mono text-amber-500 font-bold flex items-center gap-1.5 shadow-inner">
+                <Timer className="w-3.5 h-3.5 animate-pulse" />
                 <span>
-                  {Math.floor(elapsedSeconds / 60)}:
-                  {(elapsedSeconds % 60).toString().padStart(2, "0")}
+                  {Math.floor(remainingSeconds / 60)}:
+                  {(remainingSeconds % 60).toString().padStart(2, "0")}
                 </span>
               </div>
             ) : (
@@ -279,15 +276,11 @@ export default function TypingPracticePage() {
               <span>Finger Guide: {showHandsGuide ? "ON" : "OFF"}</span>
             </button>
 
-            {/* Theme Toggle Button */}
             <ThemeToggle />
           </div>
         </header>
 
-        {/* Bento Grid: Left (Question Passage) | Right (Interactive Typing Box) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-          
-          {/* डावी बाजू: प्रश्न उतारा */}
           <div className="glass-panel p-6 rounded-3xl flex flex-col min-h-[420px] lg:min-h-[500px]">
             <div className="flex justify-between items-center text-xs border-b border-slate-200 dark:border-white/[0.06] pb-3 mb-4">
               <div className="flex items-center gap-2 font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-[11px]">
@@ -299,7 +292,6 @@ export default function TypingPracticePage() {
               </span>
             </div>
 
-            {/* Highlighting सह उतारा */}
             <div className="flex-1 bg-slate-100 dark:bg-black/40 p-5 rounded-2xl border border-slate-200 dark:border-white/[0.06] overflow-y-auto leading-relaxed text-base sm:text-lg font-sans select-none shadow-inner">
               {passageWords.map((word, idx) => {
                 const userWord = typedTokens[idx];
@@ -328,7 +320,6 @@ export default function TypingPracticePage() {
             </div>
           </div>
 
-          {/* उजवी बाजू: टायपिंग बॉक्स */}
           <div className="glass-panel p-6 rounded-3xl flex flex-col min-h-[420px] lg:min-h-[500px]">
             <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 mb-4 pb-3 border-b border-slate-200 dark:border-white/[0.06]">
               <div className="flex items-center gap-2 font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider text-[11px]">
@@ -374,14 +365,12 @@ export default function TypingPracticePage() {
           </div>
         </div>
 
-        {/* Visual Finger Guide */}
         {showHandsGuide && !isEnglish && (
           <div className="glass-panel p-6 rounded-3xl">
             <VirtualKeyboardHands activeChar={activeChar} />
           </div>
         )}
 
-        {/* Modals & Diagnostic Drawers */}
         <CustomPassageModal
           isOpen={isCustomModalOpen}
           onClose={() => setIsCustomModalOpen(false)}
@@ -408,7 +397,6 @@ export default function TypingPracticePage() {
         />
       </div>
 
-      {/* Modern Minimal Footer */}
       <footer className="relative z-10 max-w-7xl mx-auto w-full pt-8 text-center text-xs text-slate-500 font-mono">
         <span>TypeForge Engine • Diagnostic Practice Lab</span>
       </footer>

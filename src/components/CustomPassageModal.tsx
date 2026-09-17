@@ -2,16 +2,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Timer, FileText } from "lucide-react";
 
-interface CustomPassageModalProps {
+export interface CustomPassageModalProps {
   isOpen: boolean;
   onClose: () => void;
   onApplyPassage: (
     title: string,
     text: string,
     lang: "marathi" | "english",
-    timeLimitSeconds: number // 0 = No timer, बाकी सेकंद (उदा. 60, 120, 180, 300, 420, 600)
+    timeLimitSeconds: number
   ) => void;
 }
 
@@ -33,7 +32,7 @@ export default function CustomPassageModal({
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [lang, setLang] = useState<"marathi" | "english">("marathi");
-  const [selectedDuration, setSelectedDuration] = useState<number>(0); // डिफॉल्ट: विना-टाइमर
+  const [selectedDuration, setSelectedDuration] = useState<number>(0);
 
   if (!isOpen) return null;
 
@@ -78,7 +77,6 @@ export default function CustomPassageModal({
         </div>
 
         <div className="space-y-3">
-          {/* भाषा निवड */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1.5">
               उताऱ्याची भाषा (Language):
@@ -109,7 +107,6 @@ export default function CustomPassageModal({
             </div>
           </div>
 
-          {/* टाइमर निवड (१, २, ३, ५, ७, १० मिनिटे किंवा No Timer) */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1.5">
               वेळ मर्यादा निवडा (Practice Duration):
@@ -134,7 +131,6 @@ export default function CustomPassageModal({
             </div>
           </div>
 
-          {/* उताऱ्याचे नाव */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1">
               उताऱ्याचे नाव (Title):
@@ -148,7 +144,6 @@ export default function CustomPassageModal({
             />
           </div>
 
-          {/* फाईल अपलोड */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1">
               टेक्स्ट फाईल (.txt) निवडा:
@@ -161,7 +156,6 @@ export default function CustomPassageModal({
             />
           </div>
 
-          {/* टेक्स्ट इनपुट */}
           <div>
             <label className="text-xs font-semibold text-slate-400 block mb-1">
               किंवा मजकूर थेट पेस्ट करा:
