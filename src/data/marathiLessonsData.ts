@@ -82,7 +82,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "फक्त क, र, स, य ची वाक्ये.",
-        targetText: "सीमा रस कर काकी सारी कर रसिका सारी आण रवी कार कर सीमा काकी सारी",
+        targetText: "सीमा रस कर. काकी सारी कर. रसिका सारी आण. रवी कार कर. सीमा काकी सारी.",
       },
     ],
   },
@@ -116,7 +116,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "शिकलेल्या अक्षरांची वाक्ये.",
-        targetText: "मकर हात वर कर तारा काम कर हात मार हरकत करू नको सीमा काम कर",
+        targetText: "मकर हात वर कर. तारा काम कर. हात मार. हरकत करू नको. सीमा काम कर.",
       },
     ],
   },
@@ -150,7 +150,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये.",
-        targetText: "सरकार काम करत आहे सहकार करा ममता मदत कर सतर्क रहा तातडीने कर",
+        targetText: "सरकार काम करत आहे. सहकार करा. ममता मदत कर. सतर्क रहा. तातडीने कर.",
       },
     ],
   },
@@ -184,7 +184,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्य प्रवाह.",
-        targetText: "भरभर काम कर सरसर पुढे चल कारभार नीट कर सारासार विचार कर",
+        targetText: "भरभर काम कर. सरसर पुढे चल. कारभार नीट कर. सारासार विचार कर.",
       },
     ],
   },
@@ -218,7 +218,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव.",
-        targetText: "अमर आज आला आधार कर आकाश स्वच्छ आहे आदर राख आवाज करू नको",
+        targetText: "अमर आज आला. आधार कर. आकाश स्वच्छ आहे. आदर राख. आवाज करू नको.",
       },
     ],
   },
@@ -252,7 +252,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "अनुस्वार वाक्ये.",
-        targetText: "संसार सुखी करा संगीत ऐका आनंद माना संकट दूर करा संत वंदन करा",
+        targetText: "संसार सुखी करा. संगीत ऐका. आनंद माना. संकट दूर करा. संत वंदन करा.",
       },
     ],
   },
@@ -320,7 +320,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव.",
-        targetText: "पवन नवीन पुस्तक आण वाचन नियमित कर वजन योग्य ठेव विलास काम कर",
+        targetText: "पवन नवीन पुस्तक आण. वाचन नियमित कर. वजन योग्य ठेव. विलास काम कर.",
       },
     ],
   },
@@ -354,7 +354,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये.",
-        targetText: "सत्य नेहमी बोला रस्ता स्वच्छ ठेवा वेळेचे मूल्य ओळखा कल्याण करा",
+        targetText: "सत्य नेहमी बोला. रस्ता स्वच्छ ठेवा. वेळेचे मूल्य ओळखा. कल्याण करा.",
       },
     ],
   },
@@ -383,12 +383,12 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 3,
         instruction: "शब्द सराव.",
-        targetText: "रक्कम जमा करा सुंदर रूप आहे पक्का निर्णय घ्या धक्का बसला",
+        targetText: "रक्कम जमा करा. सुंदर रूप आहे. पक्का निर्णय घ्या. धक्का बसला.",
       },
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये.",
-        targetText: "पूर्ण रक्कम जमा करा पक्का रस्ता तयार झाला रूपरेषा निश्चित करा",
+        targetText: "पूर्ण रक्कम जमा करा. पक्का रस्ता तयार झाला. रूपरेषा निश्चित करा.",
       },
     ],
   },
@@ -422,41 +422,41 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये.",
-        targetText: "सैनिक देशाचे रक्षण करतात मैदानावर चला विशेष भाषा वापरा पैसे सांभाळा",
+        targetText: "सैनिक देशाचे रक्षण करतात. मैदानावर चला. विशेष भाषा वापरा. पैसे सांभाळा.",
       },
     ],
   },
 
-  // --- Lesson 13: पूर्ण विराम (।) अनलॉक ---
+  // --- Lesson 13: पूर्णविराम (.) अनलॉक ---
   {
     id: "mr-lesson-13",
     language: "marathi",
     tier: "beginner",
     lessonNumber: 13,
-    title: "Purna Viram (।) with Short Sentences",
-    marathiTitle: "१३. पूर्ण विराम (।) चा सराव",
-    description: "वाक्य समाप्तीसाठी पूर्ण विराम (।) वापरणे.",
+    title: "Purna Viram (.) with Short Sentences",
+    marathiTitle: "१३. पूर्णविराम (.) चा सराव",
+    description: "वाक्य समाप्तीसाठी पूर्णविराम (.) वापरणे.",
     totalSteps: 4,
     steps: [
       {
         stepNumber: 1,
-        instruction: "पूर्ण विराम चिन्ह (।)",
-        targetText: "। । । । सं सं मं मं पं पं । सं मं पं । । सं मं पं ।",
+        instruction: "पूर्णविराम चिन्ह (.)",
+        targetText: ". . . . सं सं मं मं पं पं . सं मं पं . . सं मं पं .",
       },
       {
         stepNumber: 2,
-        instruction: "सोपी वाक्ये पूर्ण विरामासह.",
-        targetText: "राम घरी आला। सीमा काम कर। दिवस संपला। पाऊस पडत आहे।",
+        instruction: "सोपी वाक्ये पूर्णविरामासह.",
+        targetText: "राम घरी आला. सीमा काम कर. दिवस संपला. पाऊस पडत आहे.",
       },
       {
         stepNumber: 3,
         instruction: "अनुस्वारयुक्त वाक्ये.",
-        targetText: "संसार चांगला आहे। संगीत गोड आहे। पतंग वर गेला। आनंद झाला।",
+        targetText: "संसार चांगला आहे. संगीत गोड आहे. पतंग वर गेला. आनंद झाला.",
       },
       {
         stepNumber: 4,
         instruction: "सलग परिच्छेद.",
-        targetText: "भारत आपला देश आहे। आपण सर्व भारतीय आहोत। आपल्या देशाचा आदर करावा।",
+        targetText: "भारत आपला देश आहे. आपण सर्व भारतीय आहोत. आपल्या देशाचा आदर करावा.",
       },
     ],
   },
@@ -469,7 +469,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
     lessonNumber: 14,
     title: "Sentences with Joint Letters",
     marathiTitle: "१४. जोडाक्षरांची वाक्ये",
-    description: "शिकलेली जोडाक्षरे आणि पूर्ण विराम.",
+    description: "शिकलेली जोडाक्षरे आणि पूर्णविराम.",
     totalSteps: 4,
     steps: [
       {
@@ -480,17 +480,17 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 2,
         instruction: "जोडाक्षरांची वाक्ये.",
-        targetText: "सत्यमेव जयते। रस्त्याने सावकाश चाला। नियमांचे पालन करा।",
+        targetText: "सत्यमेव जयते. रस्त्याने सावकाश चाला. नियमांचे पालन करा.",
       },
       {
         stepNumber: 3,
         instruction: "मध्यम वाक्ये.",
-        targetText: "आपले शहर स्वच्छ ठेवा। सर्वांनी स्वच्छता बाळगावी।",
+        targetText: "आपले शहर स्वच्छ ठेवा. सर्वांनी स्वच्छता बाळगावी.",
       },
       {
         stepNumber: 4,
         instruction: "सलग परिच्छेद.",
-        targetText: "नियमित अभ्यास केल्याने यश मिळते। वेळेचे महत्त्व ओळखून काम करा।",
+        targetText: "नियमित अभ्यास केल्याने यश मिळते. वेळेचे महत्त्व ओळखून काम करा.",
       },
     ],
   },
@@ -524,7 +524,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "उकार वाक्ये.",
-        targetText: "सुमन सुंदर गाणे गाते। पूजा वेळेवर सुरू झाली। बागेत सुंदर फुले आहेत।",
+        targetText: "सुमन सुंदर गाणे गाते. पूजा वेळेवर सुरू झाली. बागेत सुंदर फुले आहेत.",
       },
     ],
   },
@@ -558,7 +558,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्य प्रवाह.",
-        targetText: "जनतेची सेवा करा। जमिनीचा महसूल वेळेवर भरा। तराजू बरोबर ठेवा।",
+        targetText: "जनतेची सेवा करा. जमिनीचा महसूल वेळेवर भरा. तराजू बरोबर ठेवा.",
       },
     ],
   },
@@ -592,7 +592,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव.",
-        targetText: "बाजारात जाऊन सामान आणा। पैशांची बचत करा। चांगला विचार ठेवा।",
+        targetText: "बाजारात जाऊन सामान आणा. पैशांची बचत करा. चांगला विचार ठेवा.",
       },
     ],
   },
@@ -626,7 +626,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव.",
-        targetText: "गरिबांना मदत करा। गणिताचा नियमित सराव करा। दिवा तेवत ठेवा।",
+        targetText: "गरिबांना मदत करा. गणिताचा नियमित सराव करा. दिवा तेवत ठेवा.",
       },
     ],
   },
@@ -660,7 +660,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव.",
-        targetText: "खिडकी उघडी ठेवा। बाजारातून नवीन खेळणी खरेदी करा। खरोखर छान काम केले।",
+        targetText: "खिडकी उघडी ठेवा. बाजारातून नवीन खेळणी खरेदी करा. खरोखर छान काम केले.",
       },
     ],
   },
@@ -694,7 +694,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये.",
-        targetText: "राम, शाम आणि गणेश एकत्र आले। वही, पेन आणि पुस्तक सोबत घ्या।",
+        targetText: "राम, शाम आणि गणेश एकत्र आले. वही, पेन आणि पुस्तक सोबत घ्या.",
       },
     ],
   },
@@ -728,7 +728,7 @@ export const MARATHI_BEGINNER_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "Beginner लेव्हल अंतिम मास्टर परिच्छेद.",
-        targetText: "आपण दररोज नियमित सराव करता का? होय, नियमित सरावाने टायपिंगचा वेग नक्कीच वाढतो। आता आपण पुढील Intermediate स्तरावर जाण्यासाठी सज्ज आहात!",
+        targetText: "आपण दररोज नियमित सराव करता का? होय, नियमित सरावाने टायपिंगचा वेग नक्कीच वाढतो. आता आपण पुढील Intermediate स्तरावर जाण्यासाठी सज्ज आहात!",
       },
     ],
   },

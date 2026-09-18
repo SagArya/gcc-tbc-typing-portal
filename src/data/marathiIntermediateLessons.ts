@@ -31,7 +31,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्य प्रवाह",
-        targetText: "महानगरपालिकेने नवीन नियोजन केले आहे। मनमिळाऊ स्वभावाने लोकांची मने जिंका।",
+        targetText: "महानगरपालिकेने नवीन नियोजन केले आहे. मनमिळाऊ स्वभावाने लोकांची मने जिंका.",
       },
     ],
   },
@@ -65,7 +65,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्य सराव",
-        targetText: "डॉक्टरांनी वेळेवर रिपोर्ट दिला। ऑफिसचे काम पूर्ण करून फॉर्म जमा करा।",
+        targetText: "डॉक्टरांनी वेळेवर रिपोर्ट दिला. ऑफिसचे काम पूर्ण करून फॉर्म जमा करा.",
       },
     ],
   },
@@ -99,7 +99,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "उत्तरपत्रिकेत उत्तम हस्ताक्षरात उत्तरे लिहा। हिम्मत कधीही हरू नका।",
+        targetText: "उत्तरपत्रिकेत उत्तम हस्ताक्षरात उत्तरे लिहा. हिम्मत कधीही हरू नका.",
       },
     ],
   },
@@ -133,7 +133,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "सज्जन माणसांची संगत धरा। दिल्ली ही भारताची राजधानी आहे। तज्ज्ञांचा सल्ला घ्या।",
+        targetText: "सज्जन माणसांची संगत धरा. दिल्ली ही भारताची राजधानी आहे. तज्ज्ञांचा सल्ला घ्या.",
       },
     ],
   },
@@ -167,7 +167,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "अन्न वाया घालवू नका। शेतकऱ्यांच्या अन्नधान्य उत्पादनात मोठी वाढ झाली।",
+        targetText: "अन्न वाया घालवू नका. शेतकऱ्यांच्या अन्नधान्य उत्पादनात मोठी वाढ झाली.",
       },
     ],
   },
@@ -201,7 +201,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "उच्चशिक्षणासाठी शहरात जा। सच्चा माणूस नेहमी सत्याच्या बाजूने उभा राहतो।",
+        targetText: "उच्चशिक्षणासाठी शहरात जा. सच्चा माणूस नेहमी सत्याच्या बाजूने उभा राहतो.",
       },
     ],
   },
@@ -235,7 +235,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "वृक्षारोपण करून पर्यावरणाचे रक्षण करा। विद्वान व्यक्तींचा नेहमी सन्मान करावा।",
+        targetText: "वृक्षारोपण करून पर्यावरणाचे रक्षण करा. विद्वान व्यक्तींचा नेहमी सन्मान करावा.",
       },
     ],
   },
@@ -269,7 +269,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "विद्या हेच खरे धन आहे। महाराष्ट्रात नवीन उद्योगांना मोठी चालना मिळत आहे।",
+        targetText: "विद्या हेच खरे धन आहे. महाराष्ट्रात नवीन उद्योगांना मोठी चालना मिळत आहे.",
       },
     ],
   },
@@ -298,12 +298,12 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 3,
         instruction: "वाक्य प्रवाह",
-        targetText: "विद्यापीठात उच्चशिक्षणाची उत्तम सोय आहे। उद्योगपतींनी नवीन गुंतवणूक केली।",
+        targetText: "विद्यापीठात उच्चशिक्षणाची उत्तम सोय आहे. उद्योगपतींनी नवीन गुंतवणूक केली.",
       },
       {
         stepNumber: 4,
         instruction: "सलग परिच्छेद",
-        targetText: "ज्ञानाने माणसाचे जीवन समृद्ध होते। योग्य शिक्षण आणि कष्टाच्या जोरावर प्रत्येक क्षेत्रात यश मिळवता येते।",
+        targetText: "ज्ञानाने माणसाचे जीवन समृद्ध होते. योग्य शिक्षण आणि कष्टाच्या जोरावर प्रत्येक क्षेत्रात यश मिळवता येते.",
       },
     ],
   },
@@ -337,7 +337,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "कष्टाशिवाय फळ मिळत नाही। ज्येष्ठ नागरिकांना योग्य आदर द्या। स्पष्ट शब्दात बोला।",
+        targetText: "कष्टाशिवाय फळ मिळत नाही. ज्येष्ठ नागरिकांना योग्य आदर द्या. स्पष्ट शब्दात बोला.",
       },
     ],
   },
@@ -349,29 +349,29 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
     tier: "intermediate",
     lessonNumber: 32,
     title: "Full Sentences & Punctuation",
-    marathiTitle: "३२. पूर्ण वाक्य और विराम चिह्न (।, ,, ?, !)",
+    marathiTitle: "३२. पूर्ण वाक्य और विराम चिन्ह (., ,, ?, !)",
     description: "सर्व विरामचिन्हे असणारी सलग कार्यालयीन वाक्ये.",
     totalSteps: 4,
     steps: [
       {
         stepNumber: 1,
-        instruction: "विरामचिन्हे: ।, ,, ?, !",
-        targetText: "। । , , ? ? ! ! । , ? ! । , ? ! । , ? !",
+        instruction: "विरामचिन्हे: ., ,, ?, !",
+        targetText: ". . , , ? ? ! ! . , ? ! . , ? ! . , ? !",
       },
       {
         stepNumber: 2,
         instruction: "विरामचिन्हांसह वाक्ये",
-        targetText: "तुम्ही कधी आलात? अरेरे! हे काय झाले? राम, श्याम आणि हरी आले।",
+        targetText: "तुम्ही कधी आलात? अरेरे! हे काय झाले? राम, श्याम आणि हरी आले.",
       },
       {
         stepNumber: 3,
         instruction: "कार्यालयीन वाक्ये",
-        targetText: "अर्जदाराने सर्व कागदपत्रे जोडली आहेत का? होय, सर्व प्रती साक्षांकित आहेत।",
+        targetText: "अर्जदाराने सर्व कागदपत्रे जोडली आहेत का? होय, सर्व प्रती साक्षांकित आहेत.",
       },
       {
         stepNumber: 4,
         instruction: "सलग परिच्छेद",
-        targetText: "शासकीय पत्रव्यवहारात विरामचिन्हांचा योग्य वापर करणे आवश्यक आहे। त्यामुळे मजकुराचा अर्थ स्पष्ट समजतो।",
+        targetText: "शासकीय पत्रव्यवहारात विरामचिन्हांचा योग्य वापर करणे आवश्यक आहे. त्यामुळे मजकुराचा अर्थ स्पष्ट समजतो.",
       },
     ],
   },
@@ -405,7 +405,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "प्रमोदचा प्रवास सुखकर झाला। नवीन प्रशिक्षण वर्ग वेळेवर सुरू करा।",
+        targetText: "प्रमोदचा प्रवास सुखकर झाला. नवीन प्रशिक्षण वर्ग वेळेवर सुरू करा.",
       },
     ],
   },
@@ -439,7 +439,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "अकबर आणि अमर बाजारात गेले। राज्याचा अर्थसंकल्प सादर झाला आहे।",
+        targetText: "अकबर आणि अमर बाजारात गेले. राज्याचा अर्थसंकल्प सादर झाला आहे.",
       },
     ],
   },
@@ -473,7 +473,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "इमारतीचे बांधकाम पूर्ण झाले। सर्व अधिकृत दस्तऐवज जपून ठेवा।",
+        targetText: "इमारतीचे बांधकाम पूर्ण झाले. सर्व अधिकृत दस्तऐवज जपून ठेवा.",
       },
     ],
   },
@@ -507,7 +507,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "एकतेतच मोठे बळ असते। योग्य उपाय योजना करून प्रश्न सोडवा।",
+        targetText: "एकतेतच मोठे बळ असते. योग्य उपाय योजना करून प्रश्न सोडवा.",
       },
     ],
   },
@@ -541,7 +541,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "ध्येय साध्य करण्यासाठी एकाग्रता ठेवा। सहकार्याबद्दल धन्यवाद।",
+        targetText: "ध्येय साध्य करण्यासाठी एकाग्रता ठेवा. सहकार्याबद्दल धन्यवाद.",
       },
     ],
   },
@@ -575,7 +575,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "सलग वाक्ये",
-        targetText: "योग्य मार्गदर्शनाने काम सोपे होते। पर्यावरणाचे रक्षण करणे हे आपले कर्तव्य आहे।",
+        targetText: "योग्य मार्गदर्शनाने काम सोपे होते. पर्यावरणाचे रक्षण करणे हे आपले कर्तव्य आहे.",
       },
     ],
   },
@@ -609,7 +609,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "टपाल वेळेवर पाठवा। शब्दांची निवड नेहमी विचारपूर्वक करावी।",
+        targetText: "टपाल वेळेवर पाठवा. शब्दांची निवड नेहमी विचारपूर्वक करावी.",
       },
     ],
   },
@@ -643,7 +643,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "सभेत नवीन ठराव मंजूर झाला। बैठकीची छान व्यवस्था करण्यात आली आहे।",
+        targetText: "सभेत नवीन ठराव मंजूर झाला. बैठकीची छान व्यवस्था करण्यात आली आहे.",
       },
     ],
   },
@@ -677,7 +677,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "वाक्य सराव",
-        targetText: "आकाशात काळे ढग जमा झाले आहेत। धाडसी तरुणांनी मोहिमेत भाग घेतला।",
+        targetText: "आकाशात काळे ढग जमा झाले आहेत. धाडसी तरुणांनी मोहिमेत भाग घेतला.",
       },
     ],
   },
@@ -711,7 +711,7 @@ export const MARATHI_INTERMEDIATE_LESSONS: LessonItem[] = [
       {
         stepNumber: 4,
         instruction: "Intermediate अंतिम मास्टर परिच्छेद",
-        targetText: "आपला राष्ट्रध्वज तिरंगा डौलाने फडकत आहे। घड्याळाच्या काट्याप्रमाणे आपले काम नियमित आणि वेळेवर करा।",
+        targetText: "आपला राष्ट्रध्वज तिरंगा डौलाने फडकत आहे. घड्याळाच्या काट्याप्रमाणे आपले काम नियमित आणि वेळेवर करा.",
       },
     ],
   },
