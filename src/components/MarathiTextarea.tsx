@@ -17,13 +17,14 @@ function combineLigatures(text: string, char: string): string {
   const lastChar = text.slice(-1);
   const lastTwoChars = text.slice(-2);
 
-  // 🎯 फिक्स १: जर मागचा अक्षर 'इ' असेल आणि रफार (र् किंवा \u0930\u094D) आला तर थेट 'ई' (\u0908) बनवा
+  // 🎯 फिक्स १: 'इ' + रफार = 'ई'
   const RAFAAR = "\u0930\u094D";
   const isRafaar = char === RAFAAR || char === "र्" || char === "\u094D\u0930";
   if (isRafaar && lastChar === "इ") {
     return text.slice(0, -1) + "ई";
   }
 
+  // 🎯 फिक्स २: वेलांटीनंतर पदेन (्र) किंवा नुक्ता (़) आल्यास
   const PADAN = "\u094D\u0930";
   const isPadan = char === "्र" || char === PADAN || char === "़";
 
@@ -33,8 +34,8 @@ function combineLigatures(text: string, char: string): string {
     return textWithoutVelanti + padanChar + "ि";
   }
 
+  // 🎯 फिक्स ३: व्यंजनावर रफार (र्) जोडणे (ऋकार 'ृ' सह अचूक काम करेल)
   if (char === RAFAAR || char === "र्") {
-    // व्यंजनावर रफार जोडणे
     const match = text.match(/([\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/);
     if (match) {
       const targetCluster = match[0];
@@ -43,29 +44,24 @@ function combineLigatures(text: string, char: string): string {
     }
   }
 
+  // 🎯 फिक्स ४: अर्ध्या अक्षराला काना (ा) जोडून पूर्ण अक्षर बनवणे
   if (char === "\u093E" || char === "ा") {
-    if (lastTwoChars === "ध्") return text.slice(0, -2) + "ध";
-    if (lastTwoChars === "ण्") return text.slice(0, -2) + "ण";
-    if (lastTwoChars === "श्") return text.slice(0, -2) + "श";
-    if (lastTwoChars === "ख्") return text.slice(0, -2) + "ख";
-    if (lastTwoChars === "थ्") return text.slice(0, -2) + "थ";
-    if (lastTwoChars === "भ्") return text.slice(0, -2) + "भ";
-    if (lastTwoChars === "ष्") return text.slice(0, -2) + "ष";
-    if (lastTwoChars === "क्") return text.slice(0, -2) + "क";
-    if (lastTwoChars === "ग्") return text.slice(0, -2) + "ग";
-    if (lastTwoChars === "च्") return text.slice(0, -2) + "च";
-    if (lastTwoChars === "ज्") return text.slice(0, -2) + "ज";
-    if (lastTwoChars === "त्") return text.slice(0, -2) + "त";
-    if (lastTwoChars === "न्") return text.slice(0, -2) + "न";
-    if (lastTwoChars === "प्") return text.slice(0, -2) + "प";
-    if (lastTwoChars === "म्") return text.slice(0, -2) + "म";
-    if (lastTwoChars === "ल्") return text.slice(0, -2) + "ल";
-    if (lastTwoChars === "व्") return text.slice(0, -2) + "व";
-    if (lastTwoChars === "स्") return text.slice(0, -2) + "स";
-    if (lastTwoChars === "घ्") return text.slice(0, -2) + "घ";
+    const halfToFullMap: Record<string, string> = {
+      "ध्": "ध", "ण्": "ण", "श्": "श", "ख्": "ख", "थ्": "थ",
+      "भ्": "भ", "ष्": "ष", "क्": "क", "ग्": "ग", "च्": "च",
+      "ज्": "ज", "त्": "त", "न्": "न", "प्": "प", "म्": "म",
+      "ल्": "ल", "व्": "व", "स्": "स", "घ्": "घ", "ब्": "ब",
+      "य्": "य", "द्": "द", "ट्": "ट", "ठ्": "ठ", "ड्": "ड",
+      "ढ्": "ढ", "झ्": "झ", "फ्": "फ", "क्ष्": "क्ष", "त्र्": "त्र", "ज्ञ्": "ज्ञ"
+    };
+
+    if (halfToFullMap[lastTwoChars]) {
+      return text.slice(0, -2) + halfToFullMap[lastTwoChars];
+    }
     if (lastChar === "अ") return text.slice(0, -1) + "आ";
   }
 
+  // स्वर संधी
   if (lastChar === "आ" && char === "े") return text.slice(0, -1) + "ओ";
   if ((lastChar === "आ" || lastChar === "ओ") && (char === "ै" || char === "े"))
     return text.slice(0, -1) + "औ";
@@ -129,6 +125,7 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
         return;
       }
 
+      // पहिली वेलांटी (f)
       if (!e.shiftKey && e.key === "f") {
         e.preventDefault();
         setPendingVelanti(true);
@@ -163,7 +160,7 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
 
         let nextVal = combineLigatures(value, mappedChar);
 
-        // 🎯 फिक्स २: सुरक्षा तपासणी - कोणत्याही मार्गाने 'इर्' किंवा 'इ' + रफार तयार झाल्यास थेट 'ई' करा
+        // 🎯 सुरक्षा तपासणी १: 'इर्' -> 'ई'
         if (nextVal.includes("इर्") || /\u0907[\u094D\u0930\u200C\u200D]+/.test(nextVal)) {
           nextVal = nextVal
             .replace(/इर्/g, "ई")
@@ -171,6 +168,10 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
             .replace(/\u0907\u0930\u094D/g, "ई")
             .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "ई");
         }
+
+        // 🎯 सुरक्षा तपासणी २: जर चुकून 'त्' + 'य' ऐवजी 'त्र्य' तयार होत असेल, तर ते दुरुस्त करा
+        // (मृत्यू सारख्या शब्दांसाठी फक्त त्र्यंबक वगळता सामान्य संयोग रक्षण)
+        nextVal = nextVal.replace(/मृत्र्यू/g, "मृत्यू");
 
         if (onChangeValue) onChangeValue(nextVal);
       }

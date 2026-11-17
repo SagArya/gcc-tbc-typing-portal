@@ -12,10 +12,19 @@ interface PassageViewerProps {
   fontSize?: number;
 }
 
-function normalizeMarathiWord(str: string): string {
+function normalizeWordForCompare(str: string): string {
   if (!str) return "";
   return str
     .normalize("NFD")
+    // सर्व प्रकारचे Apostrophe / Single Quotes (’, ‘, ʼ, `, ´, ′) -> साधा '
+    .replace(/['’‘‛‚′‵`´\u02BC\u02B9\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'")
+    // सर्व प्रकारचे Double Quotes (“ ”) -> साधा "
+    .replace(/["“”„‟″‶\u201C\u201D\u201E\u201F\u2033\u2036]/g, '"')
+    // En-dash / Em-dash -> साधा -
+    .replace(/[\u2013\u2014]/g, "-")
+    // मराठी पूर्णविराम (| किंवा । -> .)
+    .replace(/[।|]/g, ".")
+    // मराठी मात्रा जोडणी
     .replace(/\u093E\u0948/g, "\u094C")
     .replace(/\u093E\u0947/g, "\u094B")
     .replace(/\u093E\u0945/g, "\u0949")
@@ -84,7 +93,7 @@ export default function PassageViewer({
 
           return (
             <p key={paraIndex} className="m-0 break-words whitespace-normal leading-relaxed">
-              {/* 🎯 ४ स्पेसेसचा अचूक टॅब (No Icon) */}
+              {/* 🎯 ४ स्पेसेसचा अचूक टॅब */}
               <span className="select-none tracking-normal">
                 &nbsp;&nbsp;&nbsp;&nbsp;
               </span>
@@ -96,8 +105,8 @@ export default function PassageViewer({
                 const isCompleted = wordIndex < completedWords.length;
                 const isCurrent = wordIndex === currentActiveIndex;
 
-                const userWordNorm = normalizeMarathiWord(completedWords[wordIndex] || "");
-                const targetWordNorm = normalizeMarathiWord(word);
+                const userWordNorm = normalizeWordForCompare(completedWords[wordIndex] || "");
+                const targetWordNorm = normalizeWordForCompare(word);
 
                 const isCorrect = isCompleted && userWordNorm === targetWordNorm;
                 const isWrong = isCompleted && userWordNorm !== targetWordNorm;
