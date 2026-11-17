@@ -15,10 +15,12 @@ import {
   ArrowRight,
   Flame,
   FileCheck,
-  GraduationCap,
   Sparkles,
   HelpCircle,
   FileEdit,
+  Smartphone,
+  CheckCircle2,
+  BookMarked,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -37,7 +39,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 font-sans relative overflow-x-hidden selection:bg-amber-400 selection:text-black">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 font-sans relative overflow-x-hidden selection:bg-amber-400 selection:text-black">
       <GlowCursor />
 
       {/* Decorative Grid Pattern */}
@@ -52,10 +54,10 @@ export default function HomePage() {
       {/* Ambient Glows */}
       <div className="pointer-events-none fixed top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-amber-500/15 via-emerald-500/10 to-transparent blur-[120px] rounded-full z-0" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-12 sm:space-y-16">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-12 sm:space-y-16">
         {/* Navigation Bar */}
-        <header className="glass-panel px-4 sm:px-6 py-3 rounded-3xl flex justify-between items-center shadow-lg border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl">
-          <div className="flex items-center gap-3">
+        <header className="glass-panel px-4 sm:px-6 py-3.5 rounded-3xl flex flex-wrap justify-between items-center gap-4 shadow-lg border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-xl">
+          <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 font-black shadow-md shadow-amber-500/20">
               <Keyboard className="w-5 h-5" />
             </div>
@@ -65,14 +67,34 @@ export default function HomePage() {
                   GCC TBC Typing
                 </span>
                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 tracking-wider">
-                  Official Exam Suite
+                  Exam Suite
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
-                महाराष्ट्र राज्य परीक्षा परिषद (MSCE) GCC-TBC पॅटर्न आधारित
+                MSCE GCC-TBC 30 & 40 WPM परीक्षा पॅटर्न आधारित
               </p>
             </div>
-          </div>
+          </Link>
+
+          {/* Top Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-xs font-bold text-slate-600 dark:text-slate-300">
+            <Link href="/speed-test" className="hover:text-amber-500 transition">
+              Speed Test
+            </Link>
+            <Link href="/lessons" className="hover:text-amber-500 transition">
+              61 Lessons
+            </Link>
+            <Link href="/mcq-test" className="hover:text-amber-500 transition">
+              MCQ Practice
+            </Link>
+            <Link href="/exam-guide" className="hover:text-emerald-500 transition flex items-center gap-1">
+              <BookMarked className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Exam Guide</span>
+            </Link>
+            <Link href="/about" className="hover:text-amber-500 transition">
+              About
+            </Link>
+          </nav>
 
           <div className="flex items-center gap-3">
             {streak > 0 && (
@@ -85,8 +107,16 @@ export default function HomePage() {
           </div>
         </header>
 
+        {/* Mobile Device Tip Banner */}
+        <div className="md:hidden p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 text-xs text-slate-700 dark:text-slate-300">
+          <Smartphone className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong>मोबाईल युजर्ससाठी टीप:</strong> प्रत्यक्ष टायपिंग सरावासाठी कॉम्प्युटर/लॅपटॉप किंवा मोबाईलला <strong>OTG कीबोर्ड</strong> जोडा. मोबाईल स्क्रीनवर तुम्ही <strong>MCQ सराव चाचणी</strong> सहज सोडवू शकता!
+          </p>
+        </div>
+
         {/* Hero Section */}
-        <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-8">
+        <section className="text-center space-y-6 max-w-4xl mx-auto pt-2 sm:pt-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/[0.04] dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.1] text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm">
             <Sparkles className="w-4 h-4 text-amber-500" />
             <span>शासकीय GCC-TBC प्रत्यक्ष परीक्षेतील मूळ प्रश्न आणि बॅचेस</span>
@@ -100,9 +130,9 @@ export default function HomePage() {
           </h1>
 
           <p className="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            शासकीय परीक्षेतील <strong className="text-slate-900 dark:text-white font-bold">मूळ बॅचेसचे उतारे</strong>, 
-            तंतोतंत <strong className="text-slate-900 dark:text-white font-bold">७ मिनिटांची स्पीड टेस्ट</strong>, 
-            स्वतःचा मजकूर जोडून <strong className="text-violet-600 dark:text-violet-400 font-bold">कस्टम पॅसेज सराव</strong> आणि 
+            शासकीय परीक्षेतील <strong className="text-slate-900 dark:text-white font-bold">मूळ बॅचेसचे उतारे</strong>,
+            तंतोतंत <strong className="text-slate-900 dark:text-white font-bold">७ मिनिटांची स्पीड टेस्ट (४० गुण)</strong>,
+            स्वतःचा मजकूर जोडून <strong className="text-violet-600 dark:text-violet-400 font-bold">कस्टम पॅसेज सराव</strong> आणि
             मागील वर्षांत प्रत्यक्ष विचारलेले <strong className="text-emerald-600 dark:text-emerald-400 font-bold">१०००+ अधिकृत Computer MCQ प्रश्न</strong>.
           </p>
 
@@ -112,7 +142,7 @@ export default function HomePage() {
               className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/25 flex items-center gap-2 cursor-pointer"
             >
               <Timer className="w-4 h-4" />
-              <span>स्पीड टेस्ट सुरू करा</span>
+              <span>स्पीड टेस्ट सुरू करा (४० गुण)</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -130,7 +160,7 @@ export default function HomePage() {
               className="px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/25 flex items-center gap-2 cursor-pointer"
             >
               <Award className="w-4 h-4" />
-              <span>परीक्षेतील MCQs सोडवा (५० गुण)</span>
+              <span>परीक्षेतील MCQs सोडवा (२५ गुण)</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -144,14 +174,13 @@ export default function HomePage() {
             className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-amber-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all duration-500" />
-            
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
                   <Timer className="w-6 h-6" />
                 </div>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                  ७ मिनिटे • ४० गुण
+                  Section-C • ४० गुण
                 </span>
               </div>
 
@@ -160,7 +189,7 @@ export default function HomePage() {
                   GCC-TBC स्पीड टेस्ट
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  प्रत्यक्ष शासकीय परीक्षेतील मूळ बॅचेसचे उतारे. उणे गुण पद्धत आणि रिअल-टाईम गुणदानासह हुबेहूब परीक्षा हॉल अनुभव.
+                  प्रत्यक्ष शासकीय परीक्षेतील मूळ बॅचेसचे उतारे. ४० पैकी किमान १६ गुण मिळवण्याच्या अचूक पद्धतीसह परीक्षा हॉल अनुभव.
                 </p>
               </div>
 
@@ -186,7 +215,6 @@ export default function HomePage() {
             className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-violet-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-violet-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl group-hover:bg-violet-500/20 transition-all duration-500" />
-            
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
                 <div className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-500 group-hover:scale-110 group-hover:bg-violet-500 group-hover:text-white transition-all duration-300 shadow-sm">
@@ -228,14 +256,13 @@ export default function HomePage() {
             className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-emerald-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
-
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
                   <Award className="w-6 h-6" />
                 </div>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                  ५० गुण • १००% Exam
+                  Section-A • २५ गुण
                 </span>
               </div>
 
@@ -244,13 +271,13 @@ export default function HomePage() {
                   परीक्षेतील अधिकृत MCQs
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-                  GCC-TBC परीक्षेत वारंवार येणारे १०००+ मूळ प्रश्न. Word, Excel, PowerPoint, Windows व Internet चे २५ वस्तुनिष्ठ प्रश्न.
+                  GCC-TBC परीक्षेत वारंवार येणारे १०००+ मूळ प्रश्न. Word, Excel, PowerPoint, Windows व Internet चे २५ वस्तुनिष्ठ प्रश्न (किमान १० गुण आवश्यक).
                 </p>
               </div>
 
               <div className="pt-1 flex flex-wrap gap-1">
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                  २५ प्रश्न • २५ मिनिटे
+                  २५ प्रश्न • २५ गुण
                 </span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-300">
                   मराठी/English
@@ -270,7 +297,6 @@ export default function HomePage() {
             className="group relative glass-panel p-6 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] hover:border-cyan-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/10 flex flex-col justify-between overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all duration-500" />
-
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-start">
                 <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-500 group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 shadow-sm">
@@ -283,7 +309,7 @@ export default function HomePage() {
 
               <div>
                 <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-cyan-500 transition-colors">
-                  टायपिंग अकॅडमी
+                  टायपिंग अकॅडमी (६१ धडे)
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   Home row, Upper row, Bottom row आणि वेलांटी-काण्याचे अचूक नियम. नवशिक्यांपासून ॲडव्हान्स विद्यार्थ्यांसाठी संपूर्ण धडे.
@@ -305,6 +331,88 @@ export default function HomePage() {
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform" />
             </div>
           </Link>
+        </section>
+
+        {/* GCC-TBC Official Exam Structure & Passing Criteria Table */}
+        <section className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] space-y-6 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-white/[0.06] pb-5">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                Marks Required To Pass • उत्तीर्ण होण्यासाठी आवश्यक गुण
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">
+                GCC-TBC परीक्षेचे स्वरूप आणि उत्तीर्ण गुण (Passing Criteria)
+              </h2>
+            </div>
+            <Link
+              href="/exam-guide"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline"
+            >
+              <span>संपूर्ण परीक्षा मार्गदर्शक वाचा</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-white/[0.1] text-slate-700 dark:text-slate-200 bg-slate-100/70 dark:bg-white/[0.03]">
+                  <th className="py-3.5 px-4 font-extrabold rounded-tl-xl">विभाग (Section)</th>
+                  <th className="py-3.5 px-4 font-extrabold">प्रश्न प्रकार (Question)</th>
+                  <th className="py-3.5 px-4 font-extrabold">एकूण गुण (Max Marks)</th>
+                  <th className="py-3.5 px-4 font-extrabold rounded-tr-xl">उत्तीर्ण गुण (Must Pass)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200/70 dark:divide-white/[0.06] text-slate-600 dark:text-slate-300">
+                <tr>
+                  <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+                    Section-A (Must Pass)
+                  </td>
+                  <td className="py-3.5 px-4">Objective (वस्तुनिष्ठ प्रश्न)</td>
+                  <td className="py-3.5 px-4 font-bold">२५ गुण</td>
+                  <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold">
+                    किमान १० गुण
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+                    Section-B (Must Pass)
+                  </td>
+                  <td className="py-3.5 px-4">Email / Letter / Statement</td>
+                  <td className="py-3.5 px-4 font-bold">३५ गुण</td>
+                  <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold">
+                    किमान १४ गुण
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+                    Section-C (Must Pass)
+                  </td>
+                  <td className="py-3.5 px-4">Speed Passage (गती उतारा)</td>
+                  <td className="py-3.5 px-4 font-bold">४० गुण</td>
+                  <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold">
+                    किमान १६ गुण
+                  </td>
+                </tr>
+                <tr className="bg-slate-100/60 dark:bg-white/[0.04] font-extrabold text-slate-900 dark:text-white">
+                  <td className="py-3.5 px-4" colSpan={2}>
+                    एकूण (Total Marks)
+                  </td>
+                  <td className="py-3.5 px-4">१०० गुण</td>
+                  <td className="py-3.5 px-4 text-amber-600 dark:text-amber-400">
+                    किमान ४० गुण
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+            <span>
+              <strong>महत्त्वाचे:</strong> परीक्षेत उत्तीर्ण होण्यासाठी Section-A (किमान १० गुण), Section-B (किमान १४ गुण) आणि Section-C (किमान १६ गुण) या तिन्ही विभागांमध्ये स्वतंत्रपणे उत्तीर्ण होणे अनिवार्य आहे.
+            </span>
+          </div>
         </section>
 
         {/* Features Section */}
@@ -373,18 +481,7 @@ export default function HomePage() {
         <section className="glass-panel p-6 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-white/[0.08] shadow-xl">
           <SeoContentSection />
         </section>
-
-        {/* Footer */}
-        <footer className="border-t border-slate-200 dark:border-white/[0.08] pt-8 pb-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-slate-400 font-medium">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-amber-500" />
-            <span>GCC TBC Typing • शासकीय GCC-TBC टायपिंग परीक्षा पोर्टल</span>
-          </div>
-          <div>
-            <span>Maharashtra State Council of Examination (MSCE) Pattern Aligned</span>
-          </div>
-        </footer>
       </div>
-    </main>
+    </div>
   );
 }
