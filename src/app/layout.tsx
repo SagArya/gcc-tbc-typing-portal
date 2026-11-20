@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/react";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -162,6 +163,7 @@ export default function RootLayout({
         >
           <main className="flex-1">{children}</main>
           <Footer />
+          <Analytics/>
         </ThemeProvider>
       </body>
     </html>
