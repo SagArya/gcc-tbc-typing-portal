@@ -26,17 +26,17 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://typeforge-pro.vercel.app"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.gcctbctyping.in"
   ),
   title: {
-    default: "TypeForge PRO | GCC-TBC Typing Exam Practice (Marathi & English)",
-    template: "%s | TypeForge PRO",
+    default: "GCC-TBC Typing Practice Portal | Marathi & English 30/40 WPM",
+    template: "%s | GCC-TBC Typing",
   },
   description:
-    "Free Maharashtra GCC-TBC speed test and typing exam practice suite. Practice official Marathi 30/40 WPM and English 30/40/50/60 WPM batch passages with real 7-minute timer, LCS mistake evaluation, and instant marks.",
+    "Free Maharashtra GCC-TBC speed test and typing exam practice portal. Practice official Marathi 30/40 WPM and English 30/40/50/60 WPM batch passages with real 7-minute timer, LCS mistake evaluation, and instant marks.",
   keywords: [
     "GCC TBC typing practice",
-    "TypeForge PRO",
+    "gcctbctyping.in",
     "GCC TBC Marathi typing 30 wpm",
     "Marathi typing exam practice",
     "English typing test 30 wpm 40 wpm",
@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     "Remington GAIL marathi keyboard",
     "GCC TBC speed test 7 minutes",
   ],
-  authors: [{ name: "TypeForge PRO Team" }],
-  creator: "TypeForge PRO",
-  publisher: "TypeForge PRO",
+  authors: [{ name: "GCC-TBC Typing Team" }],
+  creator: "GCC-TBC Typing",
+  publisher: "GCC-TBC Typing",
   category: "Education",
   robots: {
     index: true,
@@ -64,15 +64,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     alternateLocale: "mr_IN",
-    url: "/",
-    siteName: "TypeForge PRO",
-    title: "TypeForge PRO | GCC-TBC Typing Engine & Speed Test",
+    url: "https://www.gcctbctyping.in",
+    siteName: "GCC-TBC Typing",
+    title: "GCC-TBC Typing Practice Portal | Marathi & English Speed Test",
     description:
       "Practice official GCC-TBC Marathi and English typing passages with 7-minute exam timer, accurate mistake tracking, and instant marks evaluation.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TypeForge PRO | GCC-TBC Typing Practice Suite",
+    title: "GCC-TBC Typing Practice Portal",
     description:
       "Official Maharashtra GCC-TBC speed test simulation with Marathi & English batch passages.",
   },
@@ -84,7 +84,8 @@ const structuredData = {
   "@graph": [
     {
       "@type": "WebApplication",
-      name: "TypeForge PRO - GCC-TBC Typing Practice",
+      name: "GCC-TBC Typing Practice Portal",
+      url: "https://www.gcctbctyping.in",
       applicationCategory: "EducationalApplication",
       operatingSystem: "All",
       offers: {
