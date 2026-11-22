@@ -4,7 +4,6 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 import Footer from "@/components/Footer";
-import { Analytics } from "@vercel/analytics/react";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -77,9 +76,11 @@ export const metadata: Metadata = {
     description:
       "Official Maharashtra GCC-TBC speed test simulation with Marathi & English batch passages.",
   },
+  other: {
+    "google-adsense-account": "ca-pub-3044053268278256",
+  },
 };
 
-// 🎯 Schema.org Combined Structured Data (WebApplication + FAQPage)
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -150,6 +151,11 @@ export default function RootLayout({
     >
       <head>
         <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3044053268278256"
+          crossOrigin="anonymous"
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
@@ -163,7 +169,6 @@ export default function RootLayout({
         >
           <main className="flex-1">{children}</main>
           <Footer />
-          <Analytics/>
         </ThemeProvider>
       </body>
     </html>
