@@ -9,7 +9,6 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { LESSONS_DATA, LessonItem } from "@/data/lessonsData";
 import {
   ArrowLeft,
-  Lock,
   Play,
   Star,
   Trophy,
@@ -108,22 +107,12 @@ function LessonsDashboardContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {lessons.map((lesson) => {
             const progress = userProgress[lesson.id] || { stars: 0, completed: false };
-            
             const globalIdx = filteredLessons.findIndex((l) => l.id === lesson.id);
-            const prevLesson = filteredLessons[globalIdx - 1];
-            const isUnlocked =
-              globalIdx === 0 ||
-              (prevLesson && userProgress[prevLesson.id]?.completed) ||
-              progress.completed;
 
             return (
               <div
                 key={lesson.id}
-                className={`glass-panel p-5 rounded-3xl flex flex-col justify-between transition-all duration-200 ${
-                  isUnlocked
-                    ? "hover:border-cyan-500/50 hover:shadow-xl"
-                    : "opacity-60 grayscale cursor-not-allowed"
-                }`}
+                className="glass-panel p-5 rounded-3xl flex flex-col justify-between transition-all duration-200 hover:border-cyan-500/50 hover:shadow-xl"
               >
                 <div className="space-y-3">
                   <div className="flex justify-between items-start">
@@ -160,21 +149,14 @@ function LessonsDashboardContent() {
                     {lesson.totalSteps} Steps
                   </span>
 
-                  {isUnlocked ? (
-                    <Link
-                      href={`/lessons/${lesson.id}`}
-                      tabIndex={0}
-                      className="px-3.5 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition duration-200 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 focus:ring-2 focus:ring-cyan-400 focus:outline-none cursor-pointer"
-                    >
-                      <Play className="w-3 h-3 fill-slate-950" />
-                      <span>{progress.completed ? "Review" : "Start"}</span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-1 text-slate-400 text-xs font-semibold">
-                      <Lock className="w-3.5 h-3.5" />
-                      <span>Locked</span>
-                    </div>
-                  )}
+                  <Link
+                    href={`/lessons/${lesson.id}`}
+                    tabIndex={0}
+                    className="px-3.5 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition duration-200 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 focus:ring-2 focus:ring-cyan-400 focus:outline-none cursor-pointer"
+                  >
+                    <Play className="w-3 h-3 fill-slate-950" />
+                    <span>{progress.completed ? "Review" : "Start"}</span>
+                  </Link>
                 </div>
               </div>
             );
@@ -220,7 +202,7 @@ function LessonsDashboardContent() {
               <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                 <span>Step-by-step touch typing mastery</span>
                 <span className="hidden sm:inline text-cyan-600 dark:text-cyan-400 font-semibold">
-                  • [Tab ➔ Enter to open lesson]
+                  - [Tab ➔ Enter to open lesson]
                 </span>
               </p>
             </div>
@@ -310,7 +292,7 @@ function LessonsDashboardContent() {
       </div>
 
       <footer className="relative z-10 max-w-6xl mx-auto w-full pt-12 pb-6 text-center text-xs text-slate-500 font-mono">
-        <span>TypeForge PRO • Structured Typing Academy</span>
+        <span>GCC-TBC Typing • Structured Typing Academy</span>
       </footer>
     </main>
   );

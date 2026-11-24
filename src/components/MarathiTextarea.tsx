@@ -34,9 +34,12 @@ function combineLigatures(text: string, char: string): string {
     return textWithoutVelanti + padanChar + "ि";
   }
 
-  // 🎯 फिक्स ३: व्यंजनावर रफार (र्) जोडणे (ऋकार 'ृ' सह अचूक काम करेल)
+  // 🎯 फिक्स ३ (सुधारित): संपूर्ण जोडाक्षराच्या सुरुवातीला रफार (र्) जोडणे
+  // उदा. 'विद्याथ्या' + 'र्' => 'विद्यार्थ्या' (अर्ध्या व्यंजनांच्या आधी रफार जाईल)
   if (char === RAFAAR || char === "र्") {
-    const match = text.match(/([\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/);
+    const match = text.match(
+      /((?:[\u0915-\u0939]\u094D)*[\u0915-\u0939][\u093E-\u094C\u0901-\u0903]?)$/
+    );
     if (match) {
       const targetCluster = match[0];
       const prefix = text.slice(0, -targetCluster.length);
@@ -169,8 +172,7 @@ const MarathiTextarea = forwardRef<HTMLTextAreaElement, MarathiTextareaProps>(
             .replace(/\u0907[\u094D\u0930\u200C\u200D]+/g, "ई");
         }
 
-        // 🎯 सुरक्षा तपासणी २: जर चुकून 'त्' + 'य' ऐवजी 'त्र्य' तयार होत असेल, तर ते दुरुस्त करा
-        // (मृत्यू सारख्या शब्दांसाठी फक्त त्र्यंबक वगळता सामान्य संयोग रक्षण)
+        // 🎯 सुरक्षा तपासणी २: 'मृत्यू' संरक्षण
         nextVal = nextVal.replace(/मृत्र्यू/g, "मृत्यू");
 
         if (onChangeValue) onChangeValue(nextVal);
